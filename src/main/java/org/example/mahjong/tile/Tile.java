@@ -49,5 +49,5 @@ public class Tile implements Comparable<Tile> {
 }
 
 enum TileType {
-    BAMBOO, CHARACTER, DOT, WIND, DRAGON, SEASON, FLOWER
+    BAMBOO, CHARACTER, DOT, WIND
 }
