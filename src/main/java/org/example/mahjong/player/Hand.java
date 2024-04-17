@@ -1,2 +1,8 @@
-package org.example.mahjong;public class Hand {
+package org.example.mahjong.player;
+
+public class Hand {
+    public Hand() {}
+    public boolean isValidMahjong() {
+        return false;
+    }
 }

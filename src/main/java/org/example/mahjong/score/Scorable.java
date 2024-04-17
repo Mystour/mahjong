@@ -1,2 +1,5 @@
-package org.example.mahjong;public class Scorable {
+package org.example.mahjong.score;
+
+public interface Scorable {
+    void calculateScore();
 }
