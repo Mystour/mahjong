@@ -3,6 +3,8 @@ package org.example.mahjong.player;
 import org.example.mahjong.score.Scorable;
 
 public class Player implements Playable, Scorable {
+    private boolean isbanker;
+    private Hand hand;
     public Player() {}
 
     @Override
@@ -25,4 +27,12 @@ public class Player implements Playable, Scorable {
 
     @Override
     public void calculateScore() {}
+
+    public boolean getIsBanker() {
+        return isbanker;
+    }
+
+    public void setIsBanker(boolean isbanker) {
+        this.isbanker = isbanker;
+    }
 }
