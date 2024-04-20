@@ -1,15 +1,8 @@
 package org.example.mahjong.tile;
 
 public class CharacterTile extends Tile {
-    public CharacterTile() {}
-
-    @Override
-    public String getTileType() {
-        return null;
+    public CharacterTile(TileType type, int number) {
+        super(type, number);
     }
 
-    @Override
-    public int getTileValue() {
-        return 0;
-    }
 }

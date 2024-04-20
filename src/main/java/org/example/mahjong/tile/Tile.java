@@ -1,6 +1,6 @@
 package org.example.mahjong.tile;
 
-public class Tile implements Comparable<Tile> {
+public abstract class Tile implements Comparable<Tile> {
     private TileType type;
     private int number;
 
@@ -48,6 +48,4 @@ public class Tile implements Comparable<Tile> {
     }
 }
 
-enum TileType {
-    BAMBOO, CHARACTER, DOT, WIND
-}
+

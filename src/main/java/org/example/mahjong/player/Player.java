@@ -27,6 +27,8 @@ public class Player implements Playable, Scorable {
     @Column
     private int score;
 
+    private boolean isbanker;
+    private Hand hand;
     public Player() {}
 
     // getters and setters
@@ -70,4 +72,12 @@ public class Player implements Playable, Scorable {
 
     @Override
     public void calculateScore() {}
+
+    public boolean getIsBanker() {
+        return isbanker;
+    }
+
+    public void setIsBanker(boolean isbanker) {
+        this.isbanker = isbanker;
+    }
 }
