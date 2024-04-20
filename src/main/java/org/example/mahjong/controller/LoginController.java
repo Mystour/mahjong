@@ -30,7 +30,7 @@ public class LoginController {
         PlayerInfo playerInfo = playerRepository.findByUsername(username);
         if (playerInfo != null && passwordEncoder.matches(password, playerInfo.getPassword())) {
             // 登录成功，重定向到主页
-            return "redirect:/";
+            return "redirect:/welcome";
         } else {
             // 登录失败，添加错误消息并重定向到登录页面
             redirectAttributes.addFlashAttribute("error", "Invalid username or password");

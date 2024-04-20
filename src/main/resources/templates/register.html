@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>用户注册</title>
+    <title>User Registration</title>
     <link rel="stylesheet" th:href="@{/css/registerstyle.css}">
 </head>
 <body>
     <div class="container">
         <div class="info">
-            <h2>COMP2004J Demo System</h2>
+            <h2>Mahjong Game</h2>
         </div>
     </div>
     <div class="register-page">
         <div class="form">
             <form class="register-form" th:action="@{/register}" method="post">
-                <input type="text" placeholder="用户名" name="username"/>
-                <input type="password" placeholder="密码" name="password"/>
-                <input type="email" placeholder="邮箱" name="email"/>
-                <button type="submit">注册</button>
-                <p style="font-size: 0.8em; color: #888;">密码必须包含至少8个字符，包括大写字母，小写字母，数字和特殊字符。</p>
+                <input type="text" placeholder="username" name="username"/>
+                <input type="password" placeholder="password" name="password"/>
+                <input type="email" placeholder="email" name="email"/>
+                <button type="submit">Register</button>
+                <p style="font-size: 0.8em; color: #888;">Password must contain at least 8 characters, including uppercase letters, lowercase letters, numbers, and special characters.</p>
             </form>
         </div>
     </div>
