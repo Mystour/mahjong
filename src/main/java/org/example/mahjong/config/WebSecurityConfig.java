@@ -9,8 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
@@ -27,8 +25,11 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(authz -> authz
+                        .requestMatchers("/login", "/register").permitAll()
                         .anyRequest().authenticated())
-                .httpBasic(withDefaults())
+                .formLogin(formLogin -> formLogin
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/", true))
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .permitAll());
