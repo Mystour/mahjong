@@ -1,4 +1,4 @@
-package org.example.mahjong.server;
+package org.example.mahjong.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.example.mahjong.player.Player;
