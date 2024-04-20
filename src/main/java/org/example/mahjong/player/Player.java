@@ -1,12 +1,7 @@
 package org.example.mahjong.player;
 
+import jakarta.persistence.*;
 import org.example.mahjong.score.Scorable;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 
 
 @Entity
@@ -28,7 +23,10 @@ public class Player implements Playable, Scorable {
     private int score;
 
     private boolean isbanker;
+
+    @Transient
     private Hand hand;
+
     public Player() {}
 
     // getters and setters
