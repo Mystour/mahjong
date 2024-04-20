@@ -1,5 +1,6 @@
 package org.example.mahjong.service;
 
+import org.example.mahjong.player.PlayerInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.example.mahjong.player.Player;
 import org.example.mahjong.repository.PlayerRepository;
@@ -14,8 +15,8 @@ public class PlayerService {
         this.playerRepository = playerRepository;
     }
 
-    public Player savePlayer(Player player) {
-        return playerRepository.save(player);
+    public PlayerInfo savePlayer(PlayerInfo playerInfo) {
+        return playerRepository.save(playerInfo);
     }
 
     // other methods

@@ -1,6 +1,7 @@
 package org.example.mahjong.service;
 
 import org.example.mahjong.player.Player;
+import org.example.mahjong.player.PlayerInfo;
 import org.example.mahjong.repository.PlayerRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,12 +20,12 @@ public class PlayerDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Player player = playerRepository.findByUsername(username);
-        if (player == null) {
+        PlayerInfo playerInfo = playerRepository.findByUsername(username);
+        if (playerInfo == null) {
             throw new UsernameNotFoundException("User not found");
         }
-        return User.withUsername(player.getUsername())
-                .password(player.getPassword())
+        return User.withUsername(playerInfo.getUsername())
+                .password(playerInfo.getPassword())
                 .roles("USER")
                 .build();
     }
