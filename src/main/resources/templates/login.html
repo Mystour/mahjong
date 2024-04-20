@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Mahjong Game</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -13,10 +13,15 @@
     <div class="login-page">
         <div class="form">
             <form class="login-form" th:action="@{/login}" method="post">
-                <input type="text" placeholder="username" name="username" class="form-control"/>
-                <input type="password" placeholder="password" name="password" class="form-control"/>
+                <label>
+                    <input type="text" placeholder="username" name="username" class="form-control"/>
+                </label>
+                <label>
+                    <input type="password" placeholder="password" name="password" class="form-control"/>
+                </label>
                 <button type="submit" class="btn btn-primary">login</button>
-                <p th:if="${error}" th:text="${error}" class="error"></p>
+                <!--/*@thymesVar id="error" type="java.lang.String"*/-->
+                <p th:if="${error != null}" th:text="${error}" class="error"></p> <!-- 添加错误消息显示 -->
             </form>
             <a th:href="@{/register}" class="btn btn-secondary">Register</a>
         </div>

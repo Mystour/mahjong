@@ -44,7 +44,7 @@ public class LoginController {
     }
 
     @PostMapping("/register")
-    public String doRegister(@RequestParam String username, @RequestParam String password, @RequestParam String email) {
+    public String doRegister(@RequestParam String username, @RequestParam String password, @RequestParam String email, RedirectAttributes redirectAttributes) {
         // 在这里处理注册请求
         PlayerInfo playerInfo = new PlayerInfo();
         playerInfo.setUsername(username);
@@ -54,13 +54,15 @@ public class LoginController {
             PlayerInfo savedPlayer = playerRepository.save(playerInfo);
             if (savedPlayer.getId() == null) {
                 System.out.println("PlayerInfo was not saved to the database");
-                return "register?error";
+                redirectAttributes.addFlashAttribute("error", "Registration failed");
+                return "redirect:/register";
             } else {
                 return "redirect:/login";
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "register?error";
+            redirectAttributes.addFlashAttribute("error", "Registration failed");
+            return "redirect:/register";
         }
     }
 }
