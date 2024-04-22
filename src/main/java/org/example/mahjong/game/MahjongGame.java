@@ -78,6 +78,14 @@ public class MahjongGame extends AbstractGame {
     public Tile dealOneCard(){
         return tilepile.poll();
     }
+
+    public static void main(String[] args) {
+        MahjongGame game = new MahjongGame();
+        game.startGame();
+        for (Player player : game.players) {
+            player.displayHand();
+        }
+    }
     public void checkWinCondition() {}
     public void endRound() {}
     @Override
@@ -90,4 +98,6 @@ public class MahjongGame extends AbstractGame {
 
     @Override
     public void endGame() {}
+
+
 }

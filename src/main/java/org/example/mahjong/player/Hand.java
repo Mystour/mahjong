@@ -120,4 +120,14 @@ public class Hand {
         return tile1.compareTo(tile2) == -1 && tile2.compareTo(tile3) == -1;
 
     }
+
+    //print all the cards in the player's hand
+    public void printCards() {
+        for (List<Tile> cardList : handcard) {
+            for (Tile card : cardList) {
+                System.out.print(card + " ");
+            }
+            System.out.println();
+        }
+    }
 }
