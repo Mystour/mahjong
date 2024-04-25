@@ -12,10 +12,10 @@ public class ScoringSystem<T> {
         this.score = 1;
 
     }
-    public int getScore() {
-
-        return score * SevenPairs() * uniformTile() * AllTriple() * OneDragon();
-    }
+//    public int getScore() {
+//
+//        return score * SevenPairs() * uniformTile() * AllTriple() * OneDragon();
+//    }
 
 
 
@@ -61,24 +61,24 @@ public class ScoringSystem<T> {
         return tile2.getNumber() - tile1.getNumber() == 1;
     }
 
-    public int SevenPairs(){ // 检查是不是七小对
-        Hand a = new Hand();
-        if(a.pair == 7){
-            return 2;
-        }else if(){// pair + 杠 的次数等于 7， 是豪华七小对
-            return 4;
-        }
-        return 1;
-
-    }
-
-    public int AllTriple(){ // 检查是不是都是由刻字和对子形成的胡
-        Hand a = new Hand();
-        if(a.pair == 1 && a.triple == 4){
-            return 2;
-        }
-        return 1;
-    }
+//    public int SevenPairs(){ // 检查是不是七小对
+//        Hand a = new Hand();
+//        if(a.pair == 7){
+//            return 2;
+//        }else if(){// pair + 杠 的次数等于 7， 是豪华七小对
+//            return 4;
+//        }
+//        return 1;
+//
+//    }
+//
+//    public int AllTriple(){ // 检查是不是都是由刻字和对子形成的胡
+//        Hand a = new Hand();
+//        if(a.pair == 1 && a.triple == 4){
+//            return 2;
+//        }
+//        return 1;
+//    }
 
 
 }
