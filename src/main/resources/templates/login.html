@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Mahjong Game</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -15,21 +15,16 @@
             <div class="form">
                 <form class="login-form" th:action="@{/login}" method="post">
                     <div class="form-group">
-                        <label>
-                            <input type="text" placeholder="username" name="username" class="form-control"/>
-                        </label>
+                        <input type="text" placeholder="username" name="username" class="form-control"/>
                     </div>
                     <div class="form-group">
-                        <label>
-                            <input type="password" placeholder="password" name="password" class="form-control"/>
-                        </label>
+                        <input type="password" placeholder="password" name="password" class="form-control"/>
                     </div>
                     <button type="submit" class="btn btn-primary">login</button>
-
-                    <!--/*@thymesVar id="message" type="java"*/-->
+                    <!--/*@thymesVar id="error" type="java.lang.String"*/-->
+                    <!--/*@thymesVar id="message" type=""*/-->
                     <div th:if="${message != null}" class="alert alert-success" th:text="${message}"></div>
-                    <!--/*@thymesVar id="error" type="java"*/-->
-                    <p th:if="${error != null}" th:text="${error}" class="error"></p>
+                    <p th:if="${error != null}" th:text="${error}" class="error"></p> <!-- 添加错误消息显示 -->
                 </form>
                 <a th:href="@{/register}" class="btn btn-secondary">Register</a>
             </div>
