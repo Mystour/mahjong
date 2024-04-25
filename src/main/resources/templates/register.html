@@ -2,24 +2,52 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>User Registration</title>
-    <link rel="stylesheet" th:href="@{/css/registerstyle.css}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://localhost:63342/mahjong/src/main/resources/static/styles.css">
+    <script>
+        window.onload = function() {
+            document.querySelector('.register-form').addEventListener('submit', function(event) {
+                var username = document.querySelector('input[name="username"]').value;
+                var password = document.querySelector('input[name="password"]').value;
+                var email = document.querySelector('input[name="email"]').value;
+
+                if (!username || username.length < 3) {
+                    alert('Username must be at least 3 characters long');
+                    event.preventDefault();
+                } else if (!password || password.length < 8) {
+                    alert('Password must be at least 8 characters long');
+                    event.preventDefault();
+                } else if (!email || !email.includes('@')) {
+                    alert('Please enter a valid email address');
+                    event.preventDefault();
+                }
+            });
+        }
+    </script>
 </head>
 <body>
     <div class="container">
         <div class="info">
-            <h2>Mahjong Game</h2>
+            <h2 class="text-center mt-5">Mahjong Game</h2>
+        </div>
+        <div class="register-page">
+            <div class="form">
+                <form class="register-form" th:action="@{/register}" method="post">
+                    <div class="form-group">
+                        <input type="text" placeholder="username" name="username" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" placeholder="password" name="password" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="email" name="email" class="form-control"/>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                    <p style="font-size: 0.8em; color: #888;">Password must contain at least 8 characters.</p>
+                </form>
+            </div>
         </div>
     </div>
-    <div class="register-page">
-        <div class="form">
-            <form class="register-form" th:action="@{/register}" method="post">
-                <input type="text" placeholder="username" name="username"/>
-                <input type="password" placeholder="password" name="password"/>
-                <input type="email" placeholder="email" name="email"/>
-                <button type="submit">Register</button>
-                <p style="font-size: 0.8em; color: #888;">Password must contain at least 8 characters, including uppercase letters, lowercase letters, numbers, and special characters.</p>
-            </form>
-        </div>
-    </div>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

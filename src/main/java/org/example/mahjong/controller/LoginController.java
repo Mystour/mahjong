@@ -29,6 +29,8 @@ public class LoginController {
     public String doLogin(@RequestParam String username, @RequestParam String password, RedirectAttributes redirectAttributes) {
         PlayerInfo playerInfo = playerRepository.findByUsername(username);
         if (playerInfo != null && passwordEncoder.matches(password, playerInfo.getPassword())) {
+            // 添加一次性消息
+            redirectAttributes.addFlashAttribute("message", "Login successful!");
             // 登录成功，重定向到主页
             return "redirect:/welcome";
         } else {
@@ -57,6 +59,8 @@ public class LoginController {
                 redirectAttributes.addFlashAttribute("error", "Registration failed");
                 return "redirect:/register";
             } else {
+                // 添加一次性消息
+                redirectAttributes.addFlashAttribute("message", "Registration successful!");
                 return "redirect:/login";
             }
         } catch (Exception e) {
