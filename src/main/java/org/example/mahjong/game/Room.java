@@ -1,7 +1,5 @@
 package org.example.mahjong.game;
 
-import org.example.mahjong.player.Player;
-
 import java.util.ArrayList;
 import java.util.List;
 
