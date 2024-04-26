@@ -61,16 +61,35 @@ public class ScoringSystem<T> {
         return tile2.getNumber() - tile1.getNumber() == 1;
     }
 
-    public int SevenPairs(){ // 检查是不是七小对
+    public int SevenPairs() { // 检查是不是七小对
         Hand a = new Hand();
-        if(a.pair == 7){
-            return 2;
-        }else if(){// pair + 杠 的次数等于 7， 是豪华七小对
-            return 4;
-        }
-        return 1;
+        int pairs = 0;
 
+        //用hashmap计算一下出现的数量
+        Map<Tile, Integer> tileCounts = new HashMap<>();
+        for (List<Tile> tileList : a.handcard) {
+            for (Tile tile : tileList) {
+                tileCounts.put(tile, tileCounts.getOrDefault(tile, 0) + 1);//获取这张牌当前的计数值 默认是0
+            }
+        }
+
+        // 统计对子
+        for (int count : tileCounts.values()) {
+            if (count == 2) {
+                pairs++;
+            }
+        }
+        int kongs = a.kongs.size();
+
+        if (pairs == 7 && kongs == 0) {
+            return 2; // 普通七小对
+        } else if (pairs + kongs*2 == 7) {
+            return 4; // 带杠的七小对
+        }
+        return 0;
     }
+
+
 
     public int AllTriple(){ // 检查是不是都是由刻字和对子形成的胡
         Hand a = new Hand();

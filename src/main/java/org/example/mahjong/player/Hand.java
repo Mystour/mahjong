@@ -4,13 +4,21 @@ import org.example.mahjong.tile.*;
 
 public class Hand {
     public List<Tile>[] handcard;
+    public List<Tile> chowsAndPungs; // 吃和碰的牌
+    public List<Tile> kongs ; // 杠的牌
     public int count; // 明牌区的计数器，负责计杠，碰，吃的次数
+    public int pair = 0;
+    public int triple = 0;
+
 
     public Hand() {
+        chowsAndPungs = new ArrayList<>();
+        kongs = new ArrayList<>();
         handcard = new List[5];
         for (int i = 0; i < 5; i++) {
             handcard[i] = new LinkedList<>();
         }
+
     }
     //for test
     public void printCard(){
@@ -50,6 +58,54 @@ public class Hand {
             sortCard(i);
         }
     }
+
+    // 添加一个牌到明牌区的碰或吃
+    public void addToChowsAndPungs(Tile tile) {
+        chowsAndPungs.add(tile);
+    }
+
+    // 添加一个牌到明牌区的杠
+    public void addToKongs(Tile tile) {
+        kongs.add(tile);
+    }
+
+    // 检查是否可以杠
+    public boolean canKong(Tile tile) {
+        // 计算手牌中与tile相同的牌的数量
+        int count = 0;
+        for (List<Tile> tiles : handcard) {
+            for (Tile t : tiles) {
+                if (t.equals(tile)) {
+                    count++;
+                }
+            }
+        }
+        // 如果有三张相同的牌，则可以明杠；如果摸到第四张，则可以暗杠
+        return count == 3;
+    }
+
+    // 执行杠操作
+    public void executeKong(Tile tile) {
+        if (canKong(tile)) {
+            // 移除三张相同的牌，并加入到杠的列表中
+            for (int i = 0; i < 3; i++) { // 移除三张
+                removeTileFromHand(tile);
+            }
+            addToKongs(tile); // 加入到杠的列表中，此操作实际上要加入四张相同的牌
+            kongs.add(tile); // 添加第四张牌
+        }
+    }
+
+    // 从手牌中移除一张牌
+    private void removeTileFromHand(Tile tile) {
+        for (List<Tile> tiles : handcard) {
+            if (tiles.remove(tile)) { // 尝试从每个子列表中移除tile
+                break; // 如果找到并移除了tile，就退出循环
+            }
+        }
+    }
+
+
 
 
 
