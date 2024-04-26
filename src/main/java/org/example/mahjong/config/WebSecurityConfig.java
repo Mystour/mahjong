@@ -36,7 +36,7 @@ public class WebSecurityConfig {
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
                         // Set the default success login page to the welcome page
-                        .defaultSuccessUrl("/", true))
+                        .defaultSuccessUrl("/welcome", true))
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .permitAll());

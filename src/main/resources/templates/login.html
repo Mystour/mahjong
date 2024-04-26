@@ -11,6 +11,8 @@
         <div class="info">
             <h2 class="text-center mt-5">Mahjong Game</h2>
         </div>
+        <div th:if="${message != null}" class="alert alert-success" th:text="${message}"></div>
+
         <div class="login-page">
             <div class="form">
                 <form class="login-form" th:action="@{/login}" method="post">
@@ -23,7 +25,7 @@
                     <button type="submit" class="btn btn-primary">login</button>
                     <!--/*@thymesVar id="error" type="java.lang.String"*/-->
 
-                    <p th:if="${error != null}" th:text="${error}" class="error"></p> <!-- 添加错误消息显示 -->
+
                 </form>
                 <a th:href="@{/register}" class="btn btn-secondary">Register</a>
             </div>

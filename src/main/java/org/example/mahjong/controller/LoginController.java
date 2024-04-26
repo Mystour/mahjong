@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
+/**
+ * Controller for handling login and registration requests. (Login is in WebSecurityConfig)
+ */
 @Controller
 public class LoginController {
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
@@ -29,22 +31,6 @@ public class LoginController {
         return "login";
     }
 
-    @PostMapping("/login")
-    public String doLogin(@RequestParam String username, @RequestParam String password, RedirectAttributes redirectAttributes) {
-        PlayerInfo playerInfo = playerRepository.findByUsername(username);
-        if (playerInfo != null && passwordEncoder.matches(password, playerInfo.getPassword())) {
-            // 添加一次性消息
-            redirectAttributes.addFlashAttribute("message", "Login successful!");
-            logger.info("User " + username + " logged in");
-            // 登录成功，重定向到主页
-            return "redirect:/welcome";
-        } else {
-            // 登录失败，添加错误消息并重定向到登录页面
-            redirectAttributes.addFlashAttribute("error", "Invalid username or password");
-            return "redirect:/login";
-        }
-    }
-
     @GetMapping("/register")
     public String register() {
         return "register";
@@ -60,7 +46,7 @@ public class LoginController {
         try {
             PlayerInfo savedPlayer = playerRepository.save(playerInfo);
             if (savedPlayer.getId() == null) {
-                System.out.println("PlayerInfo was not saved to the database");
+                logger.error("Failed to save player");
                 redirectAttributes.addFlashAttribute("error", "Registration failed");
                 return "redirect:/register";
             } else {
