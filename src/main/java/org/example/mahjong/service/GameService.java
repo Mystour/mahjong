@@ -44,11 +44,9 @@ public class GameService {
                 Player player = game.players[room.getUsers().indexOf(user)];
                 userMap.put(user, player);
             }
-
-            return true;
         }
 
-        return false;
+        return true;
     }
 
     public Player getPlayer(String roomCode, String username) {
