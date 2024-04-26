@@ -4,7 +4,7 @@ body {
     background-repeat: no-repeat;
 }
 
-.game-button {
+.room-button {
     padding: 40px 80px;  /* 增大按钮的面积 */
     margin-right: 80px;  /* 增加右边距 */
     margin-left: 80px;   /* 增加左边距 */

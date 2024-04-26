@@ -25,22 +25,25 @@ public class GameController {
         return userDetails.getUsername();
     }
 
-    @PostMapping("/createGame")
-    public String createGame(@RequestParam String gameInput, RedirectAttributes redirectAttributes) {
-        String gameCode = gameService.createGame(gameInput);
-        redirectAttributes.addFlashAttribute("message", "Game created with code: " + gameCode);
+    @PostMapping("/createRoom")
+    public String createRoom(@RequestParam String roomCode, @ModelAttribute("username") String username, RedirectAttributes redirectAttributes) {
+        String roomCodeGet = gameService.createRoom(roomCode, username);
+        if (roomCodeGet != null) {
+            redirectAttributes.addFlashAttribute("message", "Room created with code: " + roomCodeGet);
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Failed to create room with code: " + roomCodeGet);
+        }
         return "redirect:/welcome";
     }
 
-    @PostMapping("/joinGame")
-    public String joinGame(@RequestParam String gameCode, @ModelAttribute("username") String username, RedirectAttributes redirectAttributes) {
-        boolean success = gameService.joinGame(gameCode, username);
+    @PostMapping("/joinRoom")
+    public String joinRoom(@RequestParam String roomCode, @ModelAttribute("username") String username, RedirectAttributes redirectAttributes) {
+        boolean success = gameService.joinRoom(roomCode, username);
         if (success) {
-            redirectAttributes.addFlashAttribute("message", "Joined game with code: " + gameCode);
-            return "redirect:/game";
+            redirectAttributes.addFlashAttribute("message", "Joined room with code: " + roomCode);
         } else {
-            redirectAttributes.addFlashAttribute("error", "Failed to join game with code: " + gameCode);
-            return "redirect:/welcome";
+            redirectAttributes.addFlashAttribute("error", "Failed to join room with code: " + roomCode);
         }
+        return "redirect:/welcome";
     }
 }
