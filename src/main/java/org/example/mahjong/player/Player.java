@@ -36,6 +36,12 @@ public class Player implements Playable, Scorable {
     @Override
     public void calculateScore() {}
 
+    // Displays the player's hand
+    public void displayHand() {
+        System.out.println("Player's Hand:");
+        hand.printCards();
+    }
+
     public boolean getIsBanker() {
         return isbanker;
     }

@@ -122,4 +122,14 @@ public class Hand {
         return tile2.getNumber() - tile1.getNumber() == 1 && tile3.getNumber() - tile2.getNumber() == 1;
 
     }
+
+    //print all the cards in the player's hand
+    public void printCards() {
+        for (List<Tile> cardList : handcard) {
+            for (Tile card : cardList) {
+                System.out.print(card + " ");
+            }
+            System.out.println();
+        }
+    }
 }
