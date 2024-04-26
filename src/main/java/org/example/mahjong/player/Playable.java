@@ -1,10 +1,12 @@
 package org.example.mahjong.player;
 
+import org.example.mahjong.tile.Tile;
+
 public interface Playable {
     void drawTile();
-    void discardTile();
+    Tile discardTile();
     void declareChow();
     void declarePung();
-    void declareKong();
+    void declareKong(Tile tile);
     void declareMahjong();
 }

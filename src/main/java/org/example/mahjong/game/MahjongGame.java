@@ -79,15 +79,19 @@ public class MahjongGame extends AbstractGame {
         return tilepile.poll();
     }
 
+
+
+
+
     public static void main(String[] args) {
         MahjongGame game = new MahjongGame();
         game.startGame();
         for (Player player : game.players) {
             player.displayHand();
         }
+        game.playRound();
     }
     public void checkWinCondition() {}
-    public void endRound() {}
     @Override
     public void startGame() {
         creatPlayers();
@@ -95,6 +99,80 @@ public class MahjongGame extends AbstractGame {
         shuffleTiles();
         distributeInitialTiles();
     }
+
+    public void playRound() {
+
+        startGame();
+
+        boolean roundEnded = false;
+        while (!tilepile.isEmpty() && !roundEnded) {
+            // 四个玩家轮流摸牌和做出决策
+            for (int playerIndex = 0; playerIndex < players.length; playerIndex++) {
+                Player player = players[playerIndex];
+                System.out.println("轮到玩家 " + (playerIndex + 1) + " 行动。");
+                System.out.println("轮到玩家行动");
+
+                // 玩家摸牌
+                Tile drawnTile = dealOneCard();
+                if (drawnTile != null) {
+                    System.out.println("摸到的牌是：" + drawnTile);
+                    player.drawTile();
+                } else {
+                    System.out.println("牌堆中没有牌了。");
+                    roundEnded = true;
+                    break;
+                }
+
+                // 让玩家做出决策
+                player.makeDecision(drawnTile);
+
+
+                // TODO:这部分还没完成，但是吃碰杠的逻辑在前面写好了 检查其他玩家是否可以对这张牌做出反应
+//                for (Player otherPlayer : new Player[]{p1, p2, p3, p4}) {
+//                    if (otherPlayer != player) {
+//                        otherPlayer.reactToDiscard(discardedTile);
+//                    }
+//                }
+            }
+        }
+
+        // 结束回合，可能是因为牌摸完了，或者有玩家胡牌
+        endRound();
+    }
+
+    public void endRound() {
+        // 清理所有玩家的手牌
+        for (Player player : players) {
+            player.clearHand();
+        }
+
+
+        resetGameState();
+
+        // 准备新一轮游戏
+        setupNewRound();
+    }
+
+    // 重置游戏状态的方法
+    private void resetGameState() {
+        // 清空牌堆
+        tilepile.clear();
+
+        // TODO:可以在这里添加其他重置逻辑，如重置玩家状态、计分板等
+    }
+
+    // 设置新回合
+    private void setupNewRound() {
+        // 重新创建牌堆
+        creatTilePile();
+
+        // 洗牌
+        shuffleTiles();
+
+        // 分牌
+        distributeInitialTiles();
+    }
+
 
     @Override
     public void endGame() {}
