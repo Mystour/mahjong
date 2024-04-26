@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 @Controller
 public class GameController {
 
@@ -29,9 +32,17 @@ public class GameController {
     public String createRoom(@RequestParam String roomCode, @ModelAttribute("username") String username, RedirectAttributes redirectAttributes) {
         String roomCodeGet = gameService.createRoom(roomCode, username);
         if (roomCodeGet != null) {
-            redirectAttributes.addFlashAttribute("message", "Room created with code: " + roomCodeGet);
+            try {
+                String serverIp = InetAddress.getLocalHost().getHostAddress();
+                String serverPort = "8080"; // 你的应用的端口号
+                String url = "https://" + serverIp + ":" + serverPort;
+                redirectAttributes.addFlashAttribute("message", "Room created with code: " + roomCode + ". Others can join at: " + url);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+                redirectAttributes.addFlashAttribute("error", "Failed to get server IP address.");
+            }
         } else {
-            redirectAttributes.addFlashAttribute("error", "Failed to create room with code: " + roomCodeGet);
+            redirectAttributes.addFlashAttribute("error", "Failed to create room with code: " + roomCode);
         }
         return "redirect:/welcome";
     }
