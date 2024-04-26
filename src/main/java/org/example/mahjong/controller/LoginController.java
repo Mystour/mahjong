@@ -2,6 +2,8 @@ package org.example.mahjong.controller;
 
 import org.example.mahjong.player.PlayerInfo;
 import org.example.mahjong.repository.PlayerRepository;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,8 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+
 @Controller
 public class LoginController {
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     private final PlayerRepository playerRepository;
     private final PasswordEncoder passwordEncoder;
@@ -31,6 +35,7 @@ public class LoginController {
         if (playerInfo != null && passwordEncoder.matches(password, playerInfo.getPassword())) {
             // 添加一次性消息
             redirectAttributes.addFlashAttribute("message", "Login successful!");
+            logger.info("User " + username + " logged in");
             // 登录成功，重定向到主页
             return "redirect:/welcome";
         } else {

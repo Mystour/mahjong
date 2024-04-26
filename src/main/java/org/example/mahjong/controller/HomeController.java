@@ -12,10 +12,15 @@ public class HomeController {
         // Check if the user is authenticated
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             // If the user is authenticated, return the welcome page
-            return "welcome";
+            return "redirect:/welcome";
         } else {
             // If the user is not authenticated, redirect them to the login page
             return "redirect:/login";
         }
+    }
+
+    @GetMapping("/welcome")
+    public String welcome() {
+        return "welcome";
     }
 }

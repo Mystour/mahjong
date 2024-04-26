@@ -9,6 +9,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+
+/**
+ * Web security configuration.
+ * This class configures the security filter chain for the application.
+ * The security filter chain is responsible for authenticating users and authorizing requests. （for login and register）
+ */
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
