@@ -7,7 +7,12 @@
 <body>
     <div class="container">
         <h1 class="text-center mt-5">Welcome!</h1>
+        <!--/*@thymesVar id="message" type="java"*/-->
+        <div th:if="${message != null}" class="alert alert-success" th:text="${message}"></div>
     </div>
+
+    <!-- 确保jQuery在Bootstrap之前 -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

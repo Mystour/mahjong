@@ -22,8 +22,7 @@
                     </div>
                     <button type="submit" class="btn btn-primary">login</button>
                     <!--/*@thymesVar id="error" type="java.lang.String"*/-->
-                    <!--/*@thymesVar id="message" type=""*/-->
-                    <div th:if="${message != null}" class="alert alert-success" th:text="${message}"></div>
+
                     <p th:if="${error != null}" th:text="${error}" class="error"></p> <!-- 添加错误消息显示 -->
                 </form>
                 <a th:href="@{/register}" class="btn btn-secondary">Register</a>
