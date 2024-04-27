@@ -4,6 +4,14 @@
     <title>Welcome</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="http://localhost:63342/mahjong/src/main/resources/static/css/welcome.css">
+
+    <!--引入SockJS和Stomp.js-->
+    <!-- SockJS 的另一个 CDN 链接 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
+
+    <!-- 最新版本的 Stomp.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
 </head>
 <body>
     <div class="container">
@@ -12,7 +20,10 @@
         <div th:if="${error != null}" class="alert alert-danger" th:text="${error}"></div>
 
         <!--显示加入玩家的进度条-->
-        <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="progress">
+            <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="4"></div>
+        </div>
+
 
         <!-- 创建和加入房间的按钮 -->
         <div class="d-flex justify-content-center button-container">
@@ -74,5 +85,8 @@
             });
         });
     </script>
+
+    <!-- 引入room.js -->
+    <script src="http://localhost:63342/mahjong/src/main/resources/static/room.js"></script>
 </body>
 </html>

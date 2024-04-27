@@ -3,6 +3,8 @@ package org.example.mahjong.service;
 import org.example.mahjong.game.MahjongGame;
 import org.example.mahjong.game.Room;
 import org.example.mahjong.player.Player;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -14,6 +16,9 @@ public class GameService {
     private final Map<String, Room> roomMap = new HashMap<>();
     private final Map<String, Player> userMap= new HashMap<>();
 
+    @Autowired
+    private SimpMessagingTemplate template;
+
     public String createRoom(String roomCode, String username) {
         if (roomMap.containsKey(roomCode)) {
             return null;
@@ -22,6 +27,9 @@ public class GameService {
         Room room = new Room(roomCode);
         room.getUsers().add(username);
         roomMap.put(roomCode, room);
+
+        // Calculate progress and send WebSocket message
+        sendProgress(roomCode);
 
         return roomCode;
     }
@@ -46,6 +54,9 @@ public class GameService {
             }
         }
 
+        // Calculate progress and send WebSocket message
+        sendProgress(roomCode);
+
         return true;
     }
 
@@ -61,6 +72,11 @@ public class GameService {
 
     public int calculateProgress(String roomCode) {
         Room room = roomMap.get(roomCode);
-        return room == null ? 0 : room.getUsers().size() * 100 / 4;
+        return room == null ? 0 : room.getUsers().size();
+    }
+
+    public void sendProgress(String roomCode) {
+        int progress = calculateProgress(roomCode);
+        template.convertAndSend("/topic/room", progress);
     }
 }
