@@ -4,17 +4,23 @@ import org.example.mahjong.tile.*;
 
 public class Hand {
     public List<Tile>[] handcard;
-    public Stack<Tile> discards;//弃牌堆
+    public List<Tile> chowsAndPungs; // 吃和碰的牌
+    public List<Tile> kongs ; // 杠的牌
     public int count; // 明牌区的计数器，负责计杠，碰，吃的次数
+    public int pair = 0;
+    public int triple = 0;
+
 
     public Hand() {
+        chowsAndPungs = new ArrayList<>();
+        kongs = new ArrayList<>();
         handcard = new List[5];
         for (int i = 0; i < 5; i++) {
             handcard[i] = new LinkedList<>();
         }
-        discards = new Stack<>();
+
     }
-    //把手牌打印出来
+    //for test
     public void printCard(){
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < handcard[i].size(); j++) {
@@ -22,79 +28,84 @@ public class Hand {
             }
         }
     }
-    //将牌的类型转换成索引
-    public static int translateType(TileType type){
-        switch (type) {
+    public int addCard(Tile tile){
+        switch (tile.getType()) {
             case BAMBOO:
+                handcard[0].add(tile);
                 return 0;
             case CHARACTER:
+                handcard[1].add(tile);
                 return 1;
             case DOT:
+                handcard[2].add(tile);
                 return 2;
             case DRAGON:
+                handcard[3].add(tile);
                 return 3;
             case WIND:
+                handcard[4].add(tile);
                 return 4;
             default:
                 System.out.println("Non-existent tile, why did it happen?");
                 return -1;
         }
     }
-    //添加牌并返回它的索引
-    public int addCard(Tile tile){
-        int index = translateType(tile.getType());
-        if(index != -1){
-            handcard[translateType(tile.getType())].add(tile);
-        }
-        return index;
-    }
-    //弃牌阶段我觉得可以分为，当前玩家弃掉指定牌，然后系统先保留这张牌
-    //如果有其他玩家需要操作，再将这张牌移动到别人的手牌中
-    //如果没有玩家需要操作，然后再把这张牌放入弃牌堆
-    public Tile discard(TileType type, int number){
-        Tile tile = findTile(type, number);
-        if(tile != null){
-            handcard[translateType(type)].remove(tile);
-        }
-        return tile;
-    }
-    //这个方法需要牌的对象
-    public Tile discard(Tile tile){
-        handcard[translateType(tile.getType())].remove(tile);
-        return tile;
-    }
-    public void addDiscards(Tile tile){
-        discards.add(tile);
-    }
-    //根据牌型和值找到牌，如果没找到返回null, 因为可能在吃碰杠上也用上所以写出来
-    public Tile findTile(TileType type, int number){
-        int index = translateType(type);
-        if(index != -1){
-            for (int i = 0; i < handcard[index].size(); i++) {
-                if(handcard[index].get(i).getNumber() == number){
-                    return handcard[index].get(i);
-                }
-            }
-        }
-        return null;
-    }
-    //没写完
-    public boolean CanChow(Tile tile){
-        TileType type = tile.getType();
-        int typeindex = translateType(type);
-        int number = tile.getNumber();
-        return false;
-    }
-    //只排序指定索引的牌，可以在每次抽牌时调用，减少计算
     public void sortCard(int i){
         Collections.sort(handcard[i]);
     }
-    //排序所有类型的牌，应该只在开始阶段发牌后调用
     public void sortAllCard(){
         for (int i = 0; i < 5; i++) {
             sortCard(i);
         }
     }
+
+    // 添加一个牌到明牌区的碰或吃
+    public void addToChowsAndPungs(Tile tile) {
+        chowsAndPungs.add(tile);
+    }
+
+    // 添加一个牌到明牌区的杠
+    public void addToKongs(Tile tile) {
+        kongs.add(tile);
+    }
+
+    // 检查是否可以杠
+    public boolean canKong(Tile tile) {
+        // 计算手牌中与tile相同的牌的数量
+        int count = 0;
+        for (List<Tile> tiles : handcard) {
+            for (Tile t : tiles) {
+                if (t.equals(tile)) {
+                    count++;
+                }
+            }
+        }
+        // 如果有三张相同的牌，则可以明杠；如果摸到第四张，则可以暗杠
+        return count == 3;
+    }
+
+    // 执行杠操作
+    public void executeKong(Tile tile) {
+        if (canKong(tile)) {
+            // 移除三张相同的牌，并加入到杠的列表中
+            for (int i = 0; i < 3; i++) { // 移除三张
+                removeTileFromHand(tile);
+            }
+            addToKongs(tile); // 加入到杠的列表中，此操作实际上要加入四张相同的牌
+            kongs.add(tile); // 添加第四张牌
+        }
+    }
+
+    // 从手牌中移除一张牌
+    private void removeTileFromHand(Tile tile) {
+        for (List<Tile> tiles : handcard) {
+            if (tiles.remove(tile)) { // 尝试从每个子列表中移除tile
+                break; // 如果找到并移除了tile，就退出循环
+            }
+        }
+    }
+
+
 
 
 
@@ -166,5 +177,15 @@ public class Hand {
     public static boolean isSequence(Tile tile1, Tile tile2, Tile tile3) {
         return tile2.getNumber() - tile1.getNumber() == 1 && tile3.getNumber() - tile2.getNumber() == 1;
 
+    }
+
+    //print all the cards in the player's hand
+    public void printCards() {
+        for (List<Tile> cardList : handcard) {
+            for (Tile card : cardList) {
+                System.out.print(card + " ");
+            }
+            System.out.println();
+        }
     }
 }
