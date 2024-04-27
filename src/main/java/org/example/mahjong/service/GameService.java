@@ -58,4 +58,9 @@ public class GameService {
         // 根据用户找到对应的Player实例
         return userMap.get(username);
     }
+
+    public int calculateProgress(String roomCode) {
+        Room room = roomMap.get(roomCode);
+        return room == null ? 0 : room.getUsers().size() * 100 / 4;
+    }
 }
