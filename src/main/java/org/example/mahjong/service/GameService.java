@@ -1,5 +1,6 @@
 package org.example.mahjong.service;
 
+import org.example.mahjong.dto.RoomProgress;
 import org.example.mahjong.game.MahjongGame;
 import org.example.mahjong.game.Room;
 import org.example.mahjong.player.Player;
@@ -81,7 +82,8 @@ public class GameService {
 
     public void sendProgress(String roomCode) {
         int progress = calculateProgress(roomCode);
-        template.convertAndSend("/topic/room", progress);
+        RoomProgress roomProgress = new RoomProgress(roomCode, progress);
+        template.convertAndSend("/topic/room", roomProgress);
         logger.info("Progress of room {}: {}", roomCode, progress);
     }
 
