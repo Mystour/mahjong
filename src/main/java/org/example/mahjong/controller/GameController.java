@@ -2,12 +2,11 @@ package org.example.mahjong.controller;
 
 import org.example.mahjong.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.net.InetAddress;
@@ -56,5 +55,11 @@ public class GameController {
             redirectAttributes.addFlashAttribute("error", "Failed to join room with code: " + roomCode);
         }
         return "redirect:/welcome";
+    }
+
+    @GetMapping("/progress/{roomCode}")
+    public ResponseEntity<Integer> getProgress(@PathVariable String roomCode) {
+        int progress = gameService.getProgress(roomCode);
+        return ResponseEntity.ok(progress);
     }
 }

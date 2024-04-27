@@ -12,6 +12,10 @@
     <!-- 最新版本的 Stomp.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
+    <script>console.log("Before room.js")</script>
+    <!-- 引入room.js -->
+    <script src="http://localhost:63342/mahjong/src/main/resources/static/room.js"></script>
+    <script>console.log("After room.js")</script>
 </head>
 <body>
     <div class="container">
@@ -21,7 +25,7 @@
 
         <!--显示加入玩家的进度条-->
         <div class="progress">
-            <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="4"></div>
+            <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0;" aria-valuemin="0" aria-valuemax="4"></div>
         </div>
 
 
@@ -86,7 +90,7 @@
         });
     </script>
 
-    <!-- 引入room.js -->
-    <script src="http://localhost:63342/mahjong/src/main/resources/static/room.js"></script>
+
+
 </body>
 </html>

@@ -3,6 +3,8 @@ package org.example.mahjong.service;
 import org.example.mahjong.game.MahjongGame;
 import org.example.mahjong.game.Room;
 import org.example.mahjong.player.Player;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,8 @@ public class GameService {
 
     private final Map<String, Room> roomMap = new HashMap<>();
     private final Map<String, Player> userMap= new HashMap<>();
+
+    private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
     @Autowired
     private SimpMessagingTemplate template;
@@ -78,5 +82,10 @@ public class GameService {
     public void sendProgress(String roomCode) {
         int progress = calculateProgress(roomCode);
         template.convertAndSend("/topic/room", progress);
+        logger.info("Progress of room {}: {}", roomCode, progress);
+    }
+
+    public int getProgress(String roomCode) {
+        return calculateProgress(roomCode);
     }
 }
