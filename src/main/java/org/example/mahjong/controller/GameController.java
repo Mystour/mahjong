@@ -43,7 +43,7 @@ public class GameController {
         } else {
             redirectAttributes.addFlashAttribute("error", "Failed to create room with code: " + roomCode);
         }
-        return "redirect:/welcome";
+        return "redirect:/welcome/" + roomCode;
     }
 
     @PostMapping("/joinRoom")
@@ -54,7 +54,12 @@ public class GameController {
         } else {
             redirectAttributes.addFlashAttribute("error", "Failed to join room with code: " + roomCode);
         }
-        return "redirect:/welcome";
+        return "redirect:/welcome/" + roomCode;
+    }
+
+    @GetMapping("/welcome/{roomCode}")
+    public String welcome(@PathVariable String roomCode) {
+        return "welcome";
     }
 
     @GetMapping("/progress/{roomCode}")
