@@ -8,15 +8,7 @@ import org.example.mahjong.tile.TileType;
 import java.util.*;
 
 public class MahjongGame extends AbstractGame {
-//    public static void main(String[] args) {
-//        MahjongGame game = new MahjongGame();
-//        game.startGame();
-//        System.out.println(game.tilepile.size());
-//        game.p1.hand.printCard();
-//        game.p1.drawTile();
-//        System.out.println();
-//        game.p1.hand.printCard();
-//    }
+
     //为了方便，现在所有的变量我都用了public，但是应该有更好的办法
     public LinkedList<Tile> tilepile;
     public Player p1;
