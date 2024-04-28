@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -58,7 +59,14 @@ public class GameController {
     }
 
     @GetMapping("/welcome/{roomCode}")
-    public String welcome(@PathVariable String roomCode) {
+    public String welcomeToRoom(@PathVariable String roomCode, Model model) {
+        model.addAttribute("welcomeMessage", "Welcome to room: " + roomCode);
+        return "welcome";
+    }
+
+    @GetMapping("/welcome")
+    public String welcome(Model model) {
+        model.addAttribute("welcomeMessage", "Welcome to mahjong game");
         return "welcome";
     }
 

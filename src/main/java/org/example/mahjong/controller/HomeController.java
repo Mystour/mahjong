@@ -18,9 +18,4 @@ public class HomeController {
             return "redirect:/login";
         }
     }
-
-    @GetMapping("/welcome")
-    public String welcome() {
-        return "welcome";
-    }
 }

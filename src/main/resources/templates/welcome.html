@@ -19,7 +19,7 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center mt-5">Welcome to Mahjong Game!</h1>
+        <h1 class="text-center mt-5">[[${welcomeMessage}]]!</h1>
         <div th:if="${message != null}" class="alert alert-success" th:text="${message}"></div>
         <div th:if="${error != null}" class="alert alert-danger" th:text="${error}"></div>
 
