@@ -5,8 +5,8 @@ import org.example.mahjong.tile.Tile;
 public interface Playable {
     void drawTile();
     Tile discardTile();
-    void declareChow();
-    void declarePung();
+    void declareChow(Tile tile);
+    void declarePung(Tile tile);
     void declareKong(Tile tile);
     void declareMahjong();
 }

@@ -94,19 +94,59 @@ public class Hand {
             sortCard(i);
         }
     }
-    //没写完
-    public boolean CanChow(Tile tile){
+
+    public boolean canChow(Tile tile){
         TileType type = tile.getType();
         int typeindex = translateType(type);
         int number = tile.getNumber();
-        return false;
+        if(number == 0 || number == 8){
+            return false;
+        }
+        int left = 0;
+        int right = 0;
+        for (Tile tile1 : handcard[typeindex]) {
+            if(tile1.getNumber() == number - 1){
+                left++;
+            }
+            if (tile1.getNumber() == number + 1){
+                right++;
+            }
+        }
+        if(left >= 1 && right >= 1){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    public boolean canPung(Tile tile){
+        int count = 0;
+        for (Tile t : handcard[translateType(tile.getType())]) {
+            if (t.getNumber() == tile.getNumber()) {
+                count++;
+            }
+        }
+        return count == 2;
     }
 
 
-
     // 添加一个牌到明牌区的碰或吃
-    public void addToChowsAndPungs(Tile tile) {
+    public void addToChowAndPung(Tile tile) {
         chowsAndPungs.add(tile);
+    }
+    public void executeChows(Tile tile){
+        if (canChow(tile)) {
+            addToChowAndPung(discard(tile.getType(), tile.getNumber() - 1));
+            addToChowAndPung(discard(tile.getType(), tile.getNumber() + 1));
+            addToChowAndPung(tile);
+        }
+    }
+    public void executePung(Tile tile){
+        if (canPung(tile)) {  // 移除三张相同的牌，并加入到杠的列表中
+            addToChowAndPung(discard(tile.getType(), tile.getNumber()));
+            addToChowAndPung(discard(tile.getType(), tile.getNumber()));
+            addToChowAndPung(tile); // 添加第四张牌
+        }
     }
 
     // 添加一个牌到明牌区的杠
@@ -153,13 +193,17 @@ public class Hand {
     }
 
 
+    public boolean isValidMahjong_Other(Tile drawnTile){
+        List<Tile>[] copyofhandcard = handcard.clone();
+        copyofhandcard[translateType(drawnTile.getType())].add(drawnTile);
+        return isValidMahjong(copyofhandcard);
+    }
 
+    public boolean isValidMahjong_Myself(){
+        return isValidMahjong(handcard);
+    }
 
-
-
-
-
-    public boolean isValidMahjong() {
+    public boolean isValidMahjong(List<Tile>[] handcard) {
         int pair = 0;
         int triple = 0;
         int others = 0;

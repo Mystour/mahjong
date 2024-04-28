@@ -4,6 +4,7 @@ import org.example.mahjong.game.MahjongGame;
 import org.example.mahjong.score.Scorable;
 import org.example.mahjong.score.ScoringSystem;
 import org.example.mahjong.tile.Tile;
+import org.example.mahjong.tile.TileType;
 
 import java.util.InputMismatchException;
 import java.util.LinkedList;
@@ -13,6 +14,10 @@ import java.util.Scanner;
 public class Player implements Playable, Scorable {
     private ScoringSystem scoringSystem;
     public boolean isbanker;
+    public boolean canChow;
+    public boolean canPung;
+    public boolean canKong;
+    public boolean canMahjong;
     public Hand hand;
     public MahjongGame game;
     public Player(MahjongGame game) {
@@ -21,10 +26,15 @@ public class Player implements Playable, Scorable {
         this.scoringSystem = new ScoringSystem(hand.handcard);
     }
 
+
+    //抽牌意味着在自身回合，要检查杠和胡牌的条件
     @Override
     public void drawTile() {
         //这里套了好多哈哈，不知道怎么简化QWQ
-        hand.sortCard(hand.addCard(game.dealOneCard()));
+        Tile temp = game.dealOneCard();
+        hand.sortCard(hand.addCard(temp));
+        canKong = hand.canKong(temp);
+        canMahjong = hand.isValidMahjong_Myself();
     }
 
     @Override
@@ -66,23 +76,41 @@ public class Player implements Playable, Scorable {
     }
 
 
+    //这个给gui界面做的
+    public Tile discardTile(Tile tile){
+        return hand.discard(tile);
+    }
+
+    public Tile discardTile(TileType tileType, int number){
+        return hand.discard(tileType,number);
+    }
 
 
 
     @Override
-    public void declareChow() {}
+    public void declareChow(Tile tile) {
+        if(hand.canChow(tile)){
+            hand.executeChows(tile);
+        }
+    }
 
     @Override
-    public void declarePung() {}
+    public void declarePung(Tile tile) {
+        if (hand.canPung(tile)){
+            hand.executePung(tile);
+        }
+    }
 
     @Override
     public void declareKong(Tile tile) {
         if (hand.canKong(tile)) {
             hand.executeKong(tile);
             // 补一张牌，通常是杠后从牌堆中摸取
-            drawTileFromPile();
+            // 改成了drawtile方法，可以排序
+            drawTile();
         }
     }
+    //重写的drawTile也可以实现这个功能，并且还可以排序。。
     private void drawTileFromPile() {
         Tile newTile = game.dealOneCard();
         if (newTile != null) {
@@ -97,6 +125,7 @@ public class Player implements Playable, Scorable {
     }
 
 
+    //Mahjong好像就是胡的意思，所以这个方法应该是玩家胡牌
     @Override
     public void declareMahjong() {}
 
@@ -105,7 +134,10 @@ public class Player implements Playable, Scorable {
         return scoringSystem.getScore();
     }
 
+
     // 根据当前情况做出决策
+    // 点炮的情况还没做好
+    // 吃碰杠都是发生在别人的回合结束阶段，这种写法是直接进行吃碰杠了
     public void makeDecision(Tile drawnTile) {
         System.out.println("考虑是否杠、碰、胡等操作。");
         // 检查是否可以吃、碰或杠
@@ -119,13 +151,21 @@ public class Player implements Playable, Scorable {
         }
 
         // 检查是否可以胡牌
-        if (hand.isValidMahjong()) {
-            // 如果可以胡牌，根据具体规则做出决策
-            System.out.println("Player has a winning hand.");
-        }
+//        if (hand.isValidMahjong()) {
+//            // 如果可以胡牌，根据具体规则做出决策
+//            System.out.println("Player has a winning hand.");
+//        }
 
         // 做出打牌决策
         discardTile();
+    }
+
+    //在其他人的回合判断可以操作的条件
+    public void checkDecisionCondition(Tile drawnTile){
+        canChow = hand.canChow(drawnTile);
+        canPung = hand.canPung(drawnTile);
+        canKong = hand.canKong(drawnTile);
+        canMahjong = hand.isValidMahjong_Other(drawnTile);
     }
 
     // Displays the player's hand
