@@ -3,7 +3,7 @@
 <head>
     <title>Welcome</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="http://localhost:63342/mahjong/src/main/resources/static/css/welcome.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/welcome.css}">
 
     <!--引入SockJS和Stomp.js-->
     <!-- SockJS 的另一个 CDN 链接 -->
@@ -13,8 +13,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
     <script>console.log("Before room.js")</script>
-    <!-- 引入room.js -->
-    <script src="http://localhost:63342/mahjong/src/main/resources/static/js/room.js"></script>
+    <!-- 引入room.ts -->
+    <script src="/static/js/room.ts"></script>
     <script>console.log("After room.js")</script>
 </head>
 <body>
