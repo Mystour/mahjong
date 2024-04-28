@@ -14,6 +14,7 @@ import java.util.Scanner;
 public class Player implements Playable, Scorable {
     private ScoringSystem scoringSystem;
     public boolean isbanker;
+    //以下boolean值可以用在gui页面的判断中
     public boolean canChow;
     public boolean canPung;
     public boolean canKong;
@@ -30,7 +31,6 @@ public class Player implements Playable, Scorable {
     //抽牌意味着在自身回合，要检查杠和胡牌的条件
     @Override
     public void drawTile() {
-        //这里套了好多哈哈，不知道怎么简化QWQ
         Tile temp = game.dealOneCard();
         hand.sortCard(hand.addCard(temp));
         canKong = hand.canKong(temp);
@@ -38,6 +38,7 @@ public class Player implements Playable, Scorable {
     }
 
     @Override
+    //这个我觉得应该放在游戏里，属于轮次类的东西，应该交给系统判断
     public Tile discardTile() {
         // 显示玩家当前的手牌
         System.out.println("当前手牌: ");
@@ -151,10 +152,10 @@ public class Player implements Playable, Scorable {
         }
 
         // 检查是否可以胡牌
-//        if (hand.isValidMahjong()) {
-//            // 如果可以胡牌，根据具体规则做出决策
-//            System.out.println("Player has a winning hand.");
-//        }
+        if (hand.isValidMahjong_Other(drawnTile)) {
+            // 如果可以胡牌，根据具体规则做出决策
+            System.out.println("Player has a winning hand.");
+        }
 
         // 做出打牌决策
         discardTile();
