@@ -86,8 +86,4 @@ public class GameService {
         template.convertAndSend("/topic/room", roomProgress);
         logger.info("Progress of room {}: {}", roomCode, progress);
     }
-
-    public int getProgress(String roomCode) {
-        return calculateProgress(roomCode);
-    }
 }

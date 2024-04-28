@@ -69,10 +69,4 @@ public class GameController {
         model.addAttribute("welcomeMessage", "Welcome to mahjong game");
         return "welcome";
     }
-
-    @GetMapping("/progress/{roomCode}")
-    public ResponseEntity<Integer> getProgress(@PathVariable String roomCode) {
-        int progress = gameService.getProgress(roomCode);
-        return ResponseEntity.ok(progress);
-    }
 }
