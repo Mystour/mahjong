@@ -65,6 +65,11 @@ public class GameService {
         return true;
     }
 
+    public boolean isGameStarted(String roomCode) {
+        Room room = roomMap.get(roomCode);
+        return room != null && room.getGame() != null;
+    }
+
     public Player getPlayer(String roomCode, String username) {
         Room room = roomMap.get(roomCode);
         if (room == null || room.getGame() == null) {

@@ -52,6 +52,9 @@ public class GameController {
         boolean success = gameService.joinRoom(roomCode, username);
         if (success) {
             redirectAttributes.addFlashAttribute("message", "Joined room with code: " + roomCode);
+            if (gameService.isGameStarted(roomCode)) {
+                return "redirect:/game/" + roomCode;
+            }
         } else {
             redirectAttributes.addFlashAttribute("error", "Failed to join room with code: " + roomCode);
         }
@@ -68,5 +71,11 @@ public class GameController {
     public String welcome(Model model) {
         model.addAttribute("welcomeMessage", "Welcome to mahjong game");
         return "welcome";
+    }
+
+    @GetMapping("/game/{roomCode}")
+    public String game(@PathVariable String roomCode, Model model) {
+        model.addAttribute("roomCode", roomCode);
+        return "game";
     }
 }
