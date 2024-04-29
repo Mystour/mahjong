@@ -4,25 +4,32 @@ import java.util.*;
 import org.example.mahjong.player.Hand;
 import org.example.mahjong.tile.*;
 
-public class ScoringSystem<T> {
-    public List<Tile>[] hand; // 需要把手牌和杠吃碰的名牌堆合在一起
+public class ScoringSystem{
+    public List<Tile>[] handcard; // 手牌
+    public List<Tile>[] allCard; // 手牌+杠吃碰的牌
     public int score;
-    public ScoringSystem(List<Tile>[] hand) {
-        this.hand = hand;
+    public Hand hand;
+    public ScoringSystem(List<Tile>[] handcard) {
+        this.handcard = handcard;
         this.score = 1;
+        hand = new Hand();
 
+        //将名牌区的牌和手牌区的合在一起，方便判断清一色和一条龙
+        for(int i = 0; i < hand.chowsAndPungs.size();i++){
+            hand.addCard(hand.chowsAndPungs.get(i));
+        }
+        for(int i = 0; i < hand.kongs.size();i++){
+            hand.addCard(hand.kongs.get(i));
+        }
     }
     public int getScore() {
 
         return score * SevenPairs() * uniformTile() * AllTriple() * OneDragon();
     }
-
-
-
     public int uniformTile(){ // 检查是不是清一色
         int count = 0; //计算有几种类型的牌在手牌里
-        for(int i = 0; i < hand.length; i++){
-            if(!hand[i].isEmpty()){
+        for(int i = 0; i < allCard.length; i++){
+            if(!allCard[i].isEmpty()){
                 count++;
 
             }
@@ -38,9 +45,9 @@ public class ScoringSystem<T> {
         for(int i = 0; i < 3; i++){
             int index = 1;
             int count = 0;
-            while(index < hand[i].size()){
-                Tile nextTile = hand[i].get(index);
-                Tile currentTile = hand[i].get(count);
+            while(index < allCard[i].size()){
+                Tile nextTile = allCard[i].get(index);
+                Tile currentTile = allCard[i].get(count);
                 if(isPairSequence(currentTile,nextTile)){
                     count = index;
                     index ++;
@@ -62,28 +69,12 @@ public class ScoringSystem<T> {
     }
 
     public int SevenPairs() { // 检查是不是七小对
-        Hand a = new Hand();
-        int pairs = 0;
 
-        //用hashmap计算一下出现的数量
-        Map<Tile, Integer> tileCounts = new HashMap<>();
-        for (List<Tile> tileList : a.handcard) {
-            for (Tile tile : tileList) {
-                tileCounts.put(tile, tileCounts.getOrDefault(tile, 0) + 1);//获取这张牌当前的计数值 默认是0
-            }
-        }
+        int kongs = (hand.kongs.size())/4;
 
-        // 统计对子
-        for (int count : tileCounts.values()) {
-            if (count == 2) {
-                pairs++;
-            }
-        }
-        int kongs = a.kongs.size();
-
-        if (pairs == 7 && kongs == 0) {
+        if (hand.pair == 7 && kongs == 0) {
             return 2; // 普通七小对
-        } else if (pairs + kongs*2 == 7) {
+        } else if (hand.pair + kongs * 2 == 7) {
             return 4; // 带杠的七小对
         }
         return 0;
@@ -92,8 +83,8 @@ public class ScoringSystem<T> {
 
 
     public int AllTriple(){ // 检查是不是都是由刻字和对子形成的胡
-        Hand a = new Hand();
-        if(a.pair == 1 && a.triple == 4){
+        //这个部分需要改，不好获取名牌堆里的碰的牌的数量
+        if(hand.pair == 1 && hand.triple == 4){
             return 2;
         }
         return 1;
