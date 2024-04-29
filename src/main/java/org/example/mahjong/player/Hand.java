@@ -10,7 +10,8 @@ public class Hand {
     public int count; // 明牌区的计数器，负责计杠，碰，吃的次数
     public int pair = 0;
     public int triple = 0;
-
+    public int others = 0; // 无关单张牌
+    public int sequence = 0; // 顺子
 
     public Hand() {
         chowsAndPungs = new ArrayList<>();
@@ -95,15 +96,14 @@ public class Hand {
         }
     }
 
-    public boolean canChow(Tile tile){
+    public int canChow(Tile tile){
         TileType type = tile.getType();
         int typeindex = translateType(type);
         int number = tile.getNumber();
-        if(number == 0 || number == 8){
-            return false;
-        }
         int left = 0;
         int right = 0;
+        int rightright = 0;
+        int leftleft = 0;
         for (Tile tile1 : handcard[typeindex]) {
             if(tile1.getNumber() == number - 1){
                 left++;
@@ -111,12 +111,21 @@ public class Hand {
             if (tile1.getNumber() == number + 1){
                 right++;
             }
+            if(tile1.getNumber() == number + 2){
+                rightright++;
+            }
+            if(tile1.getNumber() == number - 2){
+                leftleft++;
+            }
         }
         if(left >= 1 && right >= 1){
-            return true;
-        }else {
-            return false;
+            return 1;
+        } else if (left >= 1 && leftleft >= 1){
+            return 0;
+        }else if(right >= 1 && rightright >= 1) {
+            return 2;
         }
+        return -1; // 这部分比较丑陋还得再想其他的好一点的办法
     }
 
     public boolean canPung(Tile tile){
@@ -135,8 +144,16 @@ public class Hand {
         chowsAndPungs.add(tile);
     }
     public void executeChows(Tile tile){
-        if (canChow(tile)) {
+        if (canChow(tile) == 1) {
             addToChowAndPung(discard(tile.getType(), tile.getNumber() - 1));
+            addToChowAndPung(discard(tile.getType(), tile.getNumber() + 1));
+            addToChowAndPung(tile);
+        } else if (canChow(tile) == 0) {
+            addToChowAndPung(discard(tile.getType(), tile.getNumber() - 1));
+            addToChowAndPung(discard(tile.getType(), tile.getNumber() - 2));
+            addToChowAndPung(tile);
+        }else if(canChow(tile) == 2){
+            addToChowAndPung(discard(tile.getType(), tile.getNumber() + 2));
             addToChowAndPung(discard(tile.getType(), tile.getNumber() + 1));
             addToChowAndPung(tile);
         }
@@ -204,9 +221,10 @@ public class Hand {
     }
 
     public boolean isValidMahjong(List<Tile>[] handcard) {
-        int pair = 0;
-        int triple = 0;
-        int others = 0;
+        pair = 0;
+        triple = 0;
+        sequence = 0;
+        others = 0;
         for(int i = 0; i < handcard.length; i++){ //遍历五种类型的list
             int index = 0;
             while (index < handcard[i].size()) { //遍历每个list里的tile
@@ -224,7 +242,7 @@ public class Hand {
                             triple++;
                             index += 3; // 跳过刻子
                         } else if (isSequence(currentTile, nextTile, nextNextTile)) { // 看是不是顺子
-                            triple++;
+                            sequence++;
                             index += 3; // 跳过顺子
                         } else {
                             others++;
@@ -249,7 +267,7 @@ public class Hand {
         //判断有没有胡牌
         if(pair == 7){ //七小对
             return true;
-        } else if (pair == 1 && triple + count == 4) { //4个三个的，一个两个的，正常胡牌格式
+        } else if (pair == 1 && triple + sequence + count == 4) { //4个三个的，一个两个的，正常胡牌格式
             return true;
         }else{
             return false;
