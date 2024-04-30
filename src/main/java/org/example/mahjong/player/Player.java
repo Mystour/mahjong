@@ -42,9 +42,9 @@ public class Player implements Playable, Scorable {
     public Tile discardTile() {
         // 显示玩家当前的手牌
         System.out.println("当前手牌: ");
-        for (int i = 0; i < this.hand.handcard.length; i++) {
-            if (this.hand.handcard[i] != null && !this.hand.handcard[i].isEmpty()) {
-                System.out.println("类型 " + i + ": " + this.hand.handcard[i]);
+        for (int i = 0; i < this.hand.getHandcard().length; i++) {
+            if (this.hand.getHandcard()[i] != null && !this.hand.getHandcard()[i].isEmpty()) {
+                System.out.println("类型 " + i + ": " + this.hand.getHandcard()[i]);
             } else {
                 System.out.println("类型 " + i + ": 空");
             }
@@ -56,11 +56,11 @@ public class Player implements Playable, Scorable {
         do {
             System.out.print("请选择要丢弃的牌的类型索引: ");
             typeIndex = scanner.nextInt();
-            if (typeIndex >= 0 && typeIndex < this.hand.handcard.length && !this.hand.handcard[typeIndex].isEmpty()) {
-                System.out.println("你选择的类型是 " + typeIndex + "，有以下牌: " + this.hand.handcard[typeIndex]);
+            if (typeIndex >= 0 && typeIndex < this.hand.getHandcard().length && !this.hand.getHandcard()[typeIndex].isEmpty()) {
+                System.out.println("你选择的类型是 " + typeIndex + "，有以下牌: " + this.hand.getHandcard()[typeIndex]);
                 System.out.print("请选择要丢弃的牌的索引: ");
                 tileIndex = scanner.nextInt();
-                if (tileIndex < 0 || tileIndex >= this.hand.handcard[typeIndex].size()) {
+                if (tileIndex < 0 || tileIndex >= this.hand.getHandcard()[typeIndex].size()) {
                     System.out.println("无效的牌索引，请重新选择。");
                     tileIndex = -1; // Reset tile index for reselection
                 }
@@ -70,7 +70,7 @@ public class Player implements Playable, Scorable {
             }
         } while (typeIndex == -1 || tileIndex == -1);
 
-        Tile tileToDiscard = this.hand.handcard[typeIndex].remove(tileIndex);
+        Tile tileToDiscard = this.hand.getHandcard()[typeIndex].remove(tileIndex);
         System.out.println("玩家丢弃的牌是: " + tileToDiscard);
 
         return tileToDiscard;
@@ -176,15 +176,7 @@ public class Player implements Playable, Scorable {
     }
 
     // 清理手牌的方法
-    public void clearHand() {
-        hand.handcard = new List[5];
-        for (int i = 0; i < hand.handcard.length; i++) {
-            hand.handcard[i] = new LinkedList<>();
-        }
-        hand.chows.clear();
-        hand.pungs.clear();
-        hand.kongs.clear();
-    }
+
 
 
 

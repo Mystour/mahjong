@@ -65,11 +65,11 @@ public class ScoringSystem implements Scorable{
 
     public int SevenPairs() { // 检查是不是七小对
 
-        int kongs = (hand.kongs.size())/4;
+        int kongs = (hand.getKongs().size())/4;
 
-        if (hand.pair == 7 && kongs == 0) {
+        if (hand.getPair() == 7 && kongs == 0) {
             return 2; // 普通七小对
-        } else if (hand.pair + kongs * 2 == 7) {
+        } else if (hand.getPair() + kongs * 2 == 7) {
             return 4; // 带杠的七小对
         }
         return 0;
@@ -79,7 +79,7 @@ public class ScoringSystem implements Scorable{
 
     public int AllTriple(){ // 检查是不是都是由刻字和对子形成的胡
         //这个部分需要改，不好获取名牌堆里的碰的牌的数量
-        if(hand.pair == 1 && hand.triple + hand.pungs.size()/3== 4){
+        if(hand.getPair() == 1 && hand.getTriple() + hand.getPungs().size()/3== 4){
             return 2;
         }
         return 1;

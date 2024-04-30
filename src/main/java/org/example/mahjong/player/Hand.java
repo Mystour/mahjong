@@ -3,15 +3,62 @@ import java.util.*;
 import org.example.mahjong.tile.*;
 
 public class Hand {
-    public List<Tile>[] handcard;
-    public List<Tile> pungs; //碰的牌
-    public List<Tile> chows; //吃的牌
-    public List<Tile> kongs;// 杠的牌
-    public List<Tile> discards; // 弃掉的牌
-    public int pair = 0;
-    public int triple = 0;
-    public int others = 0; // 无关单张牌
-    public int sequence = 0; // 顺子
+    public List<Tile>[] getHandcard() {
+        return handcard;
+    }
+
+    public List<Tile> getPungs() {
+        return pungs;
+    }
+
+    public List<Tile> getChows() {
+        return chows;
+    }
+
+    public List<Tile> getKongs() {
+        return kongs;
+    }
+
+    public List<Tile> getDiscards() {
+        return discards;
+    }
+
+    public int getPair() {
+        return pair;
+    }
+
+    public int getTriple() {
+        return triple;
+    }
+
+    public int getOthers() {
+        return others;
+    }
+
+    public int getSequence() {
+        return sequence;
+    }
+
+    public void clearHand() {
+        handcard = new List[5];
+        for (int i = 0; i < handcard.length; i++) {
+            handcard[i] = new LinkedList<>();
+        }
+        chows.clear();
+        pungs.clear();
+        kongs.clear();
+    }
+    private List<Tile>[] handcard;
+    private List<Tile> pungs; //碰的牌
+    private List<Tile> chows; //吃的牌
+    private List<Tile> kongs;// 杠的牌
+    private List<Tile> discards; // 弃掉的牌
+    private int pair = 0;
+    private int triple = 0;
+    private int others = 0; // 无关单张牌
+    private int sequence = 0; // 顺子
+
+
 
     public Hand() {
         pungs = new ArrayList<>();

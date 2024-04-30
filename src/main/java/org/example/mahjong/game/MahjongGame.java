@@ -135,7 +135,7 @@ public class MahjongGame extends AbstractGame {
     public void endRound() {
         // 清理所有玩家的手牌
         for (Player player : players) {
-            player.clearHand();
+            player.hand.clearHand();
         }
 
 
