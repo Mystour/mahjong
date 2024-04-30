@@ -1,6 +1,8 @@
 package org.example.mahjong.controller;
 
+import org.example.mahjong.player.Hand;
 import org.example.mahjong.service.GameService;
+import org.example.mahjong.tile.Tile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,15 +14,20 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class GameController {
 
     private final GameService gameService;
 
+    private Hand hand = new Hand();
+
     @Autowired
-    public GameController(GameService gameService) {
+    public GameController(GameService gameService, Hand hand) {
         this.gameService = gameService;
+        this.hand = hand;
     }
 
     @ModelAttribute("username")
@@ -77,5 +84,12 @@ public class GameController {
     public String game(@PathVariable String roomCode, Model model) {
         model.addAttribute("roomCode", roomCode);
         return "game";
+    }
+
+    @GetMapping("/getHandCards")
+    public List<String> getHandCards(int number) {
+        return hand.getHandCards(number).stream()
+                .map(Tile::getImageUrl)
+                .collect(Collectors.toList());
     }
 }

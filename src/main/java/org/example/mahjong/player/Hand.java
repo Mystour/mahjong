@@ -6,6 +6,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class Hand {
     public List<Tile>[] handcard;
 
@@ -24,26 +27,28 @@ public class Hand {
         }
     }
     public int addCard(Tile tile){
-        switch (tile.getType()) {
-            case BAMBOO:
+        return switch (tile.getType()) {
+            case BAMBOO -> {
                 handcard[0].add(tile);
-                return 0;
-            case CHARACTER:
+                yield 0;
+            }
+            case CHARACTER -> {
                 handcard[1].add(tile);
-                return 1;
-            case DOT:
+                yield 1;
+            }
+            case DOT -> {
                 handcard[2].add(tile);
-                return 2;
-            case DRAGON:
+                yield 2;
+            }
+            case DRAGON -> {
                 handcard[3].add(tile);
-                return 3;
-            case WIND:
+                yield 3;
+            }
+            case WIND -> {
                 handcard[4].add(tile);
-                return 4;
-            default:
-                System.out.println("Non-existent tile, why did it happen?");
-                return -1;
-        }
+                yield 4;
+            }
+        };
     }
     public void sortCard(int i){
         Collections.sort(handcard[i]);
@@ -53,6 +58,11 @@ public class Hand {
             sortCard(i);
         }
     }
+
+    public List<Tile> getHandCards(int number) {
+        return handcard[number];
+    }
+
     public boolean isValidMahjong() {
         return false;
     }
