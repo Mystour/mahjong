@@ -5,17 +5,19 @@ import org.example.mahjong.player.Hand;
 import org.example.mahjong.tile.*;
 
 public class ScoringSystem implements Scorable{
-    public List<Tile>[] handcard; // 手牌
+
     public List<Tile>[] allCard; // 手牌+杠吃碰的牌
     public int score;
     public Hand hand;
-    public ScoringSystem(List<Tile>[] handcard) {
-        this.handcard = handcard.clone();
+    public ScoringSystem(Hand hand) {
         this.score = 1;
-        hand = new Hand();
+        this.hand = hand;
+        allCard = hand.allCard();
 
         //将名牌区的牌和手牌区的合在一起，方便判断清一色和一条龙
     }
+
+
     public int calculateScore() {
         return score * SevenPairs() * uniformTile() * AllTriple() * OneDragon();
     }

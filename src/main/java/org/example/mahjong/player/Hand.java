@@ -49,6 +49,24 @@ public class Hand {
                 return -1;
         }
     }
+
+    public List<Tile>[] allCard(){
+        List<Tile>[] allcard = handcard.clone();
+        for(Tile tile : chows){
+            allcard[translateType(tile.getType())].add(tile);
+        }
+        for(Tile tile : pungs){
+            allcard[translateType(tile.getType())].add(tile);
+        }
+        for(Tile tile : kongs){
+            allcard[translateType(tile.getType())].add(tile);
+        }
+        for(int i = 0; i < allcard.length; i++){
+            Collections.sort(allcard[i]);
+        }
+        return allcard;
+    }
+
     //添加牌并返回它的索引
     public int addCard(Tile tile){
         int index = translateType(tile.getType());

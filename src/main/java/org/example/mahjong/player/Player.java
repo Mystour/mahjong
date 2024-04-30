@@ -23,7 +23,7 @@ public class Player implements Playable, Scorable {
     public Player(MahjongGame game) {
         hand = new Hand();
         this.game = game;
-        this.scoringSystem = new ScoringSystem(hand.handcard);
+        this.scoringSystem = new ScoringSystem(hand);
     }
 
 
