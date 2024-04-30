@@ -24,7 +24,7 @@ public class Player implements Playable, Scorable {
     public Player(MahjongGame game) {
         hand = new Hand();
         this.game = game;
-        this.scoringSystem = new ScoringSystem(hand.handcard);
+        this.scoringSystem = new ScoringSystem(hand);
     }
 
 
@@ -132,7 +132,7 @@ public class Player implements Playable, Scorable {
 
     @Override
     public int calculateScore() {
-        return scoringSystem.getScore();
+        return scoringSystem.calculateScore();
     }
 
 
@@ -181,7 +181,8 @@ public class Player implements Playable, Scorable {
         for (int i = 0; i < hand.handcard.length; i++) {
             hand.handcard[i] = new LinkedList<>();
         }
-        hand.chowsAndPungs.clear();
+        hand.chows.clear();
+        hand.pungs.clear();
         hand.kongs.clear();
     }
 

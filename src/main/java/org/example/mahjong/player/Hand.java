@@ -4,16 +4,18 @@ import org.example.mahjong.tile.*;
 
 public class Hand {
     public List<Tile>[] handcard;
-    public List<Tile> chowsAndPungs; // 吃和碰的牌
+    public List<Tile> pungs; //碰的牌
+    public List<Tile> chows; //吃的牌
     public List<Tile> kongs;// 杠的牌
     public List<Tile> discards; // 弃掉的牌
-    public int count; // 明牌区的计数器，负责计杠，碰，吃的次数
     public int pair = 0;
     public int triple = 0;
-
+    public int others = 0; // 无关单张牌
+    public int sequence = 0; // 顺子
 
     public Hand() {
-        chowsAndPungs = new ArrayList<>();
+        pungs = new ArrayList<>();
+        chows = new ArrayList<>();
         kongs = new ArrayList<>();
         handcard = new List[5];
         for (int i = 0; i < 5; i++) {
@@ -47,6 +49,24 @@ public class Hand {
                 return -1;
         }
     }
+
+    public List<Tile>[] allCard(){
+        List<Tile>[] allcard = handcard.clone();
+        for(Tile tile : chows){
+            allcard[translateType(tile.getType())].add(tile);
+        }
+        for(Tile tile : pungs){
+            allcard[translateType(tile.getType())].add(tile);
+        }
+        for(Tile tile : kongs){
+            allcard[translateType(tile.getType())].add(tile);
+        }
+        for(int i = 0; i < allcard.length; i++){
+            Collections.sort(allcard[i]);
+        }
+        return allcard;
+    }
+
     //添加牌并返回它的索引
     public int addCard(Tile tile){
         int index = translateType(tile.getType());
@@ -95,15 +115,14 @@ public class Hand {
         }
     }
 
-    public boolean canChow(Tile tile){
+    public int checkChow(Tile tile){
         TileType type = tile.getType();
         int typeindex = translateType(type);
         int number = tile.getNumber();
-        if(number == 0 || number == 8){
-            return false;
-        }
         int left = 0;
         int right = 0;
+        int rightright = 0;
+        int leftleft = 0;
         for (Tile tile1 : handcard[typeindex]) {
             if(tile1.getNumber() == number - 1){
                 left++;
@@ -111,12 +130,24 @@ public class Hand {
             if (tile1.getNumber() == number + 1){
                 right++;
             }
+            if(tile1.getNumber() == number + 2){
+                rightright++;
+            }
+            if(tile1.getNumber() == number - 2){
+                leftleft++;
+            }
         }
         if(left >= 1 && right >= 1){
-            return true;
-        }else {
-            return false;
+            return 1;
+        } else if (left >= 1 && leftleft >= 1){
+            return 0;
+        }else if(right >= 1 && rightright >= 1) {
+            return 2;
         }
+        return -1; // 这部分比较丑陋还得再想其他的好一点的办法
+    }
+    public boolean canChow(Tile tile){
+        return checkChow(tile) >= 0;
     }
 
     public boolean canPung(Tile tile){
@@ -129,23 +160,35 @@ public class Hand {
         return count == 2;
     }
 
+    // 添加吃到明牌堆
+    public void addToChow(Tile tile){
+        chows.add(tile);
+    }
 
-    // 添加一个牌到明牌区的碰或吃
-    public void addToChowAndPung(Tile tile) {
-        chowsAndPungs.add(tile);
+    //添加碰到明牌堆
+    public void addToPung(Tile tile) {
+        pungs.add(tile);
     }
     public void executeChows(Tile tile){
-        if (canChow(tile)) {
-            addToChowAndPung(discard(tile.getType(), tile.getNumber() - 1));
-            addToChowAndPung(discard(tile.getType(), tile.getNumber() + 1));
-            addToChowAndPung(tile);
+        if (checkChow(tile) == 1) {
+            addToChow(discard(tile.getType(), tile.getNumber() - 1));
+            addToChow(discard(tile.getType(), tile.getNumber() + 1));
+            addToChow(tile);
+        } else if (checkChow(tile) == 0) {
+            addToChow(discard(tile.getType(), tile.getNumber() - 1));
+            addToChow(discard(tile.getType(), tile.getNumber() - 2));
+            addToChow(tile);
+        }else if(checkChow(tile) == 2){
+            addToChow(discard(tile.getType(), tile.getNumber() + 2));
+            addToChow(discard(tile.getType(), tile.getNumber() + 1));
+            addToChow(tile);
         }
     }
     public void executePung(Tile tile){
-        if (canPung(tile)) {  // 移除三张相同的牌，并加入到杠的列表中
-            addToChowAndPung(discard(tile.getType(), tile.getNumber()));
-            addToChowAndPung(discard(tile.getType(), tile.getNumber()));
-            addToChowAndPung(tile); // 添加第四张牌
+        if (canPung(tile)) {  // 移除两张相同的牌，并加入到碰的列表中
+            addToPung(discard(tile.getType(), tile.getNumber()));
+            addToPung(discard(tile.getType(), tile.getNumber()));
+            addToPung(tile); // 添加第三张牌
         }
     }
 
@@ -181,17 +224,6 @@ public class Hand {
         }
     }
 
-    // 从手牌中移除一张牌
-    // 这个方法没有用的，因为同一花色同一值的牌的地址值不一样，这个只能指定地址值删除
-    // 我在前面写了一个可以接受两种参数的discard的方法，和这个一样
-    private void removeTileFromHand(Tile tile) {
-        for (List<Tile> tiles : handcard) {
-            if (tiles.remove(tile)) { // 尝试从每个子列表中移除tile
-                break; // 如果找到并移除了tile，就退出循环
-            }
-        }
-    }
-
 
     public boolean isValidMahjong_Other(Tile drawnTile){
         List<Tile>[] copyofhandcard = handcard.clone();
@@ -204,9 +236,10 @@ public class Hand {
     }
 
     public boolean isValidMahjong(List<Tile>[] handcard) {
-        int pair = 0;
-        int triple = 0;
-        int others = 0;
+        pair = 0;
+        triple = 0;
+        sequence = 0;
+        others = 0;
         for(int i = 0; i < handcard.length; i++){ //遍历五种类型的list
             int index = 0;
             while (index < handcard[i].size()) { //遍历每个list里的tile
@@ -224,7 +257,7 @@ public class Hand {
                             triple++;
                             index += 3; // 跳过刻子
                         } else if (isSequence(currentTile, nextTile, nextNextTile)) { // 看是不是顺子
-                            triple++;
+                            sequence++;
                             index += 3; // 跳过顺子
                         } else {
                             others++;
@@ -247,9 +280,9 @@ public class Hand {
             }
         }
         //判断有没有胡牌
-        if(pair == 7){ //七小对
+        if(pair + (kongs.size()/2) == 7){ //七小对
             return true;
-        } else if (pair == 1 && triple + count == 4) { //4个三个的，一个两个的，正常胡牌格式
+        } else if (pair == 1 && triple + sequence + ((chows.size()+pungs.size())/3) == 4) { //4个三个的，一个两个的，正常胡牌格式
             return true;
         }else{
             return false;
