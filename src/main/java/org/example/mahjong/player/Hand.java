@@ -2,6 +2,7 @@ package org.example.mahjong.player;
 
 import org.example.mahjong.tile.Tile;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -61,6 +62,14 @@ public class Hand {
 
     public List<Tile> getHandCards(int number) {
         return handcard[number];
+    }
+
+    public List<List<Tile>> getAllPlayersHandCards() {
+        List<List<Tile>> allPlayersHandCards = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            allPlayersHandCards.add(getHandCards(i));
+        }
+        return allPlayersHandCards;
     }
 
     public boolean isValidMahjong() {

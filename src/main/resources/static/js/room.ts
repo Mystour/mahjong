@@ -1,6 +1,5 @@
 declare var SockJS: any;
 declare var Stomp: any;
-declare var $: any;
 
 let socket = new SockJS('/room');
 let stompClient = Stomp.over(socket);

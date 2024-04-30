@@ -86,10 +86,12 @@ public class GameController {
         return "game";
     }
 
-    @GetMapping("/getHandCards")
-    public List<String> getHandCards(int number) {
-        return hand.getHandCards(number).stream()
-                .map(Tile::getImageUrl)
+    @GetMapping("/getAllPlayersHandCards")
+    public List<List<String>> getAllPlayersHandCards() {
+        return hand.getAllPlayersHandCards().stream()
+                .map(playerHandCards -> playerHandCards.stream()
+                    .map(Tile::getImageUrl)
+                    .collect(Collectors.toList()))
                 .collect(Collectors.toList());
     }
 }

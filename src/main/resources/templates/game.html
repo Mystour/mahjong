@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>game</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <link rel="stylesheet" type="text/css" th:href="@{/css/game.css}">
 </head>
 <body>
@@ -12,5 +14,24 @@
     <div id="player4" class="hand west"></div>
 
     <script type="application/javascript" th:src="@{/js/game.js}"></script>
+
+    <script>
+        $(document).ready(function() {
+            $.ajax({
+                url: '/getAllPlayersHandCards',  // 这个 URL 应该是你的服务器端提供的获取所有玩家手牌信息的接口
+                type: 'GET',
+                success: function(data) {
+                    for (var i = 0; i < data.length; i++) {
+                        var player = $('#player' + (i + 1));
+                        data[i].forEach(function(card) {
+                            var img = $('<img>');
+                            img.attr('src', card);
+                            player.append(img);
+                        });
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>
