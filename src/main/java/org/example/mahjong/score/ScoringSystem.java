@@ -4,26 +4,19 @@ import java.util.*;
 import org.example.mahjong.player.Hand;
 import org.example.mahjong.tile.*;
 
-public class ScoringSystem{
+public class ScoringSystem implements Scorable{
     public List<Tile>[] handcard; // 手牌
     public List<Tile>[] allCard; // 手牌+杠吃碰的牌
     public int score;
     public Hand hand;
     public ScoringSystem(List<Tile>[] handcard) {
-        this.handcard = handcard;
+        this.handcard = handcard.clone();
         this.score = 1;
         hand = new Hand();
 
         //将名牌区的牌和手牌区的合在一起，方便判断清一色和一条龙
-        for(int i = 0; i < hand.chowsAndPungs.size();i++){
-            hand.addCard(hand.chowsAndPungs.get(i));
-        }
-        for(int i = 0; i < hand.kongs.size();i++){
-            hand.addCard(hand.kongs.get(i));
-        }
     }
-    public int getScore() {
-
+    public int calculateScore() {
         return score * SevenPairs() * uniformTile() * AllTriple() * OneDragon();
     }
     public int uniformTile(){ // 检查是不是清一色
@@ -84,11 +77,12 @@ public class ScoringSystem{
 
     public int AllTriple(){ // 检查是不是都是由刻字和对子形成的胡
         //这个部分需要改，不好获取名牌堆里的碰的牌的数量
-        if(hand.pair == 1 && hand.triple == 4){
+        if(hand.pair == 1 && hand.triple + hand.pungs.size()/3== 4){
             return 2;
         }
         return 1;
     }
+
 
 
 }

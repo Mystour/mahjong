@@ -4,17 +4,18 @@ import org.example.mahjong.tile.*;
 
 public class Hand {
     public List<Tile>[] handcard;
-    public List<Tile> chowsAndPungs; // 吃和碰的牌
+    public List<Tile> pungs; //碰的牌
+    public List<Tile> chows; //吃的牌
     public List<Tile> kongs;// 杠的牌
     public List<Tile> discards; // 弃掉的牌
-    public int count; // 明牌区的计数器，负责计杠，碰，吃的次数
     public int pair = 0;
     public int triple = 0;
     public int others = 0; // 无关单张牌
     public int sequence = 0; // 顺子
 
     public Hand() {
-        chowsAndPungs = new ArrayList<>();
+        pungs = new ArrayList<>();
+        chows = new ArrayList<>();
         kongs = new ArrayList<>();
         handcard = new List[5];
         for (int i = 0; i < 5; i++) {
@@ -96,7 +97,7 @@ public class Hand {
         }
     }
 
-    public int canChow(Tile tile){
+    public int checkChow(Tile tile){
         TileType type = tile.getType();
         int typeindex = translateType(type);
         int number = tile.getNumber();
@@ -127,6 +128,9 @@ public class Hand {
         }
         return -1; // 这部分比较丑陋还得再想其他的好一点的办法
     }
+    public boolean canChow(Tile tile){
+        return checkChow(tile) >= 0;
+    }
 
     public boolean canPung(Tile tile){
         int count = 0;
@@ -138,31 +142,35 @@ public class Hand {
         return count == 2;
     }
 
+    // 添加吃到明牌堆
+    public void addToChow(Tile tile){
+        chows.add(tile);
+    }
 
-    // 添加一个牌到明牌区的碰或吃
-    public void addToChowAndPung(Tile tile) {
-        chowsAndPungs.add(tile);
+    //添加碰到明牌堆
+    public void addToPung(Tile tile) {
+        pungs.add(tile);
     }
     public void executeChows(Tile tile){
-        if (canChow(tile) == 1) {
-            addToChowAndPung(discard(tile.getType(), tile.getNumber() - 1));
-            addToChowAndPung(discard(tile.getType(), tile.getNumber() + 1));
-            addToChowAndPung(tile);
-        } else if (canChow(tile) == 0) {
-            addToChowAndPung(discard(tile.getType(), tile.getNumber() - 1));
-            addToChowAndPung(discard(tile.getType(), tile.getNumber() - 2));
-            addToChowAndPung(tile);
-        }else if(canChow(tile) == 2){
-            addToChowAndPung(discard(tile.getType(), tile.getNumber() + 2));
-            addToChowAndPung(discard(tile.getType(), tile.getNumber() + 1));
-            addToChowAndPung(tile);
+        if (checkChow(tile) == 1) {
+            addToChow(discard(tile.getType(), tile.getNumber() - 1));
+            addToChow(discard(tile.getType(), tile.getNumber() + 1));
+            addToChow(tile);
+        } else if (checkChow(tile) == 0) {
+            addToChow(discard(tile.getType(), tile.getNumber() - 1));
+            addToChow(discard(tile.getType(), tile.getNumber() - 2));
+            addToChow(tile);
+        }else if(checkChow(tile) == 2){
+            addToChow(discard(tile.getType(), tile.getNumber() + 2));
+            addToChow(discard(tile.getType(), tile.getNumber() + 1));
+            addToChow(tile);
         }
     }
     public void executePung(Tile tile){
-        if (canPung(tile)) {  // 移除三张相同的牌，并加入到杠的列表中
-            addToChowAndPung(discard(tile.getType(), tile.getNumber()));
-            addToChowAndPung(discard(tile.getType(), tile.getNumber()));
-            addToChowAndPung(tile); // 添加第四张牌
+        if (canPung(tile)) {  // 移除两张相同的牌，并加入到碰的列表中
+            addToPung(discard(tile.getType(), tile.getNumber()));
+            addToPung(discard(tile.getType(), tile.getNumber()));
+            addToPung(tile); // 添加第三张牌
         }
     }
 
@@ -195,17 +203,6 @@ public class Hand {
             //这里我也改了，我们不是要放入相同的牌，是把相同的值的牌放进去，所以再for循环里加吧
 //            addToKongs(tile); // 加入到杠的列表中，此操作实际上要加入四张相同的牌
             addToKongs(tile); // 添加第四张牌
-        }
-    }
-
-    // 从手牌中移除一张牌
-    // 这个方法没有用的，因为同一花色同一值的牌的地址值不一样，这个只能指定地址值删除
-    // 我在前面写了一个可以接受两种参数的discard的方法，和这个一样
-    private void removeTileFromHand(Tile tile) {
-        for (List<Tile> tiles : handcard) {
-            if (tiles.remove(tile)) { // 尝试从每个子列表中移除tile
-                break; // 如果找到并移除了tile，就退出循环
-            }
         }
     }
 
@@ -265,9 +262,9 @@ public class Hand {
             }
         }
         //判断有没有胡牌
-        if(pair == 7){ //七小对
+        if(pair + (kongs.size()/2) == 7){ //七小对
             return true;
-        } else if (pair == 1 && triple + sequence + count == 4) { //4个三个的，一个两个的，正常胡牌格式
+        } else if (pair == 1 && triple + sequence + ((chows.size()+pungs.size())/3) == 4) { //4个三个的，一个两个的，正常胡牌格式
             return true;
         }else{
             return false;

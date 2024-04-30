@@ -47,6 +47,7 @@ public abstract class Tile implements Comparable<Tile> {
                 ", number=" + number +
                 '}';
     }
+
 }
 
 
