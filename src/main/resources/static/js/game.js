@@ -1,7 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-// @ts-ignore
-var jquery_1 = require("jquery");
 var Player = /** @class */ (function () {
     function Player(id, cards) {
         this.id = id;
@@ -18,8 +14,8 @@ var Player = /** @class */ (function () {
     };
     return Player;
 }());
-(0, jquery_1.default)(document).ready(function () {
-    jquery_1.default.ajax({
+$(document).ready(function () {
+    $.ajax({
         url: '/getAllPlayersHandCards',
         type: 'GET',
         success: function (data) {

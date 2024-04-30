@@ -80,6 +80,11 @@ public class GameService {
         return userMap.get(username);
     }
 
+    public MahjongGame getGame(String roomCode) {
+        Room room = roomMap.get(roomCode);
+        return room == null ? null : room.getGame();
+    }
+
     public int calculateProgress(String roomCode) {
         Room room = roomMap.get(roomCode);
         return room == null ? 0 : room.getUsers().size();

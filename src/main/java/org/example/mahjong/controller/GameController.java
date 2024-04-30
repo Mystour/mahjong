@@ -1,5 +1,6 @@
 package org.example.mahjong.controller;
 
+import org.example.mahjong.game.MahjongGame;
 import org.example.mahjong.player.Hand;
 import org.example.mahjong.service.GameService;
 import org.example.mahjong.tile.Tile;
@@ -86,12 +87,24 @@ public class GameController {
         return "game";
     }
 
-    @GetMapping("/getAllPlayersHandCards")
-    public List<List<String>> getAllPlayersHandCards() {
-        return hand.getAllPlayersHandCards().stream()
+    @GetMapping("/getAllPlayersHandCards/{roomCode}")
+    @ResponseBody
+    public List<List<String>> getAllPlayersHandCards(@PathVariable String roomCode) {
+        MahjongGame game = gameService.getGame(roomCode);
+        if (game == null) {
+            // Handle the case where the game has not started yet
+            return null;
+        }
+        return game.getAllPlayersHands().stream()
                 .map(playerHandCards -> playerHandCards.stream()
                     .map(Tile::getImageUrl)
                     .collect(Collectors.toList()))
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/getAllPlayersHandCards")
+    @ResponseBody
+    public ResponseEntity<String> getAllPlayersHandCardsWithoutRoomCode() {
+        return ResponseEntity.badRequest().body("Room code is required.");
     }
 }

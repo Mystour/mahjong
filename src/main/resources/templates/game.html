@@ -17,14 +17,16 @@
 
     <script>
         $(document).ready(function() {
+            var roomCode = window.location.pathname.split('/')[2];  // Get the room code from the URL
+            console.log('Room code: ' + roomCode);  // Add this line
             $.ajax({
-                url: '/getAllPlayersHandCards',  // 这个 URL 应该是你的服务器端提供的获取所有玩家手牌信息的接口
+                url: '/getAllPlayersHandCards/' + roomCode,  // Add room code to the URL
                 type: 'GET',
                 success: function(data) {
                     for (var i = 0; i < data.length; i++) {
                         var player = $('#player' + (i + 1));
                         data[i].forEach(function(card) {
-                            var img = $('<img>');
+                            var img = $('<img alt="card" src="" class="card small-card">');
                             img.attr('src', card);
                             player.append(img);
                         });

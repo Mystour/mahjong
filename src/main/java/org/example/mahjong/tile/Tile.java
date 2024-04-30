@@ -49,7 +49,7 @@ public abstract class Tile implements Comparable<Tile> {
     }
 
     public String getImageUrl() {
-        return "/images/TileType/" + type.toString() + number + ".png";
+        return "/images/TileType/" + type.toString() +( number+1) + ".png";
     }
 }
 

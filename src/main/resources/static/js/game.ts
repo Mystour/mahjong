@@ -13,8 +13,9 @@ class Player {
 }
 
 $(document).ready(function() {
+    var roomCode = window.location.pathname.split('/').pop();
     $.ajax({
-        url: '/getAllPlayersHandCards',
+        url: '/getAllPlayersHandCards/' + roomCode,  // Add room code to the URL
         type: 'GET',
         success: function(data) {
             for (var i = 0; i < data.length; i++) {

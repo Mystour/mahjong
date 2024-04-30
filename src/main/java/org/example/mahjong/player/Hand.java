@@ -322,4 +322,14 @@ public class Hand {
             System.out.println();
         }
     }
+
+    public List<Tile> getHandcard() {
+        List<Tile> allHandCards = new ArrayList<>();
+        allHandCards.addAll(handcard[0]);
+        allHandCards.addAll(handcard[1]);
+        allHandCards.addAll(handcard[2]);
+        allHandCards.addAll(handcard[3]);
+        allHandCards.addAll(handcard[4]);
+        return allHandCards;
+    }
 }
