@@ -72,7 +72,7 @@ public class ScoringSystem implements Scorable{
         } else if (hand.getPair() + kongs * 2 == 7) {
             return 4; // 带杠的七小对
         }
-        return 0;
+        return 1;
     }
 
 

@@ -6,21 +6,60 @@ import org.example.mahjong.score.ScoringSystem;
 import org.example.mahjong.tile.Tile;
 import org.example.mahjong.tile.TileType;
 
-import java.util.InputMismatchException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Player implements Playable, Scorable {
     private ScoringSystem scoringSystem;
-    public boolean isbanker;
+
+    public void setIsbanker(boolean isbanker) {
+        this.isbanker = isbanker;
+    }
+
+    private boolean isbanker;
+
+    public ScoringSystem getScoringSystem() {
+        return scoringSystem;
+    }
+
+    public boolean isBanker() {
+        return isbanker;
+    }
+
+    public boolean isCanChow() {
+        return canChow;
+    }
+
+    public boolean isCanPung() {
+        return canPung;
+    }
+
+    public boolean isCanKong() {
+        return canKong;
+    }
+
+    public boolean isCanMahjong() {
+        return canMahjong;
+    }
+
+    public Hand getHand() {
+        return hand;
+    }
+
+    public MahjongGame getGame() {
+        return game;
+    }
+    public boolean isHasMahjong() {
+        return hasMahjong;
+    }
+
     //以下boolean值可以用在gui页面的判断中
-    public boolean canChow;
-    public boolean canPung;
-    public boolean canKong;
-    public boolean canMahjong;
-    public Hand hand;
-    public MahjongGame game;
+    private boolean canChow;
+    private boolean canPung;
+    private boolean canKong;
+    private boolean canMahjong;
+    private boolean hasMahjong;
+    private Hand hand;
+    private MahjongGame game;
     public Player(MahjongGame game) {
         hand = new Hand();
         this.game = game;
@@ -30,11 +69,14 @@ public class Player implements Playable, Scorable {
 
     //抽牌意味着在自身回合，要检查杠和胡牌的条件
     @Override
-    public void drawTile() {
+    public Tile drawTile() {
         Tile temp = game.dealOneCard();
-        hand.sortCard(hand.addCard(temp));
+        canChow = false;
+        canPung = false;
         canKong = hand.canKong(temp);
+        hand.sortCard(hand.addCard(temp));
         canMahjong = hand.isValidMahjong_Myself();
+        return temp;
     }
 
     @Override
@@ -86,6 +128,9 @@ public class Player implements Playable, Scorable {
         return hand.discard(tileType,number);
     }
 
+    public void putInDiscardPile(Tile discardedTile){
+        hand.addDiscards(discardedTile);
+    }
 
 
     @Override
@@ -111,13 +156,8 @@ public class Player implements Playable, Scorable {
             drawTile();
         }
     }
-    //重写的drawTile也可以实现这个功能，并且还可以排序。。
-    private void drawTileFromPile() {
-        Tile newTile = game.dealOneCard();
-        if (newTile != null) {
-            hand.addCard(newTile); // 假设addCard已经处理了排序的逻辑
-        }
-    }
+
+
 
     public void reactToDiscard(Tile discardedTile) {
         // 这里是示例逻辑，根据游戏规则调整
@@ -128,7 +168,12 @@ public class Player implements Playable, Scorable {
 
     //Mahjong好像就是胡的意思，所以这个方法应该是玩家胡牌
     @Override
-    public void declareMahjong() {}
+    public void declareMahjong(Tile tile) {
+        if(canMahjong){
+            hand.addCard(tile);
+            hasMahjong = true;
+        }
+    }
 
     @Override
     public int calculateScore() {
@@ -171,7 +216,6 @@ public class Player implements Playable, Scorable {
 
     // Displays the player's hand
     public void displayHand() {
-        System.out.println("Player's Hand:");
         hand.printCards();
     }
 

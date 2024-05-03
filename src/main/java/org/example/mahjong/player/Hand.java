@@ -97,8 +97,15 @@ public class Hand {
         }
     }
 
+    private List<Tile>[] deepCopyHandcard(List<Tile>[] handcard) {
+        List<Tile>[] copy = new List[handcard.length];
+        for (int i = 0; i < handcard.length; i++) {
+            copy[i] = new ArrayList<>(handcard[i]); // 浅拷贝每个列表
+        }
+        return copy;
+    }
     public List<Tile>[] allCard(){
-        List<Tile>[] allcard = handcard.clone();
+        List<Tile>[] allcard = deepCopyHandcard(handcard);
         for(Tile tile : chows){
             allcard[translateType(tile.getType())].add(tile);
         }
@@ -129,6 +136,8 @@ public class Hand {
         Tile tile = findTile(type, number);
         if(tile != null){
             handcard[translateType(type)].remove(tile);
+        }else{
+            System.out.println("错误输入，没有这张牌。");
         }
         return tile;
     }
@@ -219,16 +228,16 @@ public class Hand {
     public void executeChows(Tile tile){
         if (checkChow(tile) == 1) {
             addToChow(discard(tile.getType(), tile.getNumber() - 1));
-            addToChow(discard(tile.getType(), tile.getNumber() + 1));
             addToChow(tile);
+            addToChow(discard(tile.getType(), tile.getNumber() + 1));
         } else if (checkChow(tile) == 0) {
-            addToChow(discard(tile.getType(), tile.getNumber() - 1));
             addToChow(discard(tile.getType(), tile.getNumber() - 2));
+            addToChow(discard(tile.getType(), tile.getNumber() - 1));
             addToChow(tile);
         }else if(checkChow(tile) == 2){
-            addToChow(discard(tile.getType(), tile.getNumber() + 2));
-            addToChow(discard(tile.getType(), tile.getNumber() + 1));
             addToChow(tile);
+            addToChow(discard(tile.getType(), tile.getNumber() + 1));
+            addToChow(discard(tile.getType(), tile.getNumber() + 2));
         }
     }
     public void executePung(Tile tile){
@@ -273,7 +282,7 @@ public class Hand {
 
 
     public boolean isValidMahjong_Other(Tile drawnTile){
-        List<Tile>[] copyofhandcard = handcard.clone();
+        List<Tile>[] copyofhandcard = deepCopyHandcard(handcard);
         copyofhandcard[translateType(drawnTile.getType())].add(drawnTile);
         return isValidMahjong(copyofhandcard);
     }
@@ -352,11 +361,36 @@ public class Hand {
 
     //print all the cards in the player's hand
     public void printCards() {
+        System.out.println("玩家的手牌：");
         for (List<Tile> cardList : handcard) {
-            for (Tile card : cardList) {
-                System.out.print(card + " ");
+            for (Tile tile : cardList) {
+                System.out.print(tile + " ");
             }
-            System.out.println();
+        }
+        System.out.println();
+        System.out.println("玩家的弃牌堆：");
+        for (Tile tile : discards) {
+            System.out.print(tile + " ");
+        }
+        System.out.println();
+        System.out.println("玩家的明牌堆：");
+        for (Tile tile : chows) {
+            System.out.print(tile + " ");
+        }
+        for (Tile tile : pungs) {
+            System.out.print(tile + " ");
+        }
+        for (Tile tile : kongs) {
+            System.out.print(tile + " ");
+        }
+        System.out.println();
+    }
+    public void printCards_(){
+        System.out.println("玩家的手牌：");
+        for (List<Tile> cardList : handcard) {
+            for (Tile tile : cardList) {
+                System.out.print(tile + " ");
+            }
         }
     }
 }
