@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Welcome</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/css/welcome.css}">
 
     <!--引入SockJS和Stomp.js-->
@@ -73,7 +73,7 @@
 
     <!-- 显示模态框的JavaScript代码 -->
     <script>
-        $(document).ready(function() {
+        $(function() {
             $('#createRoomButton').click(function() {
                 $('#roomModalLabel').text('Create Room');
                 $('label[for="roomCode"]').text('Enter Room Code:');
