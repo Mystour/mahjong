@@ -87,6 +87,13 @@ public class GameController {
         return "game";
     }
 
+    @GetMapping("/game/{roomCode}/{playerID}")
+    public String gameWithPlayerID(@PathVariable String roomCode, @PathVariable int playerID, Model model) {
+        model.addAttribute("roomCode", roomCode);
+        model.addAttribute("playerID", playerID);
+        return "game";
+    }
+
     @GetMapping("/getAllPlayersHandCards/{roomCode}")
     @ResponseBody
     public List<List<String>> getAllPlayersHandCards(@PathVariable String roomCode) {

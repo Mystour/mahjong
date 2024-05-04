@@ -96,4 +96,24 @@ public class GameService {
         template.convertAndSend("/topic/room", roomProgress);
         logger.info("Progress of room {}: {}", roomCode, progress);
     }
+
+    public int getCurrentPlayerIndex(String roomCode, String username) {
+        Player player = getPlayer(roomCode, username);
+        if (player == null) {
+            // Handle the case where the player is not found
+            return -1;
+        }
+        MahjongGame game = getGame(roomCode);
+        if (game == null) {
+            // Handle the case where the game has not started yet
+            return -1;
+        }
+        for (int i = 0; i < game.players.length; i++) {
+            if (game.players[i] == player) {
+                return i;
+            }
+        }
+        // Handle the case where the player is not in the game
+        return -1;
+    }
 }
