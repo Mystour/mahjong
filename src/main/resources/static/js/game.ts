@@ -47,6 +47,8 @@ $(function() {
         stompClient.subscribe('/user/queue/redirect', function(message: { body: string; }) {
             // When a message is received, redirect to the new URL
             window.location.href = message.body;
+            // log the message in the console
+            console.log("Received WebSocket message: " + message.body);
         });
     });
 });
