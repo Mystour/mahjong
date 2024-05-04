@@ -13,8 +13,7 @@ stompClient.connect({}, function () {
         var currentRoomCode = parts[parts.length - 1]; // Get the last part of the path, which is the roomCode
         if (currentRoomCode === roomCode) {
             updateProgressBar(count);
-
-            // If the count is 4, redirect to the results page
+            // If the count reaches 4, redirect to the game page
             if (count === 4) {
                 window.location.href = '/game/' + roomCode;
             }

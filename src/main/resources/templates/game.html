@@ -3,9 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>game</title>
+    <!--引入SockJS和Stomp.js-->
+    <!-- SockJS 的另一个 CDN 链接 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
+
+    <!-- 最新版本的 Stomp.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <link rel="stylesheet" type="text/css" th:href="@{/css/game.css}">
+
 </head>
 <body>
     <div id="player1" class="hand north"></div>
@@ -13,7 +21,10 @@
     <div id="player3" class="hand south"></div>
     <div id="player4" class="hand west"></div>
 
+    <!-- 引入game.ts -->
+    <script>console.log("Before game.js")</script>
     <script type="application/javascript" th:src="@{/js/game.js}"></script>
+    <script>console.log("After game.js")</script>
 
 <!--    <script>
         $(function() {
