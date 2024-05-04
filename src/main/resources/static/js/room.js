@@ -7,16 +7,13 @@ stompClient.connect({}, function () {
         var count = data.count;
         console.log("Received WebSocket message: " + count); // Add this line to see the message in the browser console
         localStorage.setItem(roomCode, count.toString()); // Store the count in localStorage with roomCode as the key
+        // Update the progress bar when a message is received
         // If it is the current room, update the progress bar
         var path = window.location.pathname; // Get the path from the URL
         var parts = path.split('/'); // Split the path into parts
         var currentRoomCode = parts[parts.length - 1]; // Get the last part of the path, which is the roomCode
         if (currentRoomCode === roomCode) {
             updateProgressBar(count);
-            // If the count reaches 4, redirect to the game page
-            if (count === 4) {
-                window.location.href = '/game/' + roomCode;
-            }
         }
     });
 });
@@ -35,4 +32,8 @@ window.onload = function () {
     var roomCode = parts[parts.length - 1]; // Get the last part of the path, which is the roomCode
     var count = parseInt(localStorage.getItem(roomCode) || '0');
     updateProgressBar(count);
+    // if the count is 4, redirect to the game page
+    if (count === 4) {
+        window.location.href = '/game/' + roomCode;
+    }
 };

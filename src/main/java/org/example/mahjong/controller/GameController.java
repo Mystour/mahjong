@@ -63,7 +63,13 @@ public class GameController {
         } else {
             redirectAttributes.addFlashAttribute("error", "Failed to join room with code: " + roomCode);
         }
-        return "redirect:/welcome/" + roomCode;
+        // if game has started, redirect to game page, else redirect to welcome page
+        MahjongGame game = gameService.getGame(roomCode);
+        if (game != null) {
+            return "redirect:/game/" + roomCode;
+        } else {
+            return "redirect:/welcome/" + roomCode;
+        }
     }
 
     @GetMapping("/welcome/{roomCode}")
@@ -81,13 +87,6 @@ public class GameController {
     @GetMapping("/game/{roomCode}")
     public String game(@PathVariable String roomCode, Model model) {
         model.addAttribute("roomCode", roomCode);
-        return "game";
-    }
-
-    @GetMapping("/game/{roomCode}/{playerID}")
-    public String gameWithPlayerID(@PathVariable String roomCode, @PathVariable int playerID, Model model) {
-        model.addAttribute("roomCode", roomCode);
-        model.addAttribute("playerID", playerID);
         return "game";
     }
 
