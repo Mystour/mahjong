@@ -4,7 +4,7 @@ declare var Stomp: any;
 let socket = new SockJS('/room');
 let stompClient = Stomp.over(socket);
 
-stompClient.connect({}, function(frame: any) {
+stompClient.connect({}, function() {
     stompClient.subscribe('/topic/room', function(message: any) {
         let data = JSON.parse(message.body);
         let roomCode = data.roomCode;

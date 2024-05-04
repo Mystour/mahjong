@@ -39,6 +39,7 @@ public class GameService {
         return roomCode;
     }
 
+
     public boolean joinRoom(String roomCode, String username) {
         Room room = roomMap.get(roomCode);
         if (room == null) {
@@ -56,6 +57,12 @@ public class GameService {
             for (String user : room.getUsers()) {
                 Player player = game.players[room.getUsers().indexOf(user)];
                 userMap.put(user, player);
+            }
+
+            // 当四个用户都加入后，向他们发送一个消息，告诉他们跳转到新的URL
+            for (String user : room.getUsers()) {
+                template.convertAndSendToUser(user, "/queue/redirect", "/game/" + roomCode);
+                logger.info("Redirecting user {} to /game/{}", user, roomCode);
             }
         }
 

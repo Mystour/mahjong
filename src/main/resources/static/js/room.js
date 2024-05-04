@@ -1,22 +1,22 @@
-var socket = new SockJS('/room');
-var stompClient = Stomp.over(socket);
-stompClient.connect({}, function (frame) {
-    stompClient.subscribe('/topic/room', function (message) {
-        var data = JSON.parse(message.body);
-        var roomCode = data.roomCode;
-        var count = data.count;
-        console.log("Received WebSocket message: " + count); // Add this line to see the message in the browser console
-        localStorage.setItem(roomCode, count.toString()); // Store the count in localStorage with roomCode as the key
-        // If it is the current room, update the progress bar
-        var path = window.location.pathname; // Get the path from the URL
-        var parts = path.split('/'); // Split the path into parts
-        var currentRoomCode = parts[parts.length - 1]; // Get the last part of the path, which is the roomCode
-        if (currentRoomCode === roomCode) {
-            updateProgressBar(count);
-        }
-    });
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var socket_io_client_1 = require("socket.io-client");
+var socket = (0, socket_io_client_1.default)('/room'); // 连接到WebSocket服务器
+// 监听'topic/room'事件，这是我们从服务器发送消息的地方
+socket.on('topic/room', function (message) {
+    var data = JSON.parse(message);
+    var roomCode = data.roomCode;
+    var count = data.count;
+    console.log("Received WebSocket message: " + count);
+    localStorage.setItem(roomCode, count.toString());
+    var path = window.location.pathname;
+    var parts = path.split('/');
+    var currentRoomCode = parts[parts.length - 1];
+    if (currentRoomCode === roomCode) {
+        updateProgressBar(count);
+    }
 });
-// Function to update the progress bar
+// 更新进度条的函数
 function updateProgressBar(count) {
     var progressBar = document.getElementById('progressBar');
     if (progressBar) {
@@ -24,11 +24,11 @@ function updateProgressBar(count) {
         progressBar.setAttribute('aria-valuenow', count.toString());
     }
 }
-// When the page loads, get the count from localStorage and update the progress bar
+// 当页面加载时，从localStorage获取计数并更新进度条
 window.onload = function () {
-    var path = window.location.pathname; // Get the path from the URL
-    var parts = path.split('/'); // Split the path into parts
-    var roomCode = parts[parts.length - 1]; // Get the last part of the path, which is the roomCode
+    var path = window.location.pathname;
+    var parts = path.split('/');
+    var roomCode = parts[parts.length - 1];
     var count = parseInt(localStorage.getItem(roomCode) || '0');
     updateProgressBar(count);
 };

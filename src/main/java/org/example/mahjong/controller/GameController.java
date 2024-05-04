@@ -43,7 +43,7 @@ public class GameController {
             try {
                 String serverIp = InetAddress.getLocalHost().getHostAddress();
                 String serverPort = "8080"; // 你的应用的端口号
-                String url = "https://" + serverIp + ":" + serverPort;
+                String url = "http://" + serverIp + ":" + serverPort;  // 没弄SSL证书，所以是http而不是https
                 redirectAttributes.addFlashAttribute("message", "Room created with code: " + roomCode + ". Others can join at: " + url);
             } catch (UnknownHostException e) {
                 e.printStackTrace();
@@ -60,9 +60,6 @@ public class GameController {
         boolean success = gameService.joinRoom(roomCode, username);
         if (success) {
             redirectAttributes.addFlashAttribute("message", "Joined room with code: " + roomCode);
-            if (gameService.isGameStarted(roomCode)) {
-                return "redirect:/game/" + roomCode;
-            }
         } else {
             redirectAttributes.addFlashAttribute("error", "Failed to join room with code: " + roomCode);
         }

@@ -1,3 +1,7 @@
+declare var $: any;
+declare var SockJS: any;
+declare var Stomp: any;
+
 class Player {
     constructor(public id: string, public cards: string[]) {}
 
@@ -19,7 +23,7 @@ $(function() {
     $.ajax({
         url: '/getAllPlayersHandCards/' + roomCode + '/' + playerID,  // Add room code and playerID to the URL
         type: 'GET',
-        success: function(data) {
+        success: function(data: any[]) {
             // Rotate the array so that the current player is at the first position
             const rotatedData = data.slice(playerID - 1).concat(data.slice(0, playerID - 1));
 
@@ -32,5 +36,17 @@ $(function() {
                 playerDiv.classList.add(directions[i % 4]);
             }
         }
+    });
+
+    // Connect to the WebSocket server
+    const socket = new SockJS('/room');
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function() {
+        // Subscribe to '/user/queue/redirect', which is where we send messages from the server
+        stompClient.subscribe('/user/queue/redirect', function(message: { body: string; }) {
+            // When a message is received, redirect to the new URL
+            window.location.href = message.body;
+        });
     });
 });

@@ -55,7 +55,7 @@
                             <label for="roomCode">Enter:</label>
                             <input type="text" id="roomCode" name="roomCode" class="form-control" required>
                         </div>
-                        <!-- 添加CSRF令牌 -->
+                        <!-- 所有表单都需要添加CSRF令牌 -->
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                     </form>
                 </div>
