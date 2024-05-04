@@ -23,12 +23,10 @@ public class GameController {
 
     private final GameService gameService;
 
-    private Hand hand = new Hand();
 
     @Autowired
     public GameController(GameService gameService, Hand hand) {
         this.gameService = gameService;
-        this.hand = hand;
     }
 
     @ModelAttribute("username")

@@ -19,6 +19,11 @@ stompClient.connect({}, function() {
         let currentRoomCode = parts[parts.length - 1];  // Get the last part of the path, which is the roomCode
         if (currentRoomCode === roomCode) {
             updateProgressBar(count);
+
+            // if the count is 4, redirect to the game page
+            if (count === 4) {
+                window.location.href = '/game/' + roomCode;
+            }
         }
     });
 });
@@ -39,9 +44,4 @@ window.onload = function() {
     let roomCode = parts[parts.length - 1];  // Get the last part of the path, which is the roomCode
     let count = parseInt(localStorage.getItem(roomCode) || '0');  // Get the count from localStorage, default to 0
     updateProgressBar(count);
-
-    // if the count is 4, redirect to the game page
-    if (count === 4) {
-        window.location.href = '/game/' + roomCode;
-    }
 };
