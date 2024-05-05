@@ -44,13 +44,7 @@ $(function() {
                         url: '/getAllPlayersHandCards/' + roomCode,
                         type: 'GET',
                         success: function(data: any[]) {
-                            const directions = ['south', 'east', 'north', 'west'];  // Change the order of directions to counter-clockwise
-
                             for (let i = 0; i < 4; i++) {
-                                // Calculate the direction based on the index of the current user
-                                let direction = directions[i]
-                                console.log('Direction:', direction);
-
                                 let player = new Player('player' +( i + 1), data[(currentUserIndex + i) % 4]);
                                 player.updateHandWithImages();
                             }
