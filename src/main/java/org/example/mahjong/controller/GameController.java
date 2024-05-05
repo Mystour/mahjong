@@ -1,6 +1,7 @@
 package org.example.mahjong.controller;
 
 import org.example.mahjong.game.MahjongGame;
+import org.example.mahjong.game.Room;
 import org.example.mahjong.player.Hand;
 import org.example.mahjong.service.GameService;
 import org.example.mahjong.tile.Tile;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,22 @@ public class GameController {
     @ModelAttribute("username")
     public String getUsername(@AuthenticationPrincipal UserDetails userDetails) {
         return userDetails.getUsername();
+    }
+
+    @GetMapping("/api/username")
+    @ResponseBody
+    public String getCurrentUsername(@AuthenticationPrincipal UserDetails userDetails) {
+        return getUsername(userDetails);
+    }
+
+    @GetMapping("/api/roomUsers/{roomCode}")
+    @ResponseBody
+    public List<String> getRoomUsers(@PathVariable String roomCode) {
+        Room room = gameService.getRoom(roomCode);
+        if (room == null) {
+            return new ArrayList<>();
+        }
+        return room.getUsers();
     }
 
     @PostMapping("/createRoom")

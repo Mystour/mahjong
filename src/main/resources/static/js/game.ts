@@ -4,6 +4,10 @@ class Player {
     constructor(public id: string, public cards: string[]) {}
 
     updateHandWithImages() {
+        if (!Array.isArray(this.cards)) {
+            console.error('Player cards is not an array:', this.cards);
+            return;
+        }
         let handDiv = document.getElementById(this.id);
         handDiv.innerHTML = '';
         for (let i = 0; i < this.cards.length; i++) {
@@ -17,24 +21,46 @@ class Player {
 
 $(function() {
     const roomCode = window.location.pathname.split('/')[2];
-    const playerID: number = parseInt(window.location.pathname.split('/')[3]);
+    let username: string;
 
+    // First, get the current username
     $.ajax({
-        url: '/getAllPlayersHandCards/' + roomCode,
+        url: '/api/username',
         type: 'GET',
-        success: function(data: any[]) {
-            const directions = ['south', 'east', 'north', 'west'];  // Change the order of directions to counter-clockwise
+        success: function(data: string) {
+            username = data;
 
-            for (let i = 0; i < data.length; i++) {
-                // Calculate the direction based on the player's ID
-                let direction = directions[(i - playerID + 4) % 4];  // Add 4 to ensure the result is positive
+            // Then, get all players' usernames
+            $.ajax({
+                url: '/api/roomUsers/' + roomCode,
+                type: 'GET',
+                success: function(usernames: string[]) {
+                    // Find the index of the current user in the returned data
+                    let currentUserIndex = usernames.indexOf(username);
+                    console.log('Current user ' + username + ' index:', currentUserIndex);
 
-                let player = new Player('player' + (i + 1), data[i]);
-                player.updateHandWithImages();
-                // Add the direction class to the player's element
-                let playerDiv = document.getElementById(player.id);
-                playerDiv.classList.add('hand', direction);  // Add classes to the player's element
-            }
+                    // Then, get all players' hand cards
+                    $.ajax({
+                        url: '/getAllPlayersHandCards/' + roomCode,
+                        type: 'GET',
+                        success: function(data: any[]) {
+                            const directions = ['south', 'east', 'north', 'west'];  // Change the order of directions to counter-clockwise
+
+                            for (let i = 0; i < 4; i++) {
+                                // Calculate the direction based on the index of the current user
+                                let direction = directions[i]
+                                console.log('Direction:', direction);
+
+                                let player = new Player('player' + ((currentUserIndex + i) % 4 + 1), data[(currentUserIndex + i) % 4]);
+                                player.updateHandWithImages();
+                                // Add the direction class to the player's element
+                                let playerDiv = document.getElementById(player.id);
+                                playerDiv.classList.add('hand', direction);  // Add classes to the player's element
+                            }
+                        }
+                    });
+                }
+            });
         }
     });
 });

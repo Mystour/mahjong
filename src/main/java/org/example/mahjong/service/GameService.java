@@ -24,6 +24,10 @@ public class GameService {
     @Autowired
     private SimpMessagingTemplate template;
 
+    public Room getRoom(String roomCode) {
+        return roomMap.get(roomCode);
+    }
+
     public String createRoom(String roomCode, String username) {
         if (roomMap.containsKey(roomCode)) {
             return null;

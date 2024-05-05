@@ -21,6 +21,7 @@ public class Player implements Playable, Scorable {
     public boolean canMahjong;
     public Hand hand;
     public MahjongGame game;
+
     public Player(MahjongGame game) {
         hand = new Hand();
         this.game = game;
