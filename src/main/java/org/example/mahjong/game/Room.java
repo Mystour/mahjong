@@ -20,6 +20,10 @@ public class Room {
         return users;
     }
 
+    public void addUser(String user) {
+        users.add(user);
+    }
+
     public MahjongGame getGame() {
         return game;
     }

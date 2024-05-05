@@ -98,14 +98,8 @@ public class GameController {
         }
         return game.getAllPlayersHands().stream()
                 .map(playerHandCards -> playerHandCards.stream()
-                    .map(Tile::getImageUrl)
-                    .collect(Collectors.toList()))
+                        .map(Tile::getImageUrl)
+                        .collect(Collectors.toList()))
                 .collect(Collectors.toList());
-    }
-
-    @GetMapping("/getAllPlayersHandCards")
-    @ResponseBody
-    public ResponseEntity<String> getAllPlayersHandCardsWithoutRoomCode() {
-        return ResponseEntity.badRequest().body("Room code is required.");
     }
 }

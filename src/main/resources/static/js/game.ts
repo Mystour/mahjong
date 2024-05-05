@@ -9,6 +9,7 @@ class Player {
         for (let i = 0; i < this.cards.length; i++) {
             let img = document.createElement('img');
             img.src = this.cards[i];
+            img.classList.add('card', 'small-card');  // Add classes to the img element
             handDiv.appendChild(img);
         }
     }
@@ -32,7 +33,7 @@ $(function() {
                 player.updateHandWithImages();
                 // Add the direction class to the player's element
                 let playerDiv = document.getElementById(player.id);
-                playerDiv.classList.add(direction);
+                playerDiv.classList.add('hand', direction);  // Add classes to the player's element
             }
         }
     });

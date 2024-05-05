@@ -27,25 +27,5 @@
     <script type="application/javascript" th:src="@{/js/game.js}"></script>
     <script>console.log("After game.js")</script>
 
-<!--    <script>
-        $(function() {
-            const roomCode = window.location.pathname.split('/')[2];  // Get the room code from the URL
-            console.log('Room code: ' + roomCode);  // Add this line
-            $.ajax({
-                url: '/getAllPlayersHandCards/' + roomCode,  // Add room code to the URL
-                type: 'GET',
-                success: function(data) {
-                    for (let i = 0; i < data.length; i++) {
-                        const player = $('#player' + (i + 1));
-                        data[i].forEach(function(card) {
-                            const img = $('<img alt="card" src="" class="card small-card">');
-                            img.attr('src', card);
-                            player.append(img);
-                        });
-                    }
-                }
-            });
-        });
-    </script>-->
 </body>
 </html>

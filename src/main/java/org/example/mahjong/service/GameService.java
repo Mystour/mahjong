@@ -46,7 +46,7 @@ public class GameService {
             return false;
         }
 
-        room.getUsers().add(username);
+        room.addUser(username);
 
         if (room.getUsers().size() == 4) {
             MahjongGame game = new MahjongGame();
