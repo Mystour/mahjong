@@ -46,11 +46,8 @@ $(function () {
                                 // Calculate the direction based on the index of the current user
                                 var direction = directions[i];
                                 console.log('Direction:', direction);
-                                var player = new Player('player' + ((currentUserIndex + i) % 4 + 1), data[(currentUserIndex + i) % 4]);
+                                var player = new Player('player' + (i + 1), data[(currentUserIndex + i) % 4]);
                                 player.updateHandWithImages();
-                                // Add the direction class to the player's element
-                                var playerDiv = document.getElementById(player.id);
-                                playerDiv.classList.add('hand', direction); // Add classes to the player's element
                             }
                         }
                     });
