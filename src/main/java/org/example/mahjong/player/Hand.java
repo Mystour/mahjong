@@ -2,6 +2,16 @@ package org.example.mahjong.player;
 import java.util.*;
 import org.example.mahjong.tile.*;
 
+import org.example.mahjong.tile.Tile;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+@Component
 public class Hand {
     public List<Tile>[] getHandcard() {
         return handcard;
@@ -392,5 +402,15 @@ public class Hand {
                 System.out.print(tile + " ");
             }
         }
+    }
+
+    public List<Tile> getHandcard() {
+        List<Tile> allHandCards = new ArrayList<>();
+        allHandCards.addAll(handcard[0]);
+        allHandCards.addAll(handcard[1]);
+        allHandCards.addAll(handcard[2]);
+        allHandCards.addAll(handcard[3]);
+        allHandCards.addAll(handcard[4]);
+        return allHandCards;
     }
 }

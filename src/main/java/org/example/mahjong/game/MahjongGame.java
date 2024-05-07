@@ -53,6 +53,7 @@ public class MahjongGame extends AbstractGame {
             }
         }
     }
+
     public void creatPlayers(){
         p1 = new Player(this);
         p2 = new Player(this);
@@ -64,6 +65,7 @@ public class MahjongGame extends AbstractGame {
         players[2] = p3;
         players[3] = p4;
     }
+
     public void shuffleTiles() {
         Collections.shuffle(tilepile);
     }
@@ -492,6 +494,14 @@ public class MahjongGame extends AbstractGame {
         distributeInitialTiles();
     }
 
+
+    public List<List<Tile>> getAllPlayersHands() {
+        List<List<Tile>> allHands = new ArrayList<>();
+        for (Player player : players) {
+            allHands.add(player.hand.getHandcard());
+        }
+        return allHands;
+    }
 
     @Override
     public void endGame() {}

@@ -1,0 +1,34 @@
+package org.example.mahjong.game;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Room {
+    private final String roomCode;
+    private final List<String> users = new ArrayList<>();
+    private MahjongGame game;
+
+    public Room(String roomCode) {
+        this.roomCode = roomCode;
+    }
+
+    public String getRoomCode() {
+        return roomCode;
+    }
+
+    public List<String> getUsers() {
+        return users;
+    }
+
+    public void addUser(String user) {
+        users.add(user);
+    }
+
+    public MahjongGame getGame() {
+        return game;
+    }
+
+    public void setGame(MahjongGame game) {
+        this.game = game;
+    }
+}
