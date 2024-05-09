@@ -1,5 +1,4 @@
 package org.example.mahjong.player;
-import java.util.*;
 import org.example.mahjong.tile.*;
 
 import org.example.mahjong.tile.Tile;
@@ -404,7 +403,7 @@ public class Hand {
         }
     }
 
-    public List<Tile> getHandcard() {
+    public List<Tile> getAllHandcard() {
         List<Tile> allHandCards = new ArrayList<>();
         allHandCards.addAll(handcard[0]);
         allHandCards.addAll(handcard[1]);
