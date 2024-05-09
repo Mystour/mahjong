@@ -40,13 +40,6 @@ public abstract class Tile implements Comparable<Tile> {
         return 31 * type.ordinal() + number;
     }
 
-    @Override
-    public String toString() {
-        return "Tile{" +
-                "type=" + type +
-                ", number=" + number +
-                '}';
-    }
 
     public String getImageUrl() {
         return "/images/TileType/" + type.toString() +( number+1) + ".png";
