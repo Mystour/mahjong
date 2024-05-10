@@ -27,33 +27,65 @@ Player.prototype.updateHandWithImages = function () {
     }
     var handDiv = document.getElementById(this.id);
     handDiv.innerHTML = '';
-    var _this = this; // 保存当前上下文
-    for (var i = 0; i < this.cards.length; i++) {
+    for (let i = 0; i < this.cards.length; i++) { // 注意这里使用 let 而非 var
         var img = document.createElement('img');
         img.src = this.cards[i];
-        img.classList.add('card', 'small-card'); // Add classes to the img element
-        img.addEventListener('click', function () {
-            _this.handleCardClick(img.src); // 调用处理点击事件的方法
+        img.classList.add('card', 'small-card');
+        img.addEventListener('click', () => { // 使用箭头函数以保持 this 上下文正确
+            this.handleCardClick(img.src);
         });
         handDiv.appendChild(img);
     }
 };
 
 
+// Player.prototype.handleCardClick = function (cardSrc) {
+//     // 处理卡片点击事件的逻辑
+//     console.log('Clicked on card with src:', cardSrc);
+//     // 移除卡片从手牌
+//     img.remove(); // 从 DOM 中移除这张卡片
+//     this.cards.splice(index, 1); // 从卡片数组中移除这张卡片
+//
+//     // 将卡片添加到弃牌堆
+//     var discardPile = document.getElementById('discardPile');
+//     var newImg = img.cloneNode(true); // 克隆 img 元素
+//     discardPile.appendChild(newImg);
+//     // 这里可以执行任何你想要的操作，例如向服务器发送消息等
+//
+//     //发送出牌的请求，目前没找到出牌的接口
+//     // $.ajax({
+//     //     url: '/getAllPlayersHandCards/' + roomCode,
+//     //     type: 'GET',
+//     //     success: function (data) {
+//
+//     //     }
+//     // });
+// };
+
 Player.prototype.handleCardClick = function (cardSrc) {
-    // 处理卡片点击事件的逻辑
     console.log('Clicked on card with src:', cardSrc);
-    // 这里可以执行任何你想要的操作，例如向服务器发送消息等
 
-    //发送出牌的请求，目前没找到出牌的接口
-    // $.ajax({
-    //     url: '/getAllPlayersHandCards/' + roomCode,
-    //     type: 'GET',
-    //     success: function (data) {
+    // 找到当前点击的卡牌元素
+    var clickedCard = document.querySelector(`img[src="${cardSrc}"]`);
 
-    //     }
-    // });
+    // 发送一个出牌请求到服务器
+    $.ajax({
+        url: '/playCard',
+        type: 'POST',
+        data: { cardSrc: cardSrc },
+        success: function (response) {
+            console.log('Server responded:', response);
+            // 服务器确认出牌有效后，将卡牌移动到弃牌堆
+            var discardPile = document.getElementById('discard-pile');
+            discardPile.appendChild(clickedCard); // 将点击的卡牌移动到弃牌堆
+        },
+        error: function (error) {
+            console.error('Error sending card:', error);
+        }
+    });
 };
+
+
 
 $(function () {
     var roomCode = window.location.pathname.split('/')[2];
