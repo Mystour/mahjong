@@ -153,5 +153,42 @@ public class GameController {
     }
 
 
+    @MessageMapping("/isCanChow")
+    public boolean isCanChow(ReceiveMessage msg) {
+        Player player = gameService.getPlayer(msg.getRoomCode(), msg.getUserName());
+        if (player == null) {
+            return false;
+        }
+        return player.isCanChow();
+    }
+
+    @MessageMapping("/isCanPung")
+    public boolean isCanPung(ReceiveMessage msg) {
+        Player player = gameService.getPlayer(msg.getRoomCode(), msg.getUserName());
+        if (player == null) {
+            return false;
+        }
+        return player.isCanPung();
+    }
+
+    @MessageMapping("/isCanMahjong")
+    public boolean isCanMahjong(ReceiveMessage msg) {
+        Player player = gameService.getPlayer(msg.getRoomCode(), msg.getUserName());
+        if (player == null) {
+            return false;
+        }
+        return player.isCanMahjong();
+    }
+
+    @MessageMapping("/isCanKong")
+    public boolean isCanKong(ReceiveMessage msg) {
+        Player player = gameService.getPlayer(msg.getRoomCode(), msg.getUserName());
+        if (player == null) {
+            return false;
+        }
+        return player.isCanKong();
+    }
+
+
 
 }
