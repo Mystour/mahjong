@@ -19,12 +19,21 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.example.mahjong.player.*;
+import org.example.mahjong.tile.*;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.stereotype.Controller;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.example.mahjong.dto.*;
 
 @Controller
 public class GameController {
 
     private final GameService gameService;
 
+    @Autowired
+    public SimpMessagingTemplate template;
 
     @Autowired
     public GameController(GameService gameService, Hand hand) {
@@ -53,14 +62,16 @@ public class GameController {
     }
 
     @PostMapping("/createRoom")
-    public String createRoom(@RequestParam String roomCode, @ModelAttribute("username") String username, RedirectAttributes redirectAttributes) {
+    public String createRoom(@RequestParam String roomCode, @ModelAttribute("username") String username,
+                             RedirectAttributes redirectAttributes) {
         String roomCodeGet = gameService.createRoom(roomCode, username);
         if (roomCodeGet != null) {
             try {
                 String serverIp = InetAddress.getLocalHost().getHostAddress();
                 String serverPort = "8080"; // 你的应用的端口号
-                String url = "http://" + serverIp + ":" + serverPort;  // 没弄SSL证书，所以是http而不是https
-                redirectAttributes.addFlashAttribute("message", "Room created with code: " + roomCode + ". Others can join at: " + url);
+                String url = "http://" + serverIp + ":" + serverPort; // 没弄SSL证书，所以是http而不是https
+                redirectAttributes.addFlashAttribute("message",
+                        "Room created with code: " + roomCode + ". Others can join at: " + url);
             } catch (UnknownHostException e) {
                 e.printStackTrace();
                 redirectAttributes.addFlashAttribute("error", "Failed to get server IP address.");
@@ -72,7 +83,8 @@ public class GameController {
     }
 
     @PostMapping("/joinRoom")
-    public String joinRoom(@RequestParam String roomCode, @ModelAttribute("username") String username, RedirectAttributes redirectAttributes) {
+    public String joinRoom(@RequestParam String roomCode, @ModelAttribute("username") String username,
+                           RedirectAttributes redirectAttributes) {
         boolean success = gameService.joinRoom(roomCode, username);
         if (success) {
             redirectAttributes.addFlashAttribute("message", "Joined room with code: " + roomCode);
@@ -120,4 +132,26 @@ public class GameController {
                         .collect(Collectors.toList()))
                 .collect(Collectors.toList());
     }
+
+    @MessageMapping("/isBanker")
+    public boolean isBanker(ReceiveMessage msg) {
+        Player player = gameService.getPlayer(msg.getRoomCode(), msg.getUserName());
+        if (player == null) {
+            return false;
+        }
+        return player.isBanker();
+    }
+
+    @MessageMapping("/drawTile")
+    public void drawTile(ReceiveMessage msg) {
+        Player player = gameService.getPlayer(msg.getRoomCode(), msg.getUserName());
+        if (player == null) {
+            return;
+        }
+        player.drawTile();
+        template.convertAndSend("/game/room", "fresh card");
+    }
+
+
+
 }
