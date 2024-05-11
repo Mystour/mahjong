@@ -60,6 +60,7 @@ public class Player implements Playable, Scorable {
     private boolean hasMahjong;
     private Hand hand;
     private MahjongGame game;
+   
     public Player(MahjongGame game) {
         hand = new Hand();
         this.game = game;
