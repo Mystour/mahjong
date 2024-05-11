@@ -498,7 +498,7 @@ public class MahjongGame extends AbstractGame {
     public List<List<Tile>> getAllPlayersHands() {
         List<List<Tile>> allHands = new ArrayList<>();
         for (Player player : players) {
-            allHands.add(player.hand.getHandcard());
+            allHands.add(player.getHand().getAllHandcard());
         }
         return allHands;
     }
