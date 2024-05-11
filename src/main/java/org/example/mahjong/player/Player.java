@@ -60,7 +60,7 @@ public class Player implements Playable, Scorable {
     private boolean hasMahjong;
     private Hand hand;
     private MahjongGame game;
-   
+
     public Player(MahjongGame game) {
         hand = new Hand();
         this.game = game;
@@ -123,6 +123,10 @@ public class Player implements Playable, Scorable {
     //这个给gui界面做的
     public Tile discardTile(Tile tile){
         return hand.discard(tile);
+    }
+
+    public Tile getTile(TileType tileType, int number){
+        return hand.findTile(tileType, number);
     }
 
     public Tile discardTile(TileType tileType, int number){
