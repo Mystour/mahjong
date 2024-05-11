@@ -189,6 +189,58 @@ public class GameController {
         return player.isCanKong();
     }
 
+    @MessageMapping("/performChow")
+    public void performChow(ReceiveMessage msg) {
+        Player player = gameService.getPlayer(msg.getRoomCode(), msg.getUserName());
+        if (player == null) {
+            return;
+        }
+        TileType type = MahjongGame.transType(msg.getData());
+        int num = MahjongGame.transNum(msg.getData());
+        Tile tileParam = player.getTile(type, num);
+        player.declareChow(tileParam);
+        template.convertAndSend("/game/room", "fresh card");
+    }
+
+    @MessageMapping("/performPung")
+    public void performPung(ReceiveMessage msg) {
+        Player player = gameService.getPlayer(msg.getRoomCode(), msg.getUserName());
+        if (player == null) {
+            return;
+        }
+        TileType type = MahjongGame.transType(msg.getData());
+        int num = MahjongGame.transNum(msg.getData());
+        Tile tileParam = player.getTile(type, num);
+        player.declarePung(tileParam);
+        template.convertAndSend("/game/room", "fresh card");
+    }
+
+    @MessageMapping("/performKong")
+    public void performKong(ReceiveMessage msg) {
+        Player player = gameService.getPlayer(msg.getRoomCode(), msg.getUserName());
+        if (player == null) {
+            return;
+        }
+        TileType type = MahjongGame.transType(msg.getData());
+        int num = MahjongGame.transNum(msg.getData());
+        Tile tileParam = player.getTile(type, num);
+        player.declareKong(tileParam);
+        template.convertAndSend("/game/room", "fresh card");
+    }
+
+    @MessageMapping("/performMahjong")
+    public void performMahjong(ReceiveMessage msg) {
+        Player player = gameService.getPlayer(msg.getRoomCode(), msg.getUserName());
+        if (player == null) {
+            return;
+        }
+        TileType type = MahjongGame.transType(msg.getData());
+        int num = MahjongGame.transNum(msg.getData());
+        Tile tileParam = player.getTile(type, num);
+        player.declareMahjong(tileParam);
+        template.convertAndSend("/game/room", "fresh card");
+    }
+
 
 
 }
