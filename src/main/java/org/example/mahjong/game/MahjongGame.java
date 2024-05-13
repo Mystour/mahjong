@@ -15,16 +15,37 @@ import java.util.*;
  */
 public class MahjongGame extends AbstractGame {
 
-    // 为了方便，现在所有的变量我都用了public，但是应该有更好的办法
-    public LinkedList<Tile> tilepile;
-    public Player p1;
-    public Player p2;
-    public Player p3;
-    public Player p4;
-    public Player[] players;
-    public boolean isBoardOver;
-    public int indexnum;
-    public int dicenum;
+
+    private LinkedList<Tile> tilepile;
+    private Player p1;
+    private Player p2;
+    private Player p3;
+    private Player p4;
+
+    public boolean isBoardOver() {
+        return isBoardOver;
+    }
+
+    public Player[] getPlayers() {
+        return players;
+    }
+
+    public int getIndexnum() {
+        return indexnum;
+    }
+
+    public int getDicenum() {
+        return dicenum;
+    }
+
+    public LinkedList<Tile> getTilepile() {
+        return tilepile;
+    }
+
+    private Player[] players;
+    private boolean isBoardOver;
+    private int indexnum;
+    private int dicenum;
 
     public void creatTilePile() {
         tilepile = new LinkedList<>();
@@ -480,12 +501,6 @@ public class MahjongGame extends AbstractGame {
     }
 
     private void printPlayerCard() {
-        // for (int i = 0; i < 4; i++) {
-        // System.out.println("玩家"+(i + 1));
-        // players[i].getHand().printCards_();
-        // System.out.println();
-        // }
-        // System.out.println();
         players[indexnum].displayHand();
     }
 
