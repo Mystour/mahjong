@@ -55,7 +55,7 @@ Player.prototype.handleCardClick = function (cardSrc) {
     console.log('Clicked on card with src:', cardSrc);
     // 这里可以执行任何你想要的操作，例如向服务器发送消息等
 
-    //发送出牌的请求，目前没找到出牌的接口
+
     stompClient.send("/app/drawTile", {}, JSON.stringify({ 'roomCode': roomCode, 'userName': 'user1' }));
 };
 
