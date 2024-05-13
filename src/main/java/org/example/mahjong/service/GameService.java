@@ -17,7 +17,7 @@ import java.util.Map;
 public class GameService {
 
     private final Map<String, Room> roomMap = new HashMap<>();
-    private final Map<String, Player> userMap= new HashMap<>();
+    private final Map<String, Player> userMap = new HashMap<>();
 
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
@@ -42,7 +42,6 @@ public class GameService {
 
         return roomCode;
     }
-
 
     public boolean joinRoom(String roomCode, String username) {
         Room room = roomMap.get(roomCode);
@@ -79,6 +78,17 @@ public class GameService {
 
         // 根据用户找到对应的Player实例
         return userMap.get(username);
+    }
+
+    public String getUserName(Player player) {
+        for (Map.Entry<String, Player> entry : userMap.entrySet()) {
+            String key = entry.getKey();
+            Player value = entry.getValue();
+            if (value == player) {
+                return key;
+            }
+        }
+        return "";
     }
 
     public MahjongGame getGame(String roomCode) {
