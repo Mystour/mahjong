@@ -106,7 +106,7 @@ public class Hand {
         }
     }
 
-    private List<Tile>[] deepCopyHandcard(List<Tile>[] handcard) {
+    public List<Tile>[] deepCopyHandcard(List<Tile>[] handcard) {
         List<Tile>[] copy = new List[handcard.length];
         for (int i = 0; i < handcard.length; i++) {
             copy[i] = new ArrayList<>(handcard[i]); // 浅拷贝每个列表
