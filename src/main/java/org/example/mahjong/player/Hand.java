@@ -294,12 +294,12 @@ public class Hand {
 
                     if (index + 2 < handcard[i].size()) {
                         Tile nextNextTile = handcard[i].get(index + 2);
-                        if (isPair(currentTile, nextTile)) { //看是不是对子
-                            pair++;
-                            index += 2; // 跳过对子
-                        } else if (isTriplet(currentTile, nextTile, nextNextTile)) { //看是不是刻子
+                        if (isTriplet(currentTile, nextTile, nextNextTile)) { //看是不是刻子
                             triple++;
                             index += 3; // 跳过刻子
+                        } else if (isPair(currentTile, nextTile)) { //看是不是对子
+                            pair++;
+                            index += 2; // 跳过对子
                         } else if (isSequence(currentTile, nextTile, nextNextTile)) { // 看是不是顺子
                             sequence++;
                             index += 3; // 跳过顺子

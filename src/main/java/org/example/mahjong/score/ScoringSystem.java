@@ -28,7 +28,6 @@ public class ScoringSystem implements Scorable{
                 count++;
 
             }
-            i++;
         }
         if(count == 1){
             return 2;
@@ -67,7 +66,7 @@ public class ScoringSystem implements Scorable{
 
         int kongs = (hand.getKongs().size())/4;
 
-        if (hand.getPair() == 7 && kongs == 0) {
+        if (hand.getPair() == 7) {
             return 2; // 普通七小对
         } else if (hand.getPair() + kongs * 2 == 7) {
             return 4; // 带杠的七小对
@@ -84,7 +83,5 @@ public class ScoringSystem implements Scorable{
         }
         return 1;
     }
-
-
 
 }
