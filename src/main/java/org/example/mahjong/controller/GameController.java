@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.example.mahjong.player.*;
 import org.example.mahjong.tile.*;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.example.mahjong.dto.*;
 import org.example.mahjong.dto.message.DetermineMessage;
@@ -36,7 +37,7 @@ public class GameController {
     public SimpMessagingTemplate template;
 
     @Autowired
-    public GameController(GameService gameService, Hand hand) {
+    public GameController(GameService gameService) {
         this.gameService = gameService;
     }
 
@@ -192,7 +193,7 @@ public class GameController {
         List<Tile> pungs = player.getHand().getPungs();
         List<Tile> kongs = player.getHand().getKongs();
         List<Tile> discards = player.getHand().getDiscards();
-        List<Tile>[] handAllTypeCards = player.getHand().getHandcard();
+        List<Tile>[] handAllTypeCards = player.getHand().gethandcard();
         List<Tile> handCars = new ArrayList<>();
         for (List<Tile> item : handAllTypeCards) {
             handCars.addAll(item);
@@ -225,7 +226,7 @@ public class GameController {
         List<Tile> pungs = player.getHand().getPungs();
         List<Tile> kongs = player.getHand().getKongs();
         List<Tile> discards = player.getHand().getDiscards();
-        List<Tile>[] handAllTypeCards = player.getHand().getHandcard();
+        List<Tile>[] handAllTypeCards = player.getHand().gethandcard();
         List<Tile> handCars = new ArrayList<>();
         for (List<Tile> item : handAllTypeCards) {
             handCars.addAll(item);
@@ -315,7 +316,7 @@ public class GameController {
         List<Tile> pungs = player.getHand().getPungs();
         List<Tile> kongs = player.getHand().getKongs();
         List<Tile> discards = player.getHand().getDiscards();
-        List<Tile>[] handAllTypeCards = player.getHand().getHandcard();
+        List<Tile>[] handAllTypeCards = player.getHand().gethandcard();
         List<Tile> handCars = new ArrayList<>();
         for (List<Tile> item : handAllTypeCards) {
             handCars.addAll(item);

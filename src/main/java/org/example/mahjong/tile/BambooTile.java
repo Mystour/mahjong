@@ -6,28 +6,18 @@ public class BambooTile extends Tile {
     }
     @Override
     public String toString() {
-        switch (getNumber()){
-            case 0:
-                return "一条";
-            case 1:
-                return "二条";
-            case 2:
-                return "三条";
-            case 3:
-                return "四条";
-            case 4:
-                return "五条";
-            case 5:
-                return "六条";
-            case 6:
-                return "七条";
-            case 7:
-                return "八条";
-            case 8:
-                return "九条";
-            default:
-                return "?";
-        }
+        return switch (getNumber()) {
+            case 0 -> "一条";
+            case 1 -> "二条";
+            case 2 -> "三条";
+            case 3 -> "四条";
+            case 4 -> "五条";
+            case 5 -> "六条";
+            case 6 -> "七条";
+            case 7 -> "八条";
+            case 8 -> "九条";
+            default -> "?";
+        };
 
     }
 }
