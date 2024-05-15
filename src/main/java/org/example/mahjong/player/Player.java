@@ -21,11 +21,6 @@ public class Player implements Playable, Scorable {
         return scoringSystem;
     }
 
-    public boolean getIsbanker() {
-        return isbanker;
-    }
-
-
     public boolean isBanker() {
         return isbanker;
     }
@@ -57,6 +52,7 @@ public class Player implements Playable, Scorable {
         return hasMahjong;
     }
 
+    //以下boolean值可以用在gui页面的判断中
     private boolean canChow;
     private boolean canPung;
     private boolean canKong;
@@ -85,6 +81,8 @@ public class Player implements Playable, Scorable {
     }
 
     @Override
+
+    //这个给gui界面做的
     public Tile discardTile(Tile tile){
         return hand.discard(tile);
     }
@@ -128,6 +126,12 @@ public class Player implements Playable, Scorable {
 
 
 
+    public void reactToDiscard(Tile discardedTile) {
+        // 这里是示例逻辑，根据游戏规则调整
+        System.out.println("考虑是否对丢弃的牌做出反应。");
+        // 根据具体逻辑实现决策过程...
+    }
+
 
     //Mahjong好像就是胡的意思，所以这个方法应该是玩家胡牌
     @Override
@@ -144,6 +148,11 @@ public class Player implements Playable, Scorable {
     }
 
 
+    // 根据当前情况做出决策
+    // 点炮的情况还没做好
+    // 吃碰杠都是发生在别人的回合结束阶段，这种写法是直接进行吃碰杠了
+
+
     //在其他人的回合判断可以操作的条件
     public void checkDecisionCondition(Tile drawnTile){
         canChow = hand.canChow(drawnTile);
@@ -157,8 +166,16 @@ public class Player implements Playable, Scorable {
         hand.printCards();
     }
 
+    // 清理手牌的方法
 
 
 
 
+    public boolean getIsBanker() {
+        return isbanker;
+    }
+
+    public void setIsBanker(boolean isbanker) {
+        this.isbanker = isbanker;
+    }
 }
