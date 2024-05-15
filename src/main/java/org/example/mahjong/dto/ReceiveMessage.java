@@ -22,7 +22,7 @@ public class ReceiveMessage {
     }
 
     public String getData() {
-        return userName;
+        return data;
     }
 
     public void setData(String data) {

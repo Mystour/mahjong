@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class Hand {
-    public List<Tile>[] getHandcard() {
+    public List<Tile>[] gethandcard() {
         return handcard;
     }
 
@@ -106,7 +106,7 @@ public class Hand {
         }
     }
 
-    private List<Tile>[] deepCopyHandcard(List<Tile>[] handcard) {
+    public List<Tile>[] deepCopyHandcard(List<Tile>[] handcard) {
         List<Tile>[] copy = new List[handcard.length];
         for (int i = 0; i < handcard.length; i++) {
             copy[i] = new ArrayList<>(handcard[i]); // 浅拷贝每个列表
@@ -180,14 +180,12 @@ public class Hand {
         }
     }
 
-    public int checkChow(Tile tile){
+    public boolean canChow(Tile tile){
         TileType type = tile.getType();
         int typeindex = translateType(type);
         int number = tile.getNumber();
         int left = 0;
         int right = 0;
-        int rightright = 0;
-        int leftleft = 0;
         for (Tile tile1 : handcard[typeindex]) {
             if(tile1.getNumber() == number - 1){
                 left++;
@@ -195,25 +193,13 @@ public class Hand {
             if (tile1.getNumber() == number + 1){
                 right++;
             }
-            if(tile1.getNumber() == number + 2){
-                rightright++;
-            }
-            if(tile1.getNumber() == number - 2){
-                leftleft++;
-            }
         }
         if(left >= 1 && right >= 1){
-            return 1;
-        } else if (left >= 1 && leftleft >= 1){
-            return 0;
-        }else if(right >= 1 && rightright >= 1) {
-            return 2;
+            return true;
         }
-        return -1; // 这部分比较丑陋还得再想其他的好一点的办法
+        return false; // 这部分比较丑陋还得再想其他的好一点的办法
     }
-    public boolean canChow(Tile tile){
-        return checkChow(tile) >= 0;
-    }
+
 
     public boolean canPung(Tile tile){
         int count = 0;
@@ -235,19 +221,12 @@ public class Hand {
         pungs.add(tile);
     }
     public void executeChows(Tile tile){
-        if (checkChow(tile) == 1) {
+        if (canChow(tile)) {
             addToChow(discard(tile.getType(), tile.getNumber() - 1));
             addToChow(tile);
             addToChow(discard(tile.getType(), tile.getNumber() + 1));
-        } else if (checkChow(tile) == 0) {
-            addToChow(discard(tile.getType(), tile.getNumber() - 2));
-            addToChow(discard(tile.getType(), tile.getNumber() - 1));
-            addToChow(tile);
-        }else if(checkChow(tile) == 2){
-            addToChow(tile);
-            addToChow(discard(tile.getType(), tile.getNumber() + 1));
-            addToChow(discard(tile.getType(), tile.getNumber() + 2));
         }
+
     }
     public void executePung(Tile tile){
         if (canPung(tile)) {  // 移除两张相同的牌，并加入到碰的列表中
@@ -315,12 +294,12 @@ public class Hand {
 
                     if (index + 2 < handcard[i].size()) {
                         Tile nextNextTile = handcard[i].get(index + 2);
-                        if (isPair(currentTile, nextTile)) { //看是不是对子
-                            pair++;
-                            index += 2; // 跳过对子
-                        } else if (isTriplet(currentTile, nextTile, nextNextTile)) { //看是不是刻子
+                        if (isTriplet(currentTile, nextTile, nextNextTile)) { //看是不是刻子
                             triple++;
                             index += 3; // 跳过刻子
+                        } else if (isPair(currentTile, nextTile)) { //看是不是对子
+                            pair++;
+                            index += 2; // 跳过对子
                         } else if (isSequence(currentTile, nextTile, nextNextTile)) { // 看是不是顺子
                             sequence++;
                             index += 3; // 跳过顺子

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
     <title>User Registration</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -7,9 +7,9 @@
     <script>
         window.onload = function() {
             document.querySelector('.register-form').addEventListener('submit', function(event) {
-                var username = document.querySelector('input[name="username"]').value;
-                var password = document.querySelector('input[name="password"]').value;
-                var email = document.querySelector('input[name="email"]').value;
+                const username = document.querySelector('input[name="username"]').value;
+                const password = document.querySelector('input[name="password"]').value;
+                const email = document.querySelector('input[name="email"]').value;
 
                 if (!username || username.length < 3) {
                     alert('Username must be at least 3 characters long');
