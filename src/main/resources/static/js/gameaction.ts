@@ -13,7 +13,13 @@ function chowAction() {
                     type: 'GET',
                     //data: { roomCode, userName: username, data },
                     success: function() {
-                        // 处理接下来的工作
+                        // 添加图片按钮
+                        //这部分我不太会写，写的估计是错的
+
+                        let chowButtonImg = document.createElement('img');
+                        chowButtonImg.src = 'static/images/Actions/Chow.PNG';
+                        chowButtonImg.classList.add('chow-button');
+                        document.getElementById('chow-button-container').appendChild(chowButtonImg);
 
 
 
