@@ -124,7 +124,7 @@ public class GameController {
     public List<List<String>> getAllPlayersHandCards(@PathVariable String roomCode) {
         MahjongGame game = gameService.getGame(roomCode);
         if (game == null) {
-            // Handle the case where the game has not started yet
+
             return null;
         }
         return game.getAllPlayersHands().stream()
