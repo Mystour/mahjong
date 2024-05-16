@@ -19,7 +19,6 @@ class Player {
     }
 }
 
-$(function() {
     const roomCode = window.location.pathname.split('/')[2];
     let username: string;
 
@@ -54,4 +53,3 @@ $(function() {
             });
         }
     });
-});
