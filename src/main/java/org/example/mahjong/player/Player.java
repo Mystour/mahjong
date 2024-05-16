@@ -81,44 +81,6 @@ public class Player implements Playable, Scorable {
     }
 
     @Override
-    //这个我觉得应该放在游戏里，属于轮次类的东西，应该交给系统判断
-    public Tile discardTile() {
-        // 显示玩家当前的手牌
-        System.out.println("当前手牌: ");
-        for (int i = 0; i < this.hand.getHandcard().length; i++) {
-            if (this.hand.getHandcard()[i] != null && !this.hand.getHandcard()[i].isEmpty()) {
-                System.out.println("类型 " + i + ": " + this.hand.getHandcard()[i]);
-            } else {
-                System.out.println("类型 " + i + ": 空");
-            }
-        }
-
-        // 请求玩家选择要丢弃的牌
-        Scanner scanner = new Scanner(System.in);
-        int typeIndex = -1, tileIndex = -1;
-        do {
-            System.out.print("请选择要丢弃的牌的类型索引: ");
-            typeIndex = scanner.nextInt();
-            if (typeIndex >= 0 && typeIndex < this.hand.getHandcard().length && !this.hand.getHandcard()[typeIndex].isEmpty()) {
-                System.out.println("你选择的类型是 " + typeIndex + "，有以下牌: " + this.hand.getHandcard()[typeIndex]);
-                System.out.print("请选择要丢弃的牌的索引: ");
-                tileIndex = scanner.nextInt();
-                if (tileIndex < 0 || tileIndex >= this.hand.getHandcard()[typeIndex].size()) {
-                    System.out.println("无效的牌索引，请重新选择。");
-                    tileIndex = -1; // Reset tile index for reselection
-                }
-            } else {
-                System.out.println("无效的类型索引或者所选类型没有牌，请重新选择。");
-                typeIndex = -1; // Reset type index for reselection
-            }
-        } while (typeIndex == -1 || tileIndex == -1);
-
-        Tile tileToDiscard = this.hand.getHandcard()[typeIndex].remove(tileIndex);
-        System.out.println("玩家丢弃的牌是: " + tileToDiscard);
-
-        return tileToDiscard;
-    }
-
 
     //这个给gui界面做的
     public Tile discardTile(Tile tile){
@@ -189,27 +151,7 @@ public class Player implements Playable, Scorable {
     // 根据当前情况做出决策
     // 点炮的情况还没做好
     // 吃碰杠都是发生在别人的回合结束阶段，这种写法是直接进行吃碰杠了
-    public void makeDecision(Tile drawnTile) {
-        System.out.println("考虑是否杠、碰、胡等操作。");
-        // 检查是否可以吃、碰或杠
-        // TODO
-        if (hand.canKong(drawnTile)) {
-            // 如果可以杠，则执行杠操作
-            declareKong(drawnTile);
-        } else {
-            // TODO:如果不杠，根据其他条件做决策
-            System.out.println("Player chooses not to Kong.");
-        }
 
-        // 检查是否可以胡牌
-        if (hand.isValidMahjong_Other(drawnTile)) {
-            // 如果可以胡牌，根据具体规则做出决策
-            System.out.println("Player has a winning hand.");
-        }
-
-        // 做出打牌决策
-        discardTile();
-    }
 
     //在其他人的回合判断可以操作的条件
     public void checkDecisionCondition(Tile drawnTile){

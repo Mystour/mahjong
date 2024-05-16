@@ -6,16 +6,12 @@ public class DragonTile extends Tile {
     }
     @Override
     public String toString() {
-        switch (getNumber()){
-            case 0:
-                return "红中";
-            case 1:
-                return "发财";
-            case 2:
-                return "白板";
-            default:
-                return "?";
-        }
+        return switch (getNumber()) {
+            case 0 -> "红中";
+            case 1 -> "发财";
+            case 2 -> "白板";
+            default -> "?";
+        };
 
     }
 }
