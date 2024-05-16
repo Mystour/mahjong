@@ -39,21 +39,24 @@ Player.prototype.updateHandWithImages = function () {
     handDiv.innerHTML = '';
     var _this = this; // 保存当前上下文
     for (var i = 0; i < this.cards.length; i++) {
-        var img = document.createElement('img');
-        img.src = this.cards[i];
-        img.classList.add('card', 'small-card'); // Add classes to the img element
-        img.addEventListener('click', function () {
-            _this.handleCardClick(img.src); // 调用处理点击事件的方法
-        });
-        handDiv.appendChild(img);
+        (function() {
+            var img = document.createElement('img');
+            img.src = _this.cards[i];
+            img.classList.add('card', 'small-card'); // Add classes to the img element
+            img.addEventListener('click', function () {
+                _this.handleCardClick(img.src); // 调用处理点击事件的方法
+            });
+            handDiv.appendChild(img);
+        })();
     }
 };
-
 
 Player.prototype.handleCardClick = function (cardSrc) {
     // 处理卡片点击事件的逻辑
     console.log('Clicked on card with src:', cardSrc);
     // 这里可以执行任何你想要的操作，例如向服务器发送消息等
+
+
 
     //发送出牌的请求，目前没找到出牌的接口
     stompClient.send("/app/drawTile", {}, JSON.stringify({ 'roomCode': roomCode, 'userName': 'user1' }));
