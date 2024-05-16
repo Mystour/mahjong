@@ -61,6 +61,12 @@ public class Player implements Playable, Scorable {
     private Hand hand;
     private MahjongGame game;
 
+    public int getScore() {
+        return score;
+    }
+
+    private int score;
+
     public Player(MahjongGame game) {
         hand = new Hand();
         this.game = game;
@@ -144,7 +150,9 @@ public class Player implements Playable, Scorable {
 
     @Override
     public int calculateScore() {
-        return scoringSystem.calculateScore();
+        int nowscore = scoringSystem.calculateScore();
+        score += nowscore;
+        return nowscore;
     }
 
 

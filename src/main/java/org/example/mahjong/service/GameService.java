@@ -58,7 +58,7 @@ public class GameService {
 
             // 将用户与玩家实例的映射关系存储在userMap中
             for (String user : room.getUsers()) {
-                Player player = game.players[room.getUsers().indexOf(user)];
+                Player player = game.getPlayers()[room.getUsers().indexOf(user)];
                 userMap.put(user, player);
                 logger.info("Redirecting user {} to /game/{}", user, roomCode);
             }

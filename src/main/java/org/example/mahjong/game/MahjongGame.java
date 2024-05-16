@@ -523,6 +523,12 @@ public class MahjongGame extends AbstractGame {
         }
         return allHands;
     }
+    public List<Integer> getAllPlayersScores(){
+        List<Integer> allscores = new ArrayList<>();
+        for (Player player : players)
+            allscores.add(player.getScore());
+        return allscores;
+    }
 
     @Override
     public void endGame() {

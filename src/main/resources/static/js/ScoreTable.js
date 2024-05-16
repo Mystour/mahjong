@@ -1,24 +1,52 @@
-function createTable(containerId) {
+declare var $: any;
+
+$(function() {
+    const roomCode = window.location.pathname.split('/')[2];
+    let username: string;
+
+    $.ajax({
+        url: '/api/username',
+        type: 'GET',
+        success: function(data: string) {
+            username = data;
+
+            $.ajax({
+                url: '/api/roomUsers/' + roomCode,
+                type: 'GET',
+                success: function(usernames: string[]) {
+                    let currentUserIndex = usernames.indexOf(username);
+                    console.log('Current user ' + username + ' index:', currentUserIndex);
+
+                    $.ajax({
+                        url: '/getAllPlayersScores/' + roomCode,
+                        type: 'GET',
+                        success: function(scores: any[]) {
+                            createTable("table-container", username, scores)
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+function createTable(containerId, username: string[], scores: any[]) {
     var tableContainer = document.getElementById(containerId);
 
-    // 创建表格元素
     var table = document.createElement("table");
     table.id = "ScoreTable";
     table.className = "score-table"; // 添加类名
     table.style.display = "none";
 
-    // 创建标题行
     var titleRow = document.createElement("tr");
     titleRow.className = "table-title";
     var titleCell = document.createElement("th");
-    titleCell.colSpan = Number("3");
+    titleCell.colSpan = Number("2");
     titleCell.textContent = "Score Table";
     titleRow.appendChild(titleCell);
     table.appendChild(titleRow);
 
-    // 创建表头行
     var headerRow = document.createElement("tr");
-    var headers = ["Name", "Banker", "Score"];
+    var headers = ["Name", "Score"];
     headers.forEach(function(headerText) {
         var header = document.createElement("th");
         header.textContent = headerText;
@@ -26,16 +54,16 @@ function createTable(containerId) {
     });
     table.appendChild(headerRow);
 
-    // 创建表格数据行
+
     var numRows = 4;
     for (var i = 0; i < numRows; i++) {
         var row = document.createElement("tr");
         for (var j = 0; j < headers.length; j++) {
             var cell = document.createElement("td");
-            if (j === 2) {
-                cell.textContent = "0";
+            if (j === 1) {
+                cell.textContent = scores[i];
             } else {
-                cell.textContent = "Player";
+                cell.textContent = username[i];
             }
             row.appendChild(cell);
         }
@@ -48,7 +76,7 @@ function createTable(containerId) {
 
 
 
-createTable("table-container");
+// createTable("table-container");
 
 var style = `
   .table-container {

@@ -133,6 +133,16 @@ public class GameController {
                         .collect(Collectors.toList()))
                 .collect(Collectors.toList());
     }
+    @GetMapping("/getAllPlayersScores/{roomCode}")
+    @ResponseBody
+    public List<Integer> getAllPlayersScores(@PathVariable String roomCode) {
+        MahjongGame game = gameService.getGame(roomCode);
+        if (game == null) {
+            // Handle the case where the game has not started yet
+            return null;
+        }
+        return game.getAllPlayersScores();
+    }
 
     @PostMapping("/getRoudInfo")
     @ResponseBody
@@ -142,7 +152,7 @@ public class GameController {
         if (game == null) {
             return ResultData.fail(-1, "game not found");
         }
-        Player[] players = game.players;
+        Player[] players = game.getPlayers();
         List<PlayerEntity> playerEntitys = new ArrayList<>();
         for (Player item : players) {
             PlayerEntity playerEntity = new PlayerEntity();
