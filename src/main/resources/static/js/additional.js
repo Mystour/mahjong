@@ -1,6 +1,8 @@
 var socket = new SockJS('/room');
 var stompClient = Stomp.over(socket);
 var roomCode;
+var username; // 全局变量存储当前用户的用户名
+var currentUserIndex; // 全局变量存储当前用户的索引
 
 stompClient.connect({}, function () {
     stompClient.subscribe('/game/room', function (message) {
@@ -8,27 +10,13 @@ stompClient.connect({}, function () {
     });
 });
 
-var Player = /** @class */ (function () {
-    function Player(id, cards) {
-        this.id = id;
-        this.cards = cards;
-    }
-    Player.prototype.updateHandWithImages = function () {
-        if (!Array.isArray(this.cards)) {
-            console.error('Player cards is not an array:', this.cards);
-            return;
-        }
-        var handDiv = document.getElementById(this.id);
-        handDiv.innerHTML = '';
-        for (var i = 0; i < this.cards.length; i++) {
-            var img = document.createElement('img');
-            img.src = this.cards[i];
-            img.classList.add('card', 'small-card'); // Add classes to the img element
-            handDiv.appendChild(img);
-        }
-    };
-    return Player;
-}());
+// 定义 handleCardClick 方法
+Player.prototype.handleCardClick = function (cardSrc) {
+    // 处理卡片点击事件的逻辑
+    console.log('Clicked on card with src:', cardSrc);
+    // 这里可以执行任何你想要的操作，例如向服务器发送消息等
+    stompClient.send("/app/drawTile", {}, JSON.stringify({ 'roomCode': roomCode, 'userName': username }));
+};
 
 Player.prototype.updateHandWithImages = function () {
     if (!Array.isArray(this.cards)) {
@@ -49,17 +37,6 @@ Player.prototype.updateHandWithImages = function () {
             handDiv.appendChild(img);
         })();
     }
-};
-
-Player.prototype.handleCardClick = function (cardSrc) {
-    // 处理卡片点击事件的逻辑
-    console.log('Clicked on card with src:', cardSrc);
-    // 这里可以执行任何你想要的操作，例如向服务器发送消息等
-
-
-
-    //发送出牌的请求，目前没找到出牌的接口
-    stompClient.send("/app/drawTile", {}, JSON.stringify({ 'roomCode': roomCode, 'userName': 'user1' }));
 };
 
 // 定义 updateAllPlayersHandCards 函数
@@ -105,9 +82,6 @@ function getCurrentUserIndex() {
                     console.log('Current user ' + username + ' index:', currentUserIndex);
                     // 获取并更新所有玩家的手牌数据
                     updateAllPlayersHandCards();
-                    // 每隔一定时间间隔执行一次获取并更新所有玩家手牌数据的函数
-                    // 间隔5秒钟执行一次
-                    // setInterval(updateAllPlayersHandCards, 5000);
                 }
             });
         }
