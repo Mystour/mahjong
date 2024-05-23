@@ -6,6 +6,8 @@ import org.example.mahjong.score.ScoringSystem;
 import org.example.mahjong.tile.Tile;
 import org.example.mahjong.tile.TileType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Player implements Playable, Scorable {
@@ -71,6 +73,25 @@ public class Player implements Playable, Scorable {
         hand = new Hand();
         this.game = game;
         this.scoringSystem = new ScoringSystem(hand);
+    }
+    public void playAgain(){
+        hand = new Hand();
+        scoringSystem = new ScoringSystem(hand);
+        canChow = false;
+        canPung = false;
+        canKong = false;
+        canMahjong = false;
+        hasMahjong = false;
+        isbanker = false;
+    }
+    public List<Boolean> getAllCondition(){
+        List<Boolean> allcondition = new ArrayList<>();
+        allcondition.add(canChow);
+        allcondition.add(canPung);
+        allcondition.add(canKong);
+        allcondition.add(canMahjong);
+        allcondition.add(hasMahjong);
+        return allcondition;
     }
 
 
@@ -143,7 +164,7 @@ public class Player implements Playable, Scorable {
     @Override
     public void declareMahjong(Tile tile) {
         if(canMahjong){
-            hand.addCard(tile);
+            hand.sortCard(hand.addCard(tile));
             hasMahjong = true;
         }
     }

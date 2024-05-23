@@ -111,6 +111,7 @@ public class Hand {
         for (int i = 0; i < handcard.length; i++) {
             copy[i] = new ArrayList<>(handcard[i]); // 浅拷贝每个列表
         }
+
         return copy;
     }
     public List<Tile>[] allCard(){
@@ -197,7 +198,7 @@ public class Hand {
         if(left >= 1 && right >= 1){
             return true;
         }
-        return false; // 这部分比较丑陋还得再想其他的好一点的办法
+        return false;
     }
 
 
@@ -244,7 +245,6 @@ public class Hand {
     // 检查是否可以杠
     public boolean canKong(Tile tile) {
         // 计算手牌中与tile相同的牌的数量
-        //这里改了，不能用tile.equal, 那样比的是地址值
         int count = 0;
         for (Tile t : handcard[translateType(tile.getType())]) {
             if (t.getNumber() == tile.getNumber()) {
@@ -262,8 +262,6 @@ public class Hand {
             for (int i = 0; i < 3; i++) { // 移除三张
                 addToKongs(discard(tile.getType(), tile.getNumber()));
             }
-            //这里我也改了，我们不是要放入相同的牌，是把相同的值的牌放进去，所以再for循环里加吧
-//            addToKongs(tile); // 加入到杠的列表中，此操作实际上要加入四张相同的牌
             addToKongs(tile); // 添加第四张牌
         }
     }
@@ -272,6 +270,13 @@ public class Hand {
     public boolean isValidMahjong_Other(Tile drawnTile){
         List<Tile>[] copyofhandcard = deepCopyHandcard(handcard);
         copyofhandcard[translateType(drawnTile.getType())].add(drawnTile);
+        Collections.sort(copyofhandcard[translateType(drawnTile.getType())]);
+        for (int i = 0; i < handcard.length; i++) {
+            for (int j = 0; j < copyofhandcard[i].size(); j++) {
+                System.out.println(copyofhandcard[i].get(j));
+            }
+        }
+        System.out.println();
         return isValidMahjong(copyofhandcard);
     }
 

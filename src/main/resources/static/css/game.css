@@ -4,6 +4,20 @@
     border: 1px solid #ffffff;
     margin: 10px;
 }
+.small-card {
+    width: 40px;
+    height: 40px;
+}
+
+.small-card1{
+    width: 30px;
+    height: 30px;
+}
+.small-card2{
+    width: 20px;
+    height: 20px;
+}
+
 
 .north {
     position: absolute;
@@ -36,7 +50,61 @@
     transform-origin: 0 0;
 }
 
-.small-card {
-    width: 40px;
-    height: 40px;
+
+/*测试用的，判断出牌的玩家和判断的玩家*/
+.triangle {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 20px solid blue; /* 三角形的颜色 */
+    position: absolute;
+    top: 10px; /* 三角形距离顶部的距离 */
+    left: -40px; /* 三角形距离左侧的距离 */
+}
+
+.circle {
+    width: 20px; /* 圆形的直径 */
+    height: 20px; /* 圆形的直径 */
+    background-color: red; /* 圆形的颜色 */
+    border-radius: 50%; /* 使元素呈现圆形 */
+    position: absolute;
+    top: 10px; /* 圆形距离顶部的距离 */
+    left: -40px; /* 圆形距离左侧的距离 */
+}
+
+.table-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: lightgray;
+}
+
+.score-table {
+    margin: 0 auto;
+    border-collapse: collapse;
+    display: none; // 默认隐藏表格
+}
+
+.score-table th,
+.score-table td {
+    padding: 8px;
+    border: 1px solid black;
+}
+
+.button-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.table-title {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.hidden {
+    display: none;
 }

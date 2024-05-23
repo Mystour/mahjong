@@ -1,5 +1,8 @@
 package org.example.mahjong.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.mahjong.dto.RoomProgress;
 import org.example.mahjong.game.MahjongGame;
 import org.example.mahjong.game.Room;
@@ -20,9 +23,14 @@ public class GameService {
     private final Map<String, Player> userMap = new HashMap<>();
 
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
+    private final ObjectMapper objectMapper;
 
     @Autowired
     private SimpMessagingTemplate template;
+
+    public GameService(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     public Room getRoom(String roomCode) {
         return roomMap.get(roomCode);
@@ -54,6 +62,7 @@ public class GameService {
         if (room.getUsers().size() == 4) {
             MahjongGame game = new MahjongGame();
             game.startGame();
+            game.currentPlayerDraw();
             room.setGame(game);
 
             // 将用户与玩家实例的映射关系存储在userMap中
@@ -107,4 +116,32 @@ public class GameService {
         template.convertAndSend("/topic/room", roomProgress);
         logger.info("Progress of room {}: {}", roomCode, progress);
     }
+    public boolean handleDrawTileMessage(String message) {
+        try {
+            // 解析 JSON 字符串为一个 Map 对象
+            Map<String, String> messageMap = objectMapper.readValue(message, new TypeReference<Map<String, String>>() {});
+
+            // 从 Map 中获取 roomCode、userName 和 tile 属性
+            String roomCode = messageMap.get("roomCode");
+            String userName = messageMap.get("userName");
+            String tile = messageMap.get("tile");
+            // 获取游戏实例并处理瓦牌信息
+            MahjongGame game = getGame(roomCode);
+
+            if (game != null) {
+                game.receiveTileFromMessage(tile);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (JsonProcessingException e) {
+            // JSON 解析失败，处理异常
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+
+
 }

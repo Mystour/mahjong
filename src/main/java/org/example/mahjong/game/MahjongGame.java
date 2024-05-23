@@ -1,5 +1,6 @@
 package org.example.mahjong.game;
 
+import io.micrometer.common.KeyValues;
 import org.example.mahjong.player.Player;
 import org.example.mahjong.tile.*;
 
@@ -14,6 +15,7 @@ import java.util.*;
  *
  */
 public class MahjongGame extends AbstractGame {
+
 
 
     private LinkedList<Tile> tilepile;
@@ -41,11 +43,15 @@ public class MahjongGame extends AbstractGame {
     public LinkedList<Tile> getTilepile() {
         return tilepile;
     }
-
+    public int getChecknum() {
+        return checknum;
+    }
     private Player[] players;
     private boolean isBoardOver;
     private int indexnum;
+    private int checknum;
     private int dicenum;
+
 
     public void creatTilePile() {
         tilepile = new LinkedList<>();
@@ -112,22 +118,7 @@ public class MahjongGame extends AbstractGame {
         game.playOneBoard();
     }
 
-    public void checkWinCondition() {
-    }
 
-    @Override
-    public void startGame() {
-        creatPlayers();
-        creatTilePile();
-        shuffleTiles();
-        distributeInitialTiles();
-        Random random = new Random();
-        dicenum = random.nextInt(10) + 2;
-        System.out.println("骰子的点数为：" + dicenum);
-        indexnum = dicenum % 4;
-        System.out.println("这局的庄家是：玩家" + (indexnum + 1));
-        players[indexnum].setIsbanker(true);
-    }
 
     public static TileType transType(String s) {
         if (s.length() != 2) {
@@ -176,6 +167,8 @@ public class MahjongGame extends AbstractGame {
             return -1;
         }
     }
+
+
 
     public Tile getCommandOfDiscard() {
         Tile tile = null;
@@ -245,10 +238,40 @@ public class MahjongGame extends AbstractGame {
     }
 
     public boolean askForOperationConfirmation(int playerIndex) {
-
         Player player = players[playerIndex];
         if (!player.isCanChow() && !player.isCanKong() && !player.isCanPung() && !player.isCanMahjong()) {
-            return false; // 如果玩家没有任何操作可执行，直接返回false
+            if(playerIndex != indexnum){
+                Scanner scanner = new Scanner(System.in);
+                System.out.print("玩家" + (playerIndex + 1) + "可以进行操作：");
+                System.out.print(" 跳过");
+                System.out.println();
+                System.out.println("输入0表示玩家" + (playerIndex + 1) + "想要进行以上操作");
+                int num = -1;
+                try {
+                    while (System.in.available() == 0) {
+                        Thread.sleep(100); // 暂停100毫秒
+                    }
+
+                    num = Integer.parseInt(scanner.nextLine()); // 读取输入并尝试转换为整数
+                } catch (NumberFormatException e) {
+                    num = -1; // 如果输入无法转换为整数，将num设为-1，表示错误的输入
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+                // scanner.close();
+
+                if (num == 0) {
+                    return false;
+                } else {
+                    System.out.println("错误输入，请重新操作。");
+                    askForOperationConfirmation(indexnum);
+                }
+            }else {
+                return false;
+            }
         } else {
             Scanner scanner = new Scanner(System.in);
             System.out.print("玩家" + (playerIndex + 1) + "可以进行操作：");
@@ -431,12 +454,21 @@ public class MahjongGame extends AbstractGame {
         return false;
     }
 
+
     // 该阶段包括弃牌，是在吃碰杠的判定之后的,需要关于弃掉牌名的外部命令
     public Tile onRound() {
         Tile temp = getCommandOfDiscard();
         System.out.println("玩家" + (indexnum + 1) + "出牌后: ");
         printPlayerCard();
         return temp;
+////        Tile temp;
+////        do {
+////            temp = getCommandOfDiscard_js();
+////        } while (temp == null);
+//
+//        System.out.println("玩家" + (indexnum + 1) + "出牌后: ");
+//        printPlayerCard();
+//        return temp;
     }
 
     // 系统接收弃牌，并且开始判断下一个出牌玩家
@@ -444,7 +476,8 @@ public class MahjongGame extends AbstractGame {
     // 返回ture说明要变换出牌顺序 -> insertRound
     public boolean checkRound(Tile drawnTile) {
         System.out.println("判定中ing");
-        for (int i = (indexnum + 1) % 4; i < 3; i = (i + 1) % 4) {
+        for (int i = (indexnum + 1) % 4, index = 0; index < 3; i = (i + 1) % 4, index++) {
+            checknum = i;
             players[i].checkDecisionCondition(drawnTile);
             if (askForOperationConfirmation(i)) {
                 indexnum = i;
@@ -456,6 +489,7 @@ public class MahjongGame extends AbstractGame {
         System.out.println("玩家" + (indexnum + 1) + "最终手牌: ");
         printPlayerCard();
         indexnum = (indexnum + 1) % 4;
+        checknum = indexnum;
         return false;
     }
 
@@ -497,10 +531,9 @@ public class MahjongGame extends AbstractGame {
         // 清空牌堆
         tilepile.clear();
 
-        // TODO:可以在这里添加其他重置逻辑，如重置玩家状态、计分板等
     }
 
-    private void printPlayerCard() {
+    public void printPlayerCard() {
         players[indexnum].displayHand();
     }
 
@@ -523,6 +556,31 @@ public class MahjongGame extends AbstractGame {
         }
         return allHands;
     }
+    public List<List<Tile>> getAllPlayersDiscards() {
+        List<List<Tile>> discards = new ArrayList<>();
+        for (Player player : players) {
+            discards.add(player.getHand().getDiscards());
+        }
+        return discards;
+    }
+    public List<List<Tile>> getAllPlayersShowedCards() {
+        List<List<Tile>> showedcards = new ArrayList<>();
+        for (Player player : players) {
+            List<Tile> temp = new ArrayList<>();
+            temp.addAll(player.getHand().getChows());
+            temp.addAll(player.getHand().getPungs());
+            temp.addAll(player.getHand().getKongs());
+            showedcards.add(temp);
+        }
+        return showedcards;
+    }
+    public List<List<Boolean>> getAllPlayersCondition() {
+        List<List<Boolean>> allcondition = new ArrayList<>();
+        for (Player player : players) {
+            allcondition.add(player.getAllCondition());
+        }
+        return allcondition;
+    }
     public List<Integer> getAllPlayersScores(){
         List<Integer> allscores = new ArrayList<>();
         for (Player player : players)
@@ -530,8 +588,162 @@ public class MahjongGame extends AbstractGame {
         return allscores;
     }
 
+    public List<Integer> getPlayerIndex(){
+        List<Integer> indexs = new ArrayList<>();
+        indexs.add(indexnum);
+        indexs.add(checknum);
+        return indexs;
+    }
+    public List<List<Tile>> getDiscardingTile() {
+        List<List<Tile>> DiscardingTile = new ArrayList<>();
+        for (Player player : players) {
+            DiscardingTile.add(new ArrayList<>());
+        }
+        if(discradTile != null){
+            DiscardingTile.get(indexnum).add(discradTile);
+        }
+        return DiscardingTile;
+    }
+
+    @Override
+    public void startGame() {
+        creatPlayers();
+        creatTilePile();
+        shuffleTiles();
+        distributeInitialTiles();
+        Random random = new Random();
+        dicenum = random.nextInt(10) + 2;
+        indexnum = dicenum % 4;
+        checknum = indexnum;
+        players[indexnum].setIsbanker(true);
+//        players[indexnum].getHand().clearHand();
+//        players[(indexnum + 1)%4].getHand().clearHand();
+//        players[indexnum].getHand().addCard(new CharacterTile(TileType.CHARACTER,1));
+//        players[(indexnum + 1)%4].getHand().addCard(new CharacterTile(TileType.CHARACTER,1));
+//        players[(indexnum + 1)%4].getHand().addCard(new CharacterTile(TileType.CHARACTER,1));
+//        players[(indexnum + 1)%4].getHand().addCard(new CharacterTile(TileType.CHARACTER,2));
+//        players[(indexnum + 1)%4].getHand().addCard(new CharacterTile(TileType.CHARACTER,2));
+//        players[(indexnum + 1)%4].getHand().addCard(new CharacterTile(TileType.CHARACTER,2));
+//        players[(indexnum + 1)%4].getHand().addCard(new CharacterTile(TileType.CHARACTER,3));
+//        players[(indexnum + 1)%4].getHand().addCard(new CharacterTile(TileType.CHARACTER,3));
+//        players[(indexnum + 1)%4].getHand().addCard(new CharacterTile(TileType.CHARACTER,3));
+//        players[(indexnum + 1)%4].getHand().addCard(new CharacterTile(TileType.CHARACTER,4));
+//        players[(indexnum + 1)%4].getHand().addCard(new CharacterTile(TileType.CHARACTER,4));
+//        players[(indexnum + 1)%4].getHand().addCard(new CharacterTile(TileType.CHARACTER,4));
+//        players[(indexnum + 1)%4].getHand().addCard(new CharacterTile(TileType.CHARACTER,5));
+//        players[(indexnum + 1)%4].getHand().addCard(new CharacterTile(TileType.CHARACTER,5));
+    }
+
+
     @Override
     public void endGame() {
+        for (Player player : players) {
+            player.playAgain();
+        }
+        drawTile = null;
+        discradTile = null;
+        creatTilePile();
+        shuffleTiles();
+        distributeInitialTiles();
+        Random random = new Random();
+        dicenum = random.nextInt(10) + 2;
+        indexnum = dicenum % 4;
+        checknum = indexnum;
+        players[indexnum].setIsbanker(true);
+
+
+    }
+    private Tile drawTile;
+    //perform
+    public void currentPlayerDraw(){
+        drawTile = players[indexnum].drawTile();
+    }
+    //perform
+    public void currentPlayerKong(){
+        if(drawTile != null){
+            players[indexnum].declareKong(drawTile);
+            drawTile = null;
+        }
+
+    }
+
+    public void currentPlayerMahjong(){
+        if(drawTile != null){
+            players[indexnum].declareMahjong(drawTile);
+            drawTile = null;
+        }
+    }
+
+    public static TileType transTypeFromMessage(String s) {
+        String string = s.substring(0, s.length() - 1);
+        System.out.println(string);
+        if (string.equals("BAMBOO")) {
+            return TileType.BAMBOO;
+        } else if (string.equals("CHARACTER")) {
+            return TileType.CHARACTER;
+        } else if (string.equals("DOT")) {
+            return TileType.DOT;
+        } else if (string.equals("WIND")) {
+            return TileType.WIND;
+        } else if (string.equals("DRAGON")) {
+            return TileType.DRAGON;
+        }
+        return null;
+    }
+    public static int transNumFromMessage(String s){
+        char lastChar = s.charAt(s.length() - 1);
+        System.out.println(Integer.parseInt(String.valueOf(lastChar)) - 1);
+        // 将字符转换为字符串，然后再使用 Integer.parseInt() 方法将其转换为整数
+        return Integer.parseInt(String.valueOf(lastChar)) - 1;
+    }
+
+    private Tile discradTile;
+
+    public void receiveTileFromMessage(String string) {
+        TileType type = transTypeFromMessage(string);
+        int num = transNumFromMessage(string);
+        Tile tile = players[indexnum].discardTile(type, num);
+        if(tile != null){
+            discradTile = tile;
+            for (int i = 0, index = (indexnum + 1) % 4; i < 3; i++,index = (index + 1) % 4) {
+                players[index].checkDecisionCondition(tile);
+            }
+            checknum = (indexnum + 1) % 4;
+        }
+
+    }
+    public boolean isdiscardOver(){
+        if(checknum == indexnum && discradTile != null){
+            players[indexnum].putInDiscardPile(discradTile);
+            discradTile = null;
+            indexnum = (indexnum + 1) % 4;
+            checknum = indexnum;
+            return true;
+        }
+        return false;
+    }
+    public void otherPlayerSkip(){
+        checknum = (checknum + 1) % 4;
+    }
+    public void otherPlayerChow(){
+        players[checknum].declareChow(discradTile);
+        discradTile = null;
+        indexnum = checknum;
+    }
+    public void otherPlayerPung(){
+        players[checknum].declarePung(discradTile);
+        discradTile = null;
+        indexnum = checknum;
+    }
+    public void otherPlayerKong(){
+        players[checknum].declareKong(discradTile);
+        discradTile = null;
+        indexnum = checknum;
+    }
+    public void otherPlayerMahjong(){
+        players[checknum].declareMahjong(discradTile);
+        discradTile = null;
+        indexnum = checknum;
     }
 
 }
