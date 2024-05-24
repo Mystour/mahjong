@@ -311,7 +311,6 @@ public class GameController {
 
         }
         game.otherPlayerChow();
-        game.currentPlayerDraw();
         handleRoomDataChanged(roomCode,"otherPlayerChow");
     }
     @GetMapping("/otherPlayerPung/{roomCode}")
@@ -323,7 +322,6 @@ public class GameController {
 
         }
         game.otherPlayerPung();
-        game.currentPlayerDraw();
         handleRoomDataChanged(roomCode,"otherPlayerPung");
     }
     @GetMapping("/otherPlayerKong/{roomCode}")
@@ -335,7 +333,6 @@ public class GameController {
 
         }
         game.otherPlayerKong();
-        game.currentPlayerDraw();
         handleRoomDataChanged(roomCode,"otherPlayerKong");
     }
     @GetMapping("/otherPlayerMahjong/{roomCode}")
@@ -350,226 +347,4 @@ public class GameController {
         handleRoomDataChanged(roomCode,"otherPlayerMahjong");
     }
 
-
-    @PostMapping("/getRoudInfo")
-    @ResponseBody
-    public ResultData<RoudInfoEntity> getRoudInfo(@RequestParam String roomCode) {
-        RoudInfoEntity roudInfoEntity = new RoudInfoEntity();
-        MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            return ResultData.fail(-1, "game not found");
-        }
-        Player[] players = game.getPlayers();
-        List<PlayerEntity> playerEntitys = new ArrayList<>();
-        for (Player item : players) {
-            PlayerEntity playerEntity = new PlayerEntity();
-            playerEntity.setUserName(roomCode);
-            String userName = gameService.getUserName(item);
-            playerEntity.setUserName(userName);
-            if (item.isBanker()) {
-                playerEntity.setAlias("庄家");
-                roudInfoEntity.setOwn(playerEntity);
-            }
-            playerEntity.setAlias("闲家");
-            playerEntitys.add(playerEntity);
-        }
-        roudInfoEntity.setPlayers(playerEntitys);
-        return ResultData.success(roudInfoEntity);
-    }
-
-    @PostMapping("/take")
-    @ResponseBody
-    public ResultData<TakeEntity> take(@RequestParam String roomCode, @RequestParam String userName) {
-        Player player = gameService.getPlayer(roomCode, userName);
-        if (player == null) {
-            return ResultData.fail(-1, "player is not found");
-        }
-        Tile tile = player.drawTile();
-        TakeEntity takeEntity = new TakeEntity();
-        takeEntity.setTake(tile);
-        ArrayList<Option> raceTypes = new ArrayList<>();
-        if (!player.isCanKong()) {
-            Option operate = new Option();
-            operate.setOperationType(OperationType.Kong);
-            List<Tile> operateTiles = new ArrayList<>();
-            operateTiles.add(tile);
-            operate.setTiles(operateTiles);
-            raceTypes.add(operate);
-        }
-
-        if (player.isCanMahjong()) {
-            Option operate = new Option();
-            operate.setOperationType(OperationType.Hu);
-            List<Tile> operateTiles = new ArrayList<>();
-            operateTiles.add(tile);
-            operate.setTiles(operateTiles);
-            raceTypes.add(operate);
-        }
-
-        List<Tile> chows = player.getHand().getChows();
-        List<Tile> pungs = player.getHand().getPungs();
-        List<Tile> kongs = player.getHand().getKongs();
-        List<Tile> discards = player.getHand().getDiscards();
-        List<Tile>[] handAllTypeCards = player.getHand().gethandcard();
-        List<Tile> handCars = new ArrayList<>();
-        for (List<Tile> item : handAllTypeCards) {
-            handCars.addAll(item);
-        }
-        takeEntity.setChows(chows);
-        takeEntity.setPungs(pungs);
-        takeEntity.setKongs(kongs);
-        takeEntity.setOuts(discards);
-        takeEntity.setHands(handCars);
-
-        TakeMessage msg = new TakeMessage();
-        msg.setWho(userName);
-        sendTake(roomCode, msg);
-
-        return ResultData.success(takeEntity);
-    }
-
-    @PostMapping("/put")
-    @ResponseBody
-    public ResultData<PutEntity> put(@RequestParam String roomCode, @RequestParam String userName,
-                                     @RequestParam Tile tile) {
-        Player player = gameService.getPlayer(roomCode, userName);
-        if (player == null) {
-            return ResultData.fail(-1, "player is not found");
-        }
-        player.discardTile(tile);
-        PutEntity puEntity = new PutEntity();
-        puEntity.setPut(tile);
-        List<Tile> chows = player.getHand().getChows();
-        List<Tile> pungs = player.getHand().getPungs();
-        List<Tile> kongs = player.getHand().getKongs();
-        List<Tile> discards = player.getHand().getDiscards();
-        List<Tile>[] handAllTypeCards = player.getHand().gethandcard();
-        List<Tile> handCars = new ArrayList<>();
-        for (List<Tile> item : handAllTypeCards) {
-            handCars.addAll(item);
-        }
-        puEntity.setChows(chows);
-        puEntity.setPungs(pungs);
-        puEntity.setKongs(kongs);
-        puEntity.setOuts(discards);
-        puEntity.setHands(handCars);
-
-        PutMessage msg = new PutMessage();
-        msg.setWho(userName);
-        msg.setTile(tile);
-        sendPut(roomCode, msg);
-
-        return ResultData.success(puEntity);
-    }
-
-    @PostMapping("/determine")
-    @ResponseBody
-    public ResultData<DetermineEntity> determine(@RequestParam String roomCode, @RequestParam String userName,
-                                                 @RequestParam Tile tile) {
-        Player player = gameService.getPlayer(roomCode, userName);
-        if (player == null) {
-            return ResultData.fail(-1, "player is not found");
-        }
-        DetermineEntity determineEntity = new DetermineEntity();
-        List<Option> options = new ArrayList<>();
-
-        player.checkDecisionCondition(tile);
-        if (player.isCanChow()) {
-            Option option = new Option();
-            List<Tile> tiles = new ArrayList<>();
-            tiles.add(tile);
-            option.setTiles(tiles);
-            option.setOperationType(OperationType.Chow);
-            options.add(option);
-        }
-        if (player.isCanPung()) {
-            Option option = new Option();
-            List<Tile> tiles = new ArrayList<>();
-            tiles.add(tile);
-            option.setTiles(tiles);
-            option.setOperationType(OperationType.Pung);
-            options.add(option);
-        }
-        if (player.isCanKong()) {
-            Option option = new Option();
-            List<Tile> tiles = new ArrayList<>();
-            tiles.add(tile);
-            option.setTiles(tiles);
-            option.setOperationType(OperationType.Kong);
-            options.add(option);
-        }
-        if (player.isCanMahjong()) {
-            Option option = new Option();
-            List<Tile> tiles = new ArrayList<>();
-            tiles.add(tile);
-            option.setTiles(tiles);
-            option.setOperationType(OperationType.Hu);
-            options.add(option);
-        }
-        determineEntity.setOptions(options);
-        return ResultData.success(determineEntity);
-    }
-
-    @PostMapping("/operate")
-    @ResponseBody
-    public ResultData<OperateEntity> operate(@RequestParam String roomCode, @RequestParam String userName,
-                                             OperationType operationType,
-                                             Tile[] tiles) {
-        Player player = gameService.getPlayer(roomCode, userName);
-        if (player == null) {
-            return ResultData.fail(-1, "player is not found");
-        }
-        if (operationType == OperationType.Chow) {
-            player.declareChow(tiles[0]);
-        } else if (operationType == OperationType.Pung) {
-            player.declarePung(tiles[0]);
-        } else if (operationType == OperationType.Kong) {
-            player.declareKong(tiles[0]);
-        } else if (operationType == OperationType.Hu) {
-            player.declareMahjong(tiles[0]);
-        }
-        OperateEntity operateEntity = new OperateEntity();
-        List<Tile> chows = player.getHand().getChows();
-        List<Tile> pungs = player.getHand().getPungs();
-        List<Tile> kongs = player.getHand().getKongs();
-        List<Tile> discards = player.getHand().getDiscards();
-        List<Tile>[] handAllTypeCards = player.getHand().gethandcard();
-        List<Tile> handCars = new ArrayList<>();
-        for (List<Tile> item : handAllTypeCards) {
-            handCars.addAll(item);
-        }
-        operateEntity.setChows(chows);
-        operateEntity.setPungs(pungs);
-        operateEntity.setKongs(kongs);
-        operateEntity.setOuts(discards);
-        operateEntity.setHands(handCars);
-        operateEntity.setTargetTile(tiles[0]);
-
-        OperateMessage msg = new OperateMessage();
-        msg.setWho(userName);
-        msg.setOperationType(operationType);
-
-        sendOperate(roomCode, msg);
-        return ResultData.success(operateEntity);
-    }
-
-    public void sendTake(String roomCode, TakeMessage msg) {
-        template.convertAndSend("/game/room/" + roomCode, msg);
-    }
-
-    public void sendPut(String roomCode, PutMessage msg) {
-        template.convertAndSend("/game/room/" + roomCode, msg);
-    }
-
-    public void sendDetermine(String roomCode, DetermineMessage msg) {
-        template.convertAndSend("/game/room/" + roomCode, msg);
-    }
-
-    public void sendOperate(String roomCode, OperateMessage msg) {
-        template.convertAndSend("/game/room/" + roomCode, msg);
-    }
-
-    public void sendSkip(String roomCode, SkipMessage msg) {
-        template.convertAndSend("/game/room/" + roomCode, msg);
-    }
 }

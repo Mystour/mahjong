@@ -183,6 +183,9 @@ public class Hand {
 
     public boolean canChow(Tile tile){
         TileType type = tile.getType();
+        if(type == TileType.WIND || type == TileType.DRAGON){
+            return false;
+        }
         int typeindex = translateType(type);
         int number = tile.getNumber();
         int left = 0;
