@@ -373,6 +373,24 @@ Player.prototype.updateHandWithImages_other = function () {
     var handDiv = document.getElementById(this.id);
     handDiv.innerHTML = '';
     var _this = this;
+
+    // 根据玩家的方位来决定显示哪一张图片
+    var cardImage;
+    switch (this.id) {
+        case 'player2':
+            cardImage = '/images/TileType2/east.png';
+            break;
+        case 'player3':
+            cardImage = '/images/TileType2/north.png';
+            break;
+        case 'player4':
+            cardImage = '/images/TileType2/west.png';
+            break;
+        default:
+            console.error('Invalid player id:', this.id);
+            return;
+    }
+
     for (let i = 0; i < _this.discardingTile.length; i++) {
         let img = document.createElement('img');
         img.src = _this.discardingTile[i];
@@ -382,8 +400,16 @@ Player.prototype.updateHandWithImages_other = function () {
     }
     for (let i = 0; i < _this.cards.length; i++) {
         let img = document.createElement('img');
-        img.src = _this.cards[i];
-        img.classList.add('card', 'small-card'); // Add classes to the img element
+        img.src = cardImage; // 使用预定的图片
+        if (this.id === 'player2') {
+            img.classList.add('card', 'small-card-side'); // Add classes to the img element
+            img.style.transform = 'rotate(105deg)';
+        } else if (this.id === 'player3') {
+            img.classList.add('card', 'small-card-back'); // Add classes to the img element
+        } else {
+            img.classList.add('card', 'small-card-side'); // Add classes to the img element
+            img.style.transform = 'rotate(-105deg)';
+        }
         img.addEventListener('click', function (event) {
             console.log('Clicked on card with src:', img);
         });
