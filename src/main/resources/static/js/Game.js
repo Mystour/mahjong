@@ -1,4 +1,3 @@
-
 var stompClient = null;
 var socket = new SockJS('/room');
 var roomCode;
@@ -290,7 +289,7 @@ Player.prototype.updateHandWithImages_self = async function () {
         let img = document.createElement('img');
         img.src = _this.discardingTile[i];
         img.classList.add('card', 'small-card1'); // Add classes to the img element
-        img.style.transform = 'translateY(-40px)';
+        img.style.transform = 'translateY(-40px) translateX(40px)';
         handDiv.appendChild(img);
     }
     //这是画手牌的地方，被选择牌的变化情况可以改，但是不要改selectedImgObj这种判断，选中的牌会在弃牌时用上
@@ -395,7 +394,13 @@ Player.prototype.updateHandWithImages_other = function () {
         let img = document.createElement('img');
         img.src = _this.discardingTile[i];
         img.classList.add('card', 'small-card1'); // Add classes to the img element
-        img.style.transform = 'translateY(-40px)';
+        if (this.id === 'player2') {
+            img.style.transform = 'translateY(-40px) translateX(40px) rotate(15deg)';
+        } else if (this.id === 'player3') {
+            img.style.transform = 'translateY(-40px) translateX(40px)';
+        } else {
+            img.style.transform = 'translateY(-40px) translateX(40px)  rotate(-15deg)';
+        }
         handDiv.appendChild(img);
     }
     for (let i = 0; i < _this.cards.length; i++) {
