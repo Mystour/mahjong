@@ -280,7 +280,7 @@ Player.prototype.updateHandWithImages_self = async function () {
         return;
     }
 
-    var handDiv = document.getElementById(this.id);
+    var handDiv = document.getElementById('player1');
     handDiv.innerHTML = '';
     var _this = this; // 保存当前上下文
     let selectedImgObj = {img: null};// 用于存储当前选中的图片
@@ -312,13 +312,18 @@ Player.prototype.updateHandWithImages_self = async function () {
         });
         handDiv.appendChild(img);
     }
-    //以下是弃牌和明牌，都堆在手牌后面了，大小不一样
+    // 以下是弃牌和明牌，都堆在手牌后面了，大小不一样
+
+    //更新弃牌堆
+    var discardPileDiv = document.getElementById('discardPile1'); // 把player1换成1
+    discardPileDiv.innerHTML = '';
     for (let i = 0; i < _this.discards.length; i++) {
         let img = document.createElement('img');
         img.src = _this.discards[i];
         img.classList.add('card', 'small-card1'); // Add classes to the img element
-        handDiv.appendChild(img);
+        discardPileDiv.appendChild(img);
     }
+
     for (let i = 0; i < _this.showcards.length; i++) {
         let img = document.createElement('img');
         img.src = _this.showcards[i];
@@ -395,7 +400,7 @@ Player.prototype.updateHandWithImages_other = function () {
         img.src = _this.discardingTile[i];
         img.classList.add('card', 'small-card1'); // Add classes to the img element
         if (this.id === 'player2') {
-            img.style.transform = 'translateY(-40px) translateX(40px) rotate(15deg)';
+            img.style.transform = 'translateY(-40px) translateX(-40px) rotate(15deg)';
         } else if (this.id === 'player3') {
             img.style.transform = 'translateY(-40px) translateX(40px)';
         } else {
@@ -411,6 +416,7 @@ Player.prototype.updateHandWithImages_other = function () {
             img.style.transform = 'rotate(105deg)';
         } else if (this.id === 'player3') {
             img.classList.add('card', 'small-card-back'); // Add classes to the img element
+            img.style.transform = 'rotate(180deg)';
         } else {
             img.classList.add('card', 'small-card-side'); // Add classes to the img element
             img.style.transform = 'rotate(-105deg)';
@@ -420,12 +426,18 @@ Player.prototype.updateHandWithImages_other = function () {
         });
         handDiv.appendChild(img);
     }
-    for (let i = 0; i < this.discards.length; i++) {
+
+    // 更新弃牌堆
+    var discardPileDiv = document.getElementById('discardPile' + this.id.split('player')[1]); // 把playeri换成i
+    discardPileDiv.innerHTML = '';
+    for (let i = 0; i < _this.discards.length; i++) {
         let img = document.createElement('img');
-        img.src = this.discards[i];
+        img.src = _this.discards[i];
         img.classList.add('card', 'small-card1'); // Add classes to the img element
-        handDiv.appendChild(img);
+
+        discardPileDiv.appendChild(img);
     }
+
     for (let i = 0; i < this.showcards.length; i++) {
         let img = document.createElement('img');
         img.src = this.showcards[i];
