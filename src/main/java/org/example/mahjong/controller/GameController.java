@@ -192,7 +192,7 @@ public class GameController {
         List<Tile> pungs = player.getHand().getPungs();
         List<Tile> kongs = player.getHand().getKongs();
         List<Tile> discards = player.getHand().getDiscards();
-        List<Tile>[] handAllTypeCards = player.getHand().getHandcard();
+        List<Tile>[] handAllTypeCards = player.getHand().gethandcard();
         List<Tile> handCars = new ArrayList<>();
         for (List<Tile> item : handAllTypeCards) {
             handCars.addAll(item);
@@ -225,7 +225,7 @@ public class GameController {
         List<Tile> pungs = player.getHand().getPungs();
         List<Tile> kongs = player.getHand().getKongs();
         List<Tile> discards = player.getHand().getDiscards();
-        List<Tile>[] handAllTypeCards = player.getHand().getHandcard();
+        List<Tile>[] handAllTypeCards = player.getHand().gethandcard();
         List<Tile> handCars = new ArrayList<>();
         for (List<Tile> item : handAllTypeCards) {
             handCars.addAll(item);
@@ -315,7 +315,7 @@ public class GameController {
         List<Tile> pungs = player.getHand().getPungs();
         List<Tile> kongs = player.getHand().getKongs();
         List<Tile> discards = player.getHand().getDiscards();
-        List<Tile>[] handAllTypeCards = player.getHand().getHandcard();
+        List<Tile>[] handAllTypeCards = player.getHand().gethandcard();
         List<Tile> handCars = new ArrayList<>();
         for (List<Tile> item : handAllTypeCards) {
             handCars.addAll(item);
