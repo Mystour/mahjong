@@ -18,14 +18,18 @@
 </head>
 <body>
     <div id="player1" class="hand south"></div>
+        <div id="discardPile1" class="discardPile discardPile-south"></div>
     <div id="player2" class="hand east"></div>
+        <div id="discardPile2" class="discardPile discardPile-east"></div>
     <div id="player3" class="hand north"></div>
+        <div id="discardPile3" class="discardPile discardPile-north"></div>
     <div id="player4" class="hand west"></div>
+        <div id="discardPile4" class="discardPile discardPile-west"></div>
 
     <!-- 引入game.ts -->
-    <script>console.log("Before game.js")</script>
-    <script type="application/javascript" th:src="@{/js/game.js}"></script>
-    <script>console.log("After game.js")</script>
+    <script>console.log("Before Game.js")</script>
+    <script type="application/javascript" th:src="@{/js/Game.js}"></script>
+    <script>console.log("After Game.js")</script>
 
 </body>
 </html>

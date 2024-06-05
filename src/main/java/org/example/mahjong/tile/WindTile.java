@@ -6,18 +6,13 @@ public class WindTile extends Tile {
     }
     @Override
     public String toString() {
-        switch (getNumber()){
-            case 0:
-                return "东风";
-            case 1:
-                return "南风";
-            case 2:
-                return "西风";
-            case 3:
-                return "北风";
-            default:
-                return "?";
-        }
+        return switch (getNumber()) {
+            case 0 -> "东风";
+            case 1 -> "南风";
+            case 2 -> "西风";
+            case 3 -> "北风";
+            default -> "?";
+        };
 
     }
 }

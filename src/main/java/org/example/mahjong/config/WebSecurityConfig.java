@@ -17,7 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig {
+public class WebSecurityConfig  {
 
     private final PlayerDetailsService playerDetailsService;
     private final PasswordEncoder passwordEncoder;

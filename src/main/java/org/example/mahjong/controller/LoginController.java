@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 @Controller
 public class LoginController {
-    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+    static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     private final PlayerRepository playerRepository;
     private final PasswordEncoder passwordEncoder;

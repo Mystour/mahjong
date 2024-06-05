@@ -3,7 +3,6 @@ package org.example.mahjong.tile;
 public abstract class Tile implements Comparable<Tile> {
     private TileType type;
     private int number;
-    private boolean isCross = false;
 
     public Tile(TileType type, int number) {
         this.type = type;
@@ -42,7 +41,7 @@ public abstract class Tile implements Comparable<Tile> {
 
 
     public String getImageUrl() {
-        return "/images/TileType/" + type.toString() +( number+1) + ".png";
+        return "/images/TileType2/" + type.toString() +( number+1) + ".png";
     }
 }
 

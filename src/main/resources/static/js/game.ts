@@ -1,3 +1,4 @@
+
 declare var $: any;
 
 class Player {
@@ -45,7 +46,7 @@ $(function() {
                         type: 'GET',
                         success: function(data: any[]) {
                             for (let i = 0; i < 4; i++) {
-                                let player = new Player('player' +( i + 1), data[(currentUserIndex + i) % 4]);
+                                let player = new Player('player'+(i + 1), data[(currentUserIndex + i) % 4]);
                                 player.updateHandWithImages();
                             }
                         }
@@ -55,3 +56,4 @@ $(function() {
         }
     });
 });
+

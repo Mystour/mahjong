@@ -46,4 +46,8 @@ public class PlayerInfo {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public void setId(long l) {
+        id = l;
+    }
 }
