@@ -8,67 +8,40 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.springframework.stereotype.Component;
+/**
+ * The Hand class represents a player's hand in a tile-based game.
+ * It manages the tiles in the player's hand, as well as the tiles that have been discarded or involved in special operations.
+ * The class supports operations like adding and discarding tiles, checking for possible moves like chow, pung, and kong,
+ * and verifying if the hand is in a winning state.
+ */
 
-@Component
 public class Hand {
-    public List<Tile>[] gethandcard() {
-        return handcard;
-    }
 
-    public List<Tile> getPungs() {
-        return pungs;
-    }
-
-    public List<Tile> getChows() {
-        return chows;
-    }
-
-    public List<Tile> getKongs() {
-        return kongs;
-    }
-
-    public List<Tile> getDiscards() {
-        return discards;
-    }
-
-    public int getPair() {
-        return pair;
-    }
-
-    public int getTriple() {
-        return triple;
-    }
-
-    public int getOthers() {
-        return others;
-    }
-
-    public int getSequence() {
-        return sequence;
-    }
-
-    public void clearHand() {
-        handcard = new List[5];
-        for (int i = 0; i < handcard.length; i++) {
-            handcard[i] = new LinkedList<>();
-        }
-        chows.clear();
-        pungs.clear();
-        kongs.clear();
-    }
+    //Tiles in the player's hand are placed in a List with a specific index,
+    //and tiles of each type are stored in an array
     private List<Tile>[] handcard;
-    private List<Tile> pungs; //碰的牌
-    private List<Tile> chows; //吃的牌
-    private List<Tile> kongs;// 杠的牌
-    private List<Tile> discards; // 弃掉的牌
+    //Tiles that the player has made special operations on are stored
+    //in the specified list, including discards, chow, pung, and kong piles
+    private final List<Tile> discards;
+    private final List<Tile> pungs;
+    private final List<Tile> chows;
+    private final List<Tile> kongs;
+
+    //Pair refers to two tiles that have the same class and the same value
     private int pair = 0;
+    //Triple refers to three tiles that have the same class and the same value
     private int triple = 0;
-    private int others = 0; // 无关单张牌
-    private int sequence = 0; // 顺子
+    //Sequence refers to three tiles that have the same class and the adjacent value
+    private int sequence = 0;
+    //Others refers to tile not belong to pair, triple and sequence
+    private int others = 0;
 
 
-
+    /**
+     * Constructor for the Hand class.
+     * Initializes the lists for storing tiles and special operation piles.
+     *
+     */
     public Hand() {
         pungs = new ArrayList<>();
         chows = new ArrayList<>();
@@ -79,15 +52,97 @@ public class Hand {
         }
         discards = new ArrayList<>();
     }
-    //for test
-    public void printCard(){
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < handcard[i].size(); j++) {
-                System.out.print(handcard[i].get(j).toString()+" ");
-            }
+
+
+    /**
+     * Clears the hand, resetting all tiles and special operation piles.
+     */
+    public void clearHand() {
+        handcard = new List[5];
+        for (int i = 0; i < handcard.length; i++) {
+            handcard[i] = new LinkedList<>();
         }
+        chows.clear();
+        pungs.clear();
+        kongs.clear();
     }
-    //将牌的类型转换成索引
+
+
+    /**
+     * Returns the list of tiles in the player's hand.
+     * @return an array of lists containing tiles of each type
+     */
+    public List<Tile>[] gethandcard() {
+        return handcard;
+    }
+
+    /**
+     * Returns the list of kongs.
+     * @return the list of kongs
+     */
+    public List<Tile> getKongs() {
+        return kongs;
+    }
+
+    /**
+     * Returns the list of pungs.
+     * @return the list of pungs
+     */
+    public List<Tile> getPungs() {
+        return pungs;
+    }
+
+    /**
+     * Returns the list of chows.
+     * @return the list of chows
+     */
+    public List<Tile> getChows() {
+        return chows;
+    }
+
+    /**
+     * Returns the list of discarded tiles.
+     * @return the list of discarded tiles
+     */
+    public List<Tile> getDiscards() {
+        return discards;
+    }
+
+    /**
+     * Returns the count of pairs in the hand.
+     * @return the count of pairs
+     */
+    public int getPair() {
+        return pair;
+    }
+
+    /**
+     * Returns the count of triples in the hand.
+     * @return the count of triples
+     */
+    public int getTriple() {
+        return triple;
+    }
+
+    /**
+     * Returns a list of all tiles in the player's hand.
+     * @return a combined list of all tiles in the hand
+     */
+    public List<Tile> getAllHandcard() {
+        List<Tile> allHandCards = new ArrayList<>();
+        allHandCards.addAll(handcard[0]);
+        allHandCards.addAll(handcard[1]);
+        allHandCards.addAll(handcard[2]);
+        allHandCards.addAll(handcard[3]);
+        allHandCards.addAll(handcard[4]);
+        return allHandCards;
+    }
+
+    /**
+     * Translates a tile type to an index for storing in the hand.
+     * @param type the tile type
+     * @return the corresponding index
+     */
     public static int translateType(TileType type){
         return switch (type) {
             case BAMBOO -> 0;
@@ -97,7 +152,30 @@ public class Hand {
             case WIND -> 4;
         };
     }
+    //可以作为的report的例子
+//    public static int translateType(TileType type){
+//        switch (type) {
+//            case BAMBOO:
+//                return 0;
+//            case CHARACTER:
+//                return 1;
+//            case DOT:
+//                return 2;
+//            case DRAGON:
+//                return 3;
+//            case WIND:
+//                return 4;
+//            default:
+//                System.out.println("Non-existent tile, what happen?");
+//                return -1;
+//        }
+//    }
 
+    /**
+     * Creates a deep copy of the handcard array.
+     * @param handcard the original handcard array
+     * @return a deep copy of the handcard array
+     */
     public List<Tile>[] deepCopyHandcard(List<Tile>[] handcard) {
         List<Tile>[] copy = new List[handcard.length];
         for (int i = 0; i < handcard.length; i++) {
@@ -106,6 +184,10 @@ public class Hand {
 
         return copy;
     }
+    /**
+     * Returns a combined list of all tiles including those in handcard, chows, pungs, and kongs.
+     * @return a combined list of all tiles
+     */
     public List<Tile>[] allCard(){
         List<Tile>[] allcard = deepCopyHandcard(handcard);
         for(Tile tile : chows){
@@ -123,7 +205,11 @@ public class Hand {
         return allcard;
     }
 
-    //添加牌并返回它的索引
+    /**
+     * Adds a tile to the hand.
+     * @param tile the tile to be added
+     * @return the index of the tile type
+     */
     public int addCard(Tile tile){
         int index = translateType(tile.getType());
         if(index != -1){
@@ -131,27 +217,13 @@ public class Hand {
         }
         return index;
     }
-    //弃牌阶段我觉得可以分为，当前玩家弃掉指定牌，然后系统先保留这张牌
-    //如果有其他玩家需要操作，再将这张牌移动到别人的手牌中
-    //如果没有玩家需要操作，然后再把这张牌放入弃牌堆
-    public Tile discard(TileType type, int number){
-        Tile tile = findTile(type, number);
-        if(tile != null){
-            handcard[translateType(type)].remove(tile);
-        }else{
-            System.out.println("错误输入，没有这张牌。");
-        }
-        return tile;
-    }
-    //这个方法需要牌的对象
-    public Tile discard(Tile tile){
-        handcard[translateType(tile.getType())].remove(tile);
-        return tile;
-    }
-    public void addDiscards(Tile tile){
-        discards.add(tile);
-    }
-    //根据牌型和值找到牌，如果没找到返回null, 因为可能在吃碰杠上也用上所以写出来
+
+    /**
+     * Finds a tile of a specific type and number in the hand.
+     * @param type the tile type
+     * @param number the tile number
+     * @return the found tile, or null if not found
+     */
     public Tile findTile(TileType type, int number){
         int index = translateType(type);
         if(index != -1){
@@ -163,16 +235,63 @@ public class Hand {
         }
         return null;
     }
-    //只排序指定索引的牌，可以在每次抽牌时调用，减少计算
+
+    /**
+     * Sorts the tiles of a specific type in the hand.
+     * @param i the index of the tile type to be sorted
+     */
     public void sortCard(int i){
         Collections.sort(handcard[i]);
     }
+
+    /**
+     * Sorts all tiles in the hand.
+     */
     public void sortAllCard(){
         for (int i = 0; i < 5; i++) {
             sortCard(i);
         }
     }
+    /**
+     * Discards a tile of a specific type and number.
+     * @param type the tile type
+     * @param number the tile number
+     * @return the discarded tile, or null if not found
+     */
+    public Tile discard(TileType type, int number){
+        Tile tile = findTile(type, number);
+        if(tile != null){
+            handcard[translateType(type)].remove(tile);
+        }else{
+            System.out.println("Non-existent tile, what happen?");
+        }
+        return tile;
+    }
 
+    /**
+     * Discards a specific tile.
+     * @param tile the tile to be discarded
+     * @return the discarded tile
+     */
+    protected Tile discard(Tile tile){
+        handcard[translateType(tile.getType())].remove(tile);
+        return tile;
+    }
+
+    /**
+     * Adds a tile to the list of discards.
+     * @param tile the tile to be added
+     */
+    public void excuteDiscard(Tile tile){
+        discards.add(tile);
+    }
+
+
+    /**
+     * Checks if a specific tile can form a chow with the tiles in the hand.
+     * @param tile the tile to be checked
+     * @return true if a chow can be formed, false otherwise
+     */
     public boolean canChow(Tile tile){
         TileType type = tile.getType();
         if(type == TileType.WIND || type == TileType.DRAGON){
@@ -193,7 +312,11 @@ public class Hand {
         return left >= 1 && right >= 1;
     }
 
-
+    /**
+     * Checks if a specific tile can form a pung with the tiles in the hand.
+     * @param tile the tile to be checked
+     * @return true if a pung can be formed, false otherwise
+     */
     public boolean canPung(Tile tile){
         int count = 0;
         for (Tile t : handcard[translateType(tile.getType())]) {
@@ -203,16 +326,58 @@ public class Hand {
         }
         return count == 2;
     }
+    /**
+     * Checks if a specific tile can form a kong with the tiles in the hand.
+     * @param tile the tile to be checked
+     * @return true if a kong can be formed, false otherwise
+     */
+    public boolean canKong(Tile tile) {
+        int count = 0;
+        for (Tile t : handcard[translateType(tile.getType())]) {
+            if (t.getNumber() == tile.getNumber()) {
+                count++;
+            }
+        }
+        return count == 3;
+    }
 
-    // 添加吃到明牌堆
+    /**
+     * Adds a tile to the list of chows.
+     * @param tile the tile to be added
+     */
     public void addToChow(Tile tile){
         chows.add(tile);
     }
 
-    //添加碰到明牌堆
+    /**
+     * Adds a tile to the list of pungs.
+     * @param tile the tile to be added
+     */
     public void addToPung(Tile tile) {
         pungs.add(tile);
     }
+    /**
+     * Adds a tile to the list of kongs.
+     * @param tile the tile to be added
+     */
+    public void addToKongs(Tile tile) {
+        kongs.add(tile);
+    }
+    /**
+     * Executes the action of forming a pung with a specific tile.
+     * @param tile the tile to form a pung with
+     */
+    public void executePung(Tile tile){
+        if (canPung(tile)) {
+            addToPung(discard(tile.getType(), tile.getNumber()));
+            addToPung(discard(tile.getType(), tile.getNumber()));
+            addToPung(tile);
+        }
+    }
+    /**
+     * Executes the action of forming a chow with a specific tile.
+     * @param tile the tile to form a chow with
+     */
     public void executeChows(Tile tile){
         if (canChow(tile)) {
             addToChow(discard(tile.getType(), tile.getNumber() - 1));
@@ -221,69 +386,50 @@ public class Hand {
         }
 
     }
-    public void executePung(Tile tile){
-        if (canPung(tile)) {  // 移除两张相同的牌，并加入到碰的列表中
-            addToPung(discard(tile.getType(), tile.getNumber()));
-            addToPung(discard(tile.getType(), tile.getNumber()));
-            addToPung(tile); // 添加第三张牌
-        }
-    }
-
-    // 添加一个牌到明牌区的杠
-    public void addToKongs(Tile tile) {
-        kongs.add(tile);
-    }
-
-    // 检查是否可以杠
-    public boolean canKong(Tile tile) {
-        // 计算手牌中与tile相同的牌的数量
-        int count = 0;
-        for (Tile t : handcard[translateType(tile.getType())]) {
-            if (t.getNumber() == tile.getNumber()) {
-                count++;
-            }
-        }
-        // 如果有三张相同的牌，则可以明杠；如果摸到第四张，则可以暗杠
-        return count == 3;
-    }
-
-    // 执行杠操作
+    /**
+     * Executes the action of forming a kong with a specific tile.
+     * @param tile the tile to form a kong with
+     */
     public void executeKong(Tile tile) {
         if (canKong(tile)) {
-            // 移除三张相同的牌，并加入到杠的列表中
             for (int i = 0; i < 3; i++) { // 移除三张
                 addToKongs(discard(tile.getType(), tile.getNumber()));
             }
-            addToKongs(tile); // 添加第四张牌
+            addToKongs(tile);
         }
     }
 
-
+    /**
+     * Checks if the hand is in a valid Mahjong state when a tile is drawn.
+     * @param drawnTile the tile that was drawn
+     * @return true if the hand is valid, false otherwise
+     */
     public boolean isValidMahjong_Other(Tile drawnTile){
         List<Tile>[] copyofhandcard = deepCopyHandcard(handcard);
         copyofhandcard[translateType(drawnTile.getType())].add(drawnTile);
         Collections.sort(copyofhandcard[translateType(drawnTile.getType())]);
-        for (int i = 0; i < handcard.length; i++) {
-            for (int j = 0; j < copyofhandcard[i].size(); j++) {
-                System.out.println(copyofhandcard[i].get(j));
-            }
-        }
-        System.out.println();
         return isValidMahjong(copyofhandcard);
     }
-
+    /**
+     * Checks if the hand is in a valid Mahjong state for the player.
+     * @return true if the hand is valid, false otherwise
+     */
     public boolean isValidMahjong_Myself(){
         return isValidMahjong(handcard);
     }
-
+    /**
+     * Checks if the hand is in a valid Mahjong state.
+     * @param handcard the hand to be checked
+     * @return true if the hand is valid, false otherwise
+     */
     public boolean isValidMahjong(List<Tile>[] handcard) {
         pair = 0;
         triple = 0;
         sequence = 0;
         others = 0;
-        for (List<Tile> tiles : handcard) { //遍历五种类型的list
+        for (List<Tile> tiles : handcard) { // Iterate through the five types of lists
             int index = 0;
-            while (index < tiles.size()) { //遍历每个list里的tile
+            while (index < tiles.size()) { // Iterate through each tile in the list
                 Tile currentTile = tiles.get(index);
 
                 if (index + 1 < tiles.size()) {
@@ -291,21 +437,21 @@ public class Hand {
 
                     if (index + 2 < tiles.size()) {
                         Tile nextNextTile = tiles.get(index + 2);
-                        if (isTriplet(currentTile, nextTile, nextNextTile)) { //看是不是刻子
+                        if (isTriplet(currentTile, nextTile, nextNextTile)) { // Check if it's a triplet
                             triple++;
-                            index += 3; // 跳过刻子
-                        } else if (isPair(currentTile, nextTile)) { //看是不是对子
+                            index += 3; // Skip the triplet
+                        } else if (isPair(currentTile, nextTile)) { // Check if it's a pair
                             pair++;
-                            index += 2; // 跳过对子
-                        } else if (isSequence(currentTile, nextTile, nextNextTile)) { // 看是不是顺子
+                            index += 2; // Skip the pair
+                        } else if (isSequence(currentTile, nextTile, nextNextTile)) { // Check if it's a sequence
                             sequence++;
-                            index += 3; // 跳过顺子
+                            index += 3; // Skip the sequence
                         } else {
                             others++;
                             index++;
                         }
                     } else {
-                        //末尾剩两张
+                        // Two tiles left at the end
                         if (isPair(currentTile, nextTile)) {
                             pair++;
                         } else {
@@ -314,75 +460,48 @@ public class Hand {
                         index += 2;
                     }
                 } else {
-                    //末尾剩一张
+                    // One tile left at the end
                     others++;
                     index++;
                 }
             }
         }
-        //判断有没有胡牌
-        //4个三个的，一个两个的，正常胡牌格式
-        if(pair + (kongs.size()/2) == 7){ //七小对
+        // Check for valid winning hand
+        // Normal winning hand format
+        if (pair + (kongs.size() / 2) == 7) { // Seven pairs
             return true;
         } else return pair == 1 && triple + sequence + ((chows.size() + pungs.size()) / 3) == 4;
 
     }
-    //判断是否为对子
+    /**
+     * Checks if two tiles form a pair.
+     * @param tile1 the first tile
+     * @param tile2 the second tile
+     * @return true if the tiles form a pair, false otherwise
+     */
     public static boolean isPair(Tile tile1, Tile tile2) {
         return tile1.compareTo(tile2) == 0;
     }
-    //判断是否为刻子
+    /**
+     * Checks if three tiles form a triplet.
+     * @param tile1 the first tile
+     * @param tile2 the second tile
+     * @param tile3 the third tile
+     * @return true if the tiles form a triplet, false otherwise
+     */
     public static boolean isTriplet(Tile tile1, Tile tile2, Tile tile3) {
         return tile1.compareTo(tile2) == 0 && tile2.compareTo(tile3) == 0;
     }
-    //判断是否为顺子
+    /**
+     * Checks if three tiles form a sequence.
+     * @param tile1 the first tile
+     * @param tile2 the second tile
+     * @param tile3 the third tile
+     * @return true if the tiles form a sequence, false otherwise
+     */
     public static boolean isSequence(Tile tile1, Tile tile2, Tile tile3) {
         return tile2.getNumber() - tile1.getNumber() == 1 && tile3.getNumber() - tile2.getNumber() == 1;
 
     }
 
-    //print all the cards in the player's hand
-    public void printCards() {
-        System.out.println("玩家的手牌：");
-        for (List<Tile> cardList : handcard) {
-            for (Tile tile : cardList) {
-                System.out.print(tile + " ");
-            }
-        }
-        System.out.println();
-        System.out.println("玩家的弃牌堆：");
-        for (Tile tile : discards) {
-            System.out.print(tile + " ");
-        }
-        System.out.println();
-        System.out.println("玩家的明牌堆：");
-        for (Tile tile : chows) {
-            System.out.print(tile + " ");
-        }
-        for (Tile tile : pungs) {
-            System.out.print(tile + " ");
-        }
-        for (Tile tile : kongs) {
-            System.out.print(tile + " ");
-        }
-        System.out.println();
-    }
-    public void printCards_(){
-        System.out.println("玩家的手牌：");
-        for (List<Tile> cardList : handcard) {
-            for (Tile tile : cardList) {
-                System.out.print(tile + " ");
-            }
-        }
-    }
-
-    public List<Tile> getAllHandcard() {
-        List<Tile> allHandCards = new ArrayList<>();
-        allHandCards.addAll(handcard[0]);
-        allHandCards.addAll(handcard[1]);
-        allHandCards.addAll(handcard[2]);
-        allHandCards.addAll(handcard[3]);
-        allHandCards.addAll(handcard[4]);
-        return allHandCards;
-    }
 }
