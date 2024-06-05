@@ -19,30 +19,23 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.example.mahjong.player.*;
+
 import org.example.mahjong.tile.*;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.example.mahjong.dto.*;
-import org.example.mahjong.dto.message.DetermineMessage;
-import org.example.mahjong.dto.message.OperateMessage;
-import org.example.mahjong.dto.message.OperationType;
-import org.example.mahjong.dto.message.PutMessage;
-import org.example.mahjong.dto.message.SkipMessage;
-import org.example.mahjong.dto.message.TakeMessage;
 
 @Controller
 public class GameController {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final GameService gameService;
 
-    @Autowired
-    public SimpMessagingTemplate template;
+    public final SimpMessagingTemplate template;
 
     @Autowired
-    public GameController(SimpMessagingTemplate simpMessagingTemplate, GameService gameService) {
+    public GameController(SimpMessagingTemplate simpMessagingTemplate, GameService gameService, SimpMessagingTemplate template) {
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.gameService = gameService;
+        this.template = template;
     }
 
 
@@ -204,9 +197,6 @@ public class GameController {
     @ResponseBody
     public void endGame(@PathVariable String roomCode) {
         MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-
-        }
         game.endGame();
         handleRoomDataChanged(roomCode,"currentPlayerDraw");
     }
@@ -246,10 +236,6 @@ public class GameController {
     @ResponseBody
     public void currentPlayerDraw(@PathVariable String roomCode) {
         MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
-
-        }
         game.currentPlayerDraw();
         handleRoomDataChanged(roomCode,"currentPlayerDraw");
     }
@@ -257,10 +243,6 @@ public class GameController {
     @ResponseBody
     public void currentPlayerKong(@PathVariable String roomCode) {
         MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
-
-        }
         game.currentPlayerKong();
         handleRoomDataChanged(roomCode,"currentPlayerKong");
     }
@@ -268,10 +250,6 @@ public class GameController {
     @ResponseBody
     public void currentPlayerMahjong(@PathVariable String roomCode) {
         MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
-
-        }
         game.currentPlayerMahjong();
         handleRoomDataChanged(roomCode,"currentPlayerMahjong");
     }
@@ -280,21 +258,15 @@ public class GameController {
     @ResponseBody
     public void discardOver(@PathVariable String roomCode) {
         MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
-
+        if (game != null) {
+            game.isdiscardOver();
         }
-        game.isdiscardOver();
         handleRoomDataChanged(roomCode,"discardOver");
     }
     @GetMapping("/otherPlayerSkip/{roomCode}")
     @ResponseBody
     public void otherPlayerSkip(@PathVariable String roomCode) {
         MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
-
-        }
         game.otherPlayerSkip();
         if(game.isdiscardOver()){
             game.currentPlayerDraw();
@@ -306,10 +278,6 @@ public class GameController {
     @ResponseBody
     public void otherPlayerChow(@PathVariable String roomCode) {
         MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
-
-        }
         game.otherPlayerChow();
         handleRoomDataChanged(roomCode,"otherPlayerChow");
     }
@@ -317,10 +285,6 @@ public class GameController {
     @ResponseBody
     public void otherPlayerPung(@PathVariable String roomCode) {
         MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
-
-        }
         game.otherPlayerPung();
         handleRoomDataChanged(roomCode,"otherPlayerPung");
     }
@@ -328,10 +292,7 @@ public class GameController {
     @ResponseBody
     public void otherPlayerKong(@PathVariable String roomCode) {
         MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
 
-        }
         game.otherPlayerKong();
         handleRoomDataChanged(roomCode,"otherPlayerKong");
     }
@@ -339,10 +300,6 @@ public class GameController {
     @ResponseBody
     public void otherPlayerMahjong(@PathVariable String roomCode) {
         MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
-
-        }
         game.otherPlayerMahjong();
         handleRoomDataChanged(roomCode,"otherPlayerMahjong");
     }
