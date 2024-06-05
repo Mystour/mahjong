@@ -1,7 +1,6 @@
 package org.example.mahjong.controller;
 
 import org.example.mahjong.service.GameService;
-import org.example.mahjong.dto.ReceiveMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

@@ -89,21 +89,13 @@ public class Hand {
     }
     //将牌的类型转换成索引
     public static int translateType(TileType type){
-        switch (type) {
-            case BAMBOO:
-                return 0;
-            case CHARACTER:
-                return 1;
-            case DOT:
-                return 2;
-            case DRAGON:
-                return 3;
-            case WIND:
-                return 4;
-            default:
-                System.out.println("Non-existent tile, why did it happen?");
-                return -1;
-        }
+        return switch (type) {
+            case BAMBOO -> 0;
+            case CHARACTER -> 1;
+            case DOT -> 2;
+            case DRAGON -> 3;
+            case WIND -> 4;
+        };
     }
 
     public List<Tile>[] deepCopyHandcard(List<Tile>[] handcard) {
@@ -125,8 +117,8 @@ public class Hand {
         for(Tile tile : kongs){
             allcard[translateType(tile.getType())].add(tile);
         }
-        for(int i = 0; i < allcard.length; i++){
-            Collections.sort(allcard[i]);
+        for (List<Tile> tiles : allcard) {
+            Collections.sort(tiles);
         }
         return allcard;
     }
@@ -198,10 +190,7 @@ public class Hand {
                 right++;
             }
         }
-        if(left >= 1 && right >= 1){
-            return true;
-        }
-        return false;
+        return left >= 1 && right >= 1;
     }
 
 
@@ -292,16 +281,16 @@ public class Hand {
         triple = 0;
         sequence = 0;
         others = 0;
-        for(int i = 0; i < handcard.length; i++){ //遍历五种类型的list
+        for (List<Tile> tiles : handcard) { //遍历五种类型的list
             int index = 0;
-            while (index < handcard[i].size()) { //遍历每个list里的tile
-                Tile currentTile = handcard[i].get(index);
+            while (index < tiles.size()) { //遍历每个list里的tile
+                Tile currentTile = tiles.get(index);
 
-                if (index + 1 < handcard[i].size()) {
-                    Tile nextTile = handcard[i].get(index + 1);
+                if (index + 1 < tiles.size()) {
+                    Tile nextTile = tiles.get(index + 1);
 
-                    if (index + 2 < handcard[i].size()) {
-                        Tile nextNextTile = handcard[i].get(index + 2);
+                    if (index + 2 < tiles.size()) {
+                        Tile nextNextTile = tiles.get(index + 2);
                         if (isTriplet(currentTile, nextTile, nextNextTile)) { //看是不是刻子
                             triple++;
                             index += 3; // 跳过刻子
@@ -332,13 +321,10 @@ public class Hand {
             }
         }
         //判断有没有胡牌
+        //4个三个的，一个两个的，正常胡牌格式
         if(pair + (kongs.size()/2) == 7){ //七小对
             return true;
-        } else if (pair == 1 && triple + sequence + ((chows.size()+pungs.size())/3) == 4) { //4个三个的，一个两个的，正常胡牌格式
-            return true;
-        }else{
-            return false;
-        }
+        } else return pair == 1 && triple + sequence + ((chows.size() + pungs.size()) / 3) == 4;
 
     }
     //判断是否为对子
