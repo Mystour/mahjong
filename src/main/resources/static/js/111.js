@@ -42,7 +42,6 @@ function connect() {
                 updateAllPlayersHandCards();
             });
             stompClient.subscribe('/topic/drawTileFeedback/' + roomCode, function (message) {
-                // 当接收到服务器端的消息时，执行更新所有玩家手牌数据的函数
                 console.log('Message received: ' + message.body);
 
             });
@@ -64,9 +63,10 @@ function reconnect() {
 connect(); // 初始化时建立连接
 
 var Player = /** @class */ (function () {
-    function Player(id, cards, discards, showcards, discardingTile, condition, isturn, ischecking) {
+    function Player(id, username, cards, discards, showcards, discardingTile, condition, isturn, ischecking) {
         //大部分信息都存在player类里了方便调用
         this.id = id;
+        this.username = username; // 添加这一行
         this.cards = cards;
         this.discards = discards;
         this.showcards = showcards;
@@ -79,12 +79,15 @@ var Player = /** @class */ (function () {
         this.hasMahjong = this.condition[4];
         this.isturn = isturn;
         this.ischecking = ischecking;
-        //这里被注释掉了，现在用不了
-        // this.usernames = usernames;
-        // this.scores = scores;
     }
     return Player;
 }());
+
+Player.prototype.updateGameProgress = function() {
+    // 调用全局函数来更新进度条和显示的玩家名
+    window.updateProgressBarAndPlayerNames(this.username);
+};
+
 //以下perform_xxx都是按钮，可以改一下按钮的格式和位置
 Player.prototype.perform_discard = function (handDiv, selectedImgObj) {
     // 创建按钮
@@ -229,28 +232,18 @@ Player.prototype.perform_mahjong = function (handDiv,_this) {
 
     handDiv.appendChild(button);
 };
+
 Player.prototype.perform_skip = function (handDiv) {
     var button = document.createElement('button');
     button.innerHTML = 'Skip';
     button.addEventListener('click', function() {
         // 禁用按钮，防止多次点击
         button.disabled = true;
-        fetch('/otherPlayerSkip/' + roomCode, {
-            method: 'GET'
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-            })
-            .catch(error => {
-                // 如果发生错误，可以选择重新启用按钮，用户可以再次尝试
-                button.disabled = false;
-                console.error('Error:', error);
-            });
+        skipAction();
     });
     handDiv.appendChild(button);
 };
+
 Player.prototype.perform_playagain = function (handDiv) {
     var button = document.createElement('button');
     button.innerHTML = 'playagain';
@@ -486,11 +479,7 @@ async function updateAllPlayersHandCards() {
             url: '/getPlayerIndex/' + roomCode,
             type: 'GET'
         });
-        //'/api/roomUsers'有问题无法使用诶
-        // var usernames = await $.ajax({
-        //     url: '/api/roomUsers' + roomCode,
-        //     type: 'GET',
-        // });
+
         // var scores = await $.ajax({
         //     url: '/getAllPlayersScores/' + roomCode,
         //     type: 'GET',
@@ -500,15 +489,19 @@ async function updateAllPlayersHandCards() {
             var direction = directions[i];
             console.log('Direction:', direction);
             // 创建玩家对象并更新手牌数据
-            var isturn = index[0] == (currentUserIndex + i) % 4;
-            var ischecking = index[1] == (currentUserIndex + i) % 4;
-            if(i == 0){
-                var player  = new Player('player' + (i + 1), cards[(currentUserIndex + i) % 4], discards[(currentUserIndex + i) % 4],showcards[(currentUserIndex + i) % 4],discardingTile[(currentUserIndex + i) % 4], condition[(currentUserIndex + i) % 4], isturn, ischecking );
-                player.updateHandWithImages_self();
+            var isturn = index[0] === (currentUserIndex + i) % 4;
+            var ischecking = index[1] === (currentUserIndex + i) % 4;
+            var username = await $.ajax({
+                url: '/api/username',
+                type: 'GET',
+            });
+            var player  = new Player('player' + (i + 1), username, cards[(currentUserIndex + i) % 4], discards[(currentUserIndex + i) % 4],showcards[(currentUserIndex + i) % 4],discardingTile[(currentUserIndex + i) % 4], condition[(currentUserIndex + i) % 4], isturn, ischecking );
+            if(i === 0){
+                await player.updateHandWithImages_self();
             } else {
-                var player  = new Player('player' + (i + 1), cards[(currentUserIndex + i) % 4], discards[(currentUserIndex + i) % 4],showcards[(currentUserIndex + i) % 4],discardingTile[(currentUserIndex + i) % 4], condition[(currentUserIndex + i) % 4], isturn, ischecking);
                 player.updateHandWithImages_other();
             }
+            player.updateGameProgress();
         }
     } catch (error) {
         console.error('Error:', error);

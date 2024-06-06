@@ -46,7 +46,7 @@ public class GameService {
         roomMap.put(roomCode, room);
 
         // Calculate progress and send WebSocket message
-        sendProgress(roomCode);
+        sendRoomProgress(roomCode);
 
         return roomCode;
     }
@@ -74,7 +74,7 @@ public class GameService {
         }
 
         // Calculate progress and send WebSocket message
-        sendProgress(roomCode);
+        sendRoomProgress(roomCode);
 
         return true;
     }
@@ -110,7 +110,7 @@ public class GameService {
         return room == null ? 0 : room.getUsers().size();
     }
 
-    public void sendProgress(String roomCode) {
+    public void sendRoomProgress(String roomCode) {
         int progress = calculateProgress(roomCode);
         RoomProgress roomProgress = new RoomProgress(roomCode, progress);
         template.convertAndSend("/topic/room", roomProgress);

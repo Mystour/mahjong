@@ -26,10 +26,19 @@
     <div id="player4" class="hand west"></div>
         <div id="discardPile4" class="discardPile discardPile-west"></div>
 
-    <!-- 引入game.ts -->
-    <script>console.log("Before Game.js")</script>
-    <script type="application/javascript" th:src="@{/js/Game.js}"></script>
-    <script>console.log("After Game.js")</script>
+    <!-- 引入gameProgress.js -->
+    <script>console.log("Before gameProgress.js")</script>
+    <script type="application/javascript" th:src="@{/js/gameProgress.js}"></script>
+    <script>console.log("After gameProgress.js")</script>
+
+    <!-- 引入111.js -->
+    <script>console.log("Before 111.js")</script>
+    <script type="application/javascript" th:src="@{/js/111.js}"></script>
+    <script>console.log("After 111.js")</script>
+
+    <!-- add a progress bar to show the progress of checking -->
+    <progress id="progressBar" value="0" max="10"></progress>
+    <p id="playingPlayer"></p>
 
 </body>
 </html>
