@@ -1,40 +1,59 @@
-// 更新进度条和显示的玩家名
-// 定义为全局函数
-window.updateProgressBarAndPlayerNames = function(playingPlayer) {
-    // 更新进度条
-    var progressBar = document.getElementById('progressBar');
-    if (playingPlayer) {
-        progressBar.value = 10;
-    } else {
-        progressBar.value = 0;
-    }
-    autoSkip(); // 自动执行skip操作
+var socket = new SockJS('/room');
+var stompClient = Stomp.over(socket);
 
-    // 更新显示的玩家名
+stompClient.connect({}, function() {
+    stompClient.subscribe('/topic/game', function(message) {
+        let data = JSON.parse(message.body);
+        let roomCode = data.roomCode;
+        let count = data.count;
+        console.log("Received WebSocket message: " + count);
+        localStorage.setItem(roomCode, count.toString());
+
+        let path = window.location.pathname;
+        let parts = path.split('/');
+        let currentRoomCode = parts[parts.length - 1];
+        if (currentRoomCode === roomCode) {
+            updateProgressBar(count);
+        }
+    });
+});
+
+function updateProgressBar(count) {
+    let progressBar = document.getElementById('progressBar');
+    if (progressBar) {
+        progressBar.style.width = (count * 10) + '%';
+        progressBar.setAttribute('aria-valuenow', count.toString());
+    }
+}
+
+window.onload = function() {
+    let path = window.location.pathname;
+    let parts = path.split('/');
+    let roomCode = parts[parts.length - 1];
+    let count = parseInt(localStorage.getItem(roomCode) || '0');
+    updateProgressBar(count);
+};
+
+window.updatePlayerNames = function(playingPlayer) {
     document.getElementById('playingPlayer').textContent = 'Playing player: ' + (playingPlayer || 'None');
 }
 
-// 自动执行skip操作
-function autoSkip() {
-    // 设置一个10秒的定时器
-    var timer = setInterval(function() {
-        var progressBar = document.getElementById('progressBar');
-        progressBar.value -= 1;
-        if (progressBar.value <= 0) {
-            // 在这里执行skip操作
-            skipAction();
-            clearInterval(timer);
-        }
-    }, 1000); // 每隔1秒减少进度条的值
-
-    // // 当玩家做出选择时，清除定时器
-    // // 注意：你需要在玩家做出选择的代码中调用这个函数
-    // function playerMadeChoice() {
-    //     clearInterval(timer);
-    // }
-}
+// function autoSkip() {
+//     let timer = setInterval(function() {
+//         let progressBar = document.getElementById('progressBar');
+//         progressBar.value -= 1;
+//         if (progressBar.value <= 0) {
+//             skipAction();
+//             clearInterval(timer);
+//         }
+//     }, 1000);
+// }
 
 window.skipAction = function() {
+    let path = window.location.pathname;
+    let parts = path.split('/');
+    let roomCode = parts[parts.length - 1];
+
     fetch('/otherPlayerSkip/' + roomCode, {
         method: 'GET'
     })
@@ -47,3 +66,17 @@ window.skipAction = function() {
             console.error('Error:', error);
         });
 }
+
+window.startGameProgressCountdown = function() {
+    let path = window.location.pathname;
+    let parts = path.split('/');
+    let roomCode = parts[parts.length - 1];
+
+    fetch('/startGameProgressCountdown/' + roomCode, {
+        method: 'GET'
+    })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    console.log('Game progress countdown started');
+};

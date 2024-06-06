@@ -83,10 +83,10 @@ var Player = /** @class */ (function () {
     return Player;
 }());
 
-Player.prototype.updateGameProgress = function() {
-    // 调用全局函数来更新进度条和显示的玩家名
-    window.updateProgressBarAndPlayerNames(this.username);
-};
+// Player.prototype.updateGameProgress = function() {
+//     // 调用全局函数来更新进度条和显示的玩家名
+//     window.updateProgressBarAndPlayerNames(this.username);
+// };
 
 //以下perform_xxx都是按钮，可以改一下按钮的格式和位置
 Player.prototype.perform_discard = function (handDiv, selectedImgObj) {
@@ -109,6 +109,8 @@ Player.prototype.perform_discard = function (handDiv, selectedImgObj) {
             button.disabled = false;
             console.log('No card selected.');
         }
+
+        // startGameProgressCountdown();
     };
     handDiv.appendChild(button);
 };
@@ -239,6 +241,7 @@ Player.prototype.perform_skip = function (handDiv) {
     button.addEventListener('click', function() {
         // 禁用按钮，防止多次点击
         button.disabled = true;
+
         skipAction();
     });
     handDiv.appendChild(button);
@@ -498,10 +501,10 @@ async function updateAllPlayersHandCards() {
             var player  = new Player('player' + (i + 1), username, cards[(currentUserIndex + i) % 4], discards[(currentUserIndex + i) % 4],showcards[(currentUserIndex + i) % 4],discardingTile[(currentUserIndex + i) % 4], condition[(currentUserIndex + i) % 4], isturn, ischecking );
             if(i === 0){
                 await player.updateHandWithImages_self();
+                startGameProgressCountdown();
             } else {
                 player.updateHandWithImages_other();
             }
-            player.updateGameProgress();
         }
     } catch (error) {
         console.error('Error:', error);

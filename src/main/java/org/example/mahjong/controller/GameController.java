@@ -296,6 +296,7 @@ public class GameController {
         game.otherPlayerKong();
         handleRoomDataChanged(roomCode,"otherPlayerKong");
     }
+
     @GetMapping("/otherPlayerMahjong/{roomCode}")
     @ResponseBody
     public void otherPlayerMahjong(@PathVariable String roomCode) {
@@ -304,4 +305,12 @@ public class GameController {
         handleRoomDataChanged(roomCode,"otherPlayerMahjong");
     }
 
+
+
+    // for game progress
+    @GetMapping(value = "/startGameProgressCountdown/{roomCode}")
+    @ResponseBody
+    public void startGameProgressCountdown(@PathVariable("roomCode") String roomCode) {
+        gameService.startGameProgressCountdown(roomCode);
+    }
 }
