@@ -327,24 +327,6 @@ public class MahjongGame extends AbstractGame {
         };
     }
 
-    //可以当report的例子
-//    public static TileType transTypeFromMessage(String s) {
-//        String string = s.substring(0, s.length() - 1);
-//        System.out.println(string);
-//        if (string.equals("BAMBOO")) {
-//            return TileType.BAMBOO;
-//        } else if (string.equals("CHARACTER")) {
-//            return TileType.CHARACTER;
-//        } else if (string.equals("DOT")) {
-//            return TileType.DOT;
-//        } else if (string.equals("WIND")) {
-//            return TileType.WIND;
-//        } else if (string.equals("DRAGON")) {
-//            return TileType.DRAGON;
-//        }
-//        return null;
-//    }
-
     /**
      * Translates a tile number from a message string.
      * @param s the message string
