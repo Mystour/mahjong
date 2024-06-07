@@ -371,6 +371,10 @@ Player.prototype.updateHandWithImages_self = async function () {
         //本来是玩家胜利后可以选择看积分板，但是"/api/roomUsers/{roomCode}"方法会让服务器报错？？
         //await createTable(handDiv, _this.usernames, _this.scores);
     }
+    if (_this.ischecking) {
+        console.log('send username to server');
+        _this.sendUsernameToServer();
+    }
 
 };
 Player.prototype.updateHandWithImages_other = function () {
@@ -464,10 +468,7 @@ Player.prototype.updateHandWithImages_other = function () {
 
 
     }
-    if (_this.ischecking && !_this.isturn) {
-        console.log('send username to server');
-        _this.sendUsernameToServer();
-    }
+
 };
 
 //由于订阅机制，每次服务器的后端数据发生改动后，都会告诉客户端数据改动了，要客户端在更新所有玩家的手牌
@@ -517,7 +518,7 @@ async function updateAllPlayersHandCards() {
                 url: '/api/username',
                 type: 'GET',
             });
-            var player  = new Player('player' + (i + 1), username, cards[(currentUserIndex + i) % 4], discards[(currentUserIndex + i) % 4],showcards[(currentUserIndex + i) % 4],discardingTile[(currentUserIndex + i) % 4], condition[(currentUserIndex + i) % 4], isturn, ischecking );
+            var player = new Player('player' + (i + 1), username, cards[(currentUserIndex + i) % 4], discards[(currentUserIndex + i) % 4],showcards[(currentUserIndex + i) % 4],discardingTile[(currentUserIndex + i) % 4], condition[(currentUserIndex + i) % 4], isturn, ischecking );
             if(i === 0){
                 await player.updateHandWithImages_self();
             } else {

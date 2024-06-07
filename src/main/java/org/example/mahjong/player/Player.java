@@ -125,6 +125,7 @@ public class Player implements Playable, Scorable {
         allcondition.add(canKong);
         allcondition.add(canMahjong);
         allcondition.add(hasMahjong);
+        allcondition.add(isbanker);
         return allcondition;
     }
 

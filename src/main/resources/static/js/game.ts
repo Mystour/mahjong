@@ -2,21 +2,45 @@
 declare var $: any;
 
 class Player {
-    constructor(public id: string, public cards: string[]) {}
+    public canChow: boolean;
+    public canPung: boolean;
+    public canKong: boolean;
+    public canMahjong: boolean;
+    public hasMahjong: boolean;
+    public isbanker: boolean;
+    public isturn: boolean;
+    public ischecking: boolean;
+    usernames: string;
 
-    updateHandWithImages() {
-        if (!Array.isArray(this.cards)) {
-            console.error('Player cards is not an array:', this.cards);
-            return;
-        }
-        let handDiv = document.getElementById(this.id);
-        handDiv.innerHTML = '';
-        for (let i = 0; i < this.cards.length; i++) {
-            let img = document.createElement('img');
-            img.src = this.cards[i];
-            img.classList.add('card', 'small-card');  // Add classes to the img element
-            handDiv.appendChild(img);
-        }
+    constructor(
+        public id: string,
+        public cards: string[],
+        public discards: string[],
+        public showcards: string[],
+        public discardingTile: string[],
+        public condition: boolean[],
+        isturn: boolean,
+        ischecking: boolean,
+        username: string,
+
+    ) {
+        this.id = id;
+        this.cards = cards;
+        this.discards = discards;
+        this.showcards = showcards;
+        this.discardingTile = discardingTile;
+        this.condition = condition;
+
+        this.canChow = this.condition[0];
+        this.canPung = this.condition[1];
+        this.canKong = this.condition[2];
+        this.canMahjong = this.condition[3];
+        this.hasMahjong = this.condition[4];
+        this.isbanker = this.condition[5];
+        this.isturn = isturn;
+        this.ischecking = ischecking;
+        this.usernames = usernames;
+        this.scores = scores;
     }
 }
 
@@ -46,8 +70,7 @@ $(function() {
                         type: 'GET',
                         success: function(data: any[]) {
                             for (let i = 0; i < 4; i++) {
-                                let player = new Player('player'+(i + 1), data[(currentUserIndex + i) % 4]);
-                                player.updateHandWithImages();
+
                             }
                         }
                     });

@@ -198,7 +198,7 @@ public class GameController {
     public void endGame(@PathVariable String roomCode) {
         MahjongGame game = gameService.getGame(roomCode);
         game.endGame();
-        handleRoomDataChanged(roomCode,"currentPlayerDraw");
+        handleRoomDataChanged(roomCode,"endGame");
     }
 
     @GetMapping("/getAllPlayersCondition/{roomCode}")
