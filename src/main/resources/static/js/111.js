@@ -102,6 +102,7 @@ Player.prototype.perform_discard = function (handDiv, selectedImgObj) {
     // 创建按钮
     var button = document.createElement('button');
     button.innerHTML = 'Discard';
+    setButtonStyle(button);
     var subscription = null;
 
     // 设置按钮点击事件
@@ -126,6 +127,7 @@ Player.prototype.perform_discard = function (handDiv, selectedImgObj) {
 Player.prototype.perform_chow = function (handDiv) {
     var button = document.createElement('button');
     button.innerHTML = 'Chow';
+    setButtonStyle(button);
     console.log('Chow');
     button.addEventListener('click', function() {
         button.disabled = true;
@@ -147,6 +149,7 @@ Player.prototype.perform_chow = function (handDiv) {
 Player.prototype.perform_pung = function (handDiv) {
     var button = document.createElement('button');
     button.innerHTML = 'Pung';
+    setButtonStyle(button);
     console.log('Pung');
     button.addEventListener('click', function() {
         button.disabled = true;
@@ -247,6 +250,7 @@ Player.prototype.perform_mahjong = function (handDiv,_this) {
 Player.prototype.perform_skip = function (handDiv) {
     var button = document.createElement('button');
     button.innerHTML = 'Skip';
+    setButtonStyle(button)
     button.addEventListener('click', function() {
         // 禁用按钮，防止多次点击
         button.disabled = true;
@@ -371,6 +375,10 @@ Player.prototype.updateHandWithImages_self = async function () {
         //本来是玩家胜利后可以选择看积分板，但是"/api/roomUsers/{roomCode}"方法会让服务器报错？？
         //await createTable(handDiv, _this.usernames, _this.scores);
     }
+    if (_this.ischecking) {
+        console.log('send username to server');
+        _this.sendUsernameToServer();
+    }
 
 };
 Player.prototype.updateHandWithImages_other = function () {
@@ -461,12 +469,6 @@ Player.prototype.updateHandWithImages_other = function () {
         var circle = document.createElement('div');
         circle.classList.add('circle');
         handDiv.appendChild(circle);
-
-
-    }
-    if (_this.ischecking && !_this.isturn) {
-        console.log('send username to server');
-        _this.sendUsernameToServer();
     }
 };
 
