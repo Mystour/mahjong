@@ -46,13 +46,13 @@ function connect() {
 
             });
 
-            // 订阅 "/topic/currentPlayer" 主题
-            stompClient.subscribe('/topic/currentPlayer', function (message) {
-                console.log('Message received: ' + message.body);
+            // 订阅 "/topic/currentPlayer/{roomCode}" 主题
+            stompClient.subscribe('/topic/currentPlayer/' + roomCode, function (message) {
                 // 当收到消息时，更新显示的玩家名字
                 let currentPlayingPlayer = message.body;
                 updatePlayerNames(currentPlayingPlayer);
             });
+
         },50)
     }, function (error) {
         console.log('Error in connecting WebSocket: ' + error);
@@ -91,11 +91,12 @@ var Player = /** @class */ (function () {
     return Player;
 }());
 
-Player.prototype.sendUsernameToServer = function() {
+Player.prototype.sendUsernameToServer = function(roomCode) {
     // 使用 WebSocket 发送消息
-    var message = JSON.stringify({ 'username': this.username });
-    stompClient.send("/app/updateCurrentPlayer", {}, message);
+    var message = JSON.stringify({ 'username': username });
+    stompClient.send("/app/updateCurrentPlayer/" + roomCode, {}, message);
 };
+
 
 //以下perform_xxx都是按钮，可以改一下按钮的格式和位置
 Player.prototype.perform_discard = function (handDiv, selectedImgObj) {
@@ -377,7 +378,7 @@ Player.prototype.updateHandWithImages_self = async function () {
     }
     if (_this.ischecking) {
         console.log('send username to server');
-        _this.sendUsernameToServer();
+        _this.sendUsernameToServer(roomCode);
     }
 
 };

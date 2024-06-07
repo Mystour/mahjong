@@ -315,10 +315,11 @@ public class GameController {
     }
 
 
-    @MessageMapping("/updateCurrentPlayer")
-    public void updateCurrentPlayer(String username) {
+    @MessageMapping("/updateCurrentPlayer/{roomCode}")
+    public void updateCurrentPlayer(@DestinationVariable String roomCode, String username) {
         System.out.println("Received message: " + username);
-        // 将 username 发送到 "/topic/currentPlayer"
-        template.convertAndSend("/topic/currentPlayer", username);
+        // 将 username 发送到 "/topic/currentPlayer/{roomCode}"
+        template.convertAndSend("/topic/currentPlayer/" + roomCode, username);
     }
+
 }
