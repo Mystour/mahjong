@@ -4,9 +4,6 @@ import org.example.mahjong.game.MahjongGame;
 import org.example.mahjong.game.Room;
 import org.example.mahjong.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -31,320 +28,331 @@ import org.example.mahjong.dto.message.PutMessage;
 import org.example.mahjong.dto.message.SkipMessage;
 import org.example.mahjong.dto.message.TakeMessage;
 
-@Controller
-public class GameController {
-    private final SimpMessagingTemplate simpMessagingTemplate;
-    private final GameService gameService;
 
-    @Autowired
-    public SimpMessagingTemplate template;
+    @Controller
+    public class GameController {
 
-    @Autowired
-    public GameController(SimpMessagingTemplate simpMessagingTemplate, GameService gameService) {
-        this.simpMessagingTemplate = simpMessagingTemplate;
-        this.gameService = gameService;
-    }
+        private final GameService gameService;
 
+        @Autowired
+        public SimpMessagingTemplate template;
 
-    @ModelAttribute("username")
-    public String getUsername(@AuthenticationPrincipal UserDetails userDetails) {
-        return userDetails.getUsername();
-    }
-
-    @GetMapping("/api/username")
-    @ResponseBody
-    public String getCurrentUsername(@AuthenticationPrincipal UserDetails userDetails) {
-        return getUsername(userDetails);
-    }
-
-    @GetMapping("/api/roomUsers/{roomCode}")
-    @ResponseBody
-    public List<String> getRoomUsers(@PathVariable String roomCode) {
-        Room room = gameService.getRoom(roomCode);
-        if (room == null) {
-            return new ArrayList<>();
+        @Autowired
+        public GameController(GameService gameService) {
+            this.gameService = gameService;
         }
-        return room.getUsers();
-    }
 
-    @PostMapping("/createRoom")
-    public String createRoom(@RequestParam String roomCode, @ModelAttribute("username") String username,
-                             RedirectAttributes redirectAttributes) {
-        String roomCodeGet = gameService.createRoom(roomCode, username);
-        if (roomCodeGet != null) {
-            try {
-                String serverIp = InetAddress.getLocalHost().getHostAddress();
-                String serverPort = "8080"; // 你的应用的端口号
-                String url = "http://" + serverIp + ":" + serverPort; // 没弄SSL证书，所以是http而不是https
-                redirectAttributes.addFlashAttribute("message",
-                        "Room created with code: " + roomCode + ". Others can join at: " + url);
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-                redirectAttributes.addFlashAttribute("error", "Failed to get server IP address.");
+        @ModelAttribute("username")
+        public String getUsername(@AuthenticationPrincipal UserDetails userDetails) {
+            return userDetails.getUsername();
+        }
+
+        @GetMapping("/api/username")
+        @ResponseBody
+        public String getCurrentUsername(@AuthenticationPrincipal UserDetails userDetails) {
+            return getUsername(userDetails);
+        }
+
+        @GetMapping("/api/roomUsers/{roomCode}")
+        @ResponseBody
+        public List<String> getRoomUsers(@PathVariable String roomCode) {
+            Room room = gameService.getRoom(roomCode);
+            if (room == null) {
+                return new ArrayList<>();
             }
-        } else {
-            redirectAttributes.addFlashAttribute("error", "Failed to create room with code: " + roomCode);
+            return room.getUsers();
         }
-        return "redirect:/welcome/" + roomCode;
-    }
 
-    @PostMapping("/joinRoom")
-    public String joinRoom(@RequestParam String roomCode, @ModelAttribute("username") String username,
-                           RedirectAttributes redirectAttributes) {
-        boolean success = gameService.joinRoom(roomCode, username);
-        if (success) {
-            redirectAttributes.addFlashAttribute("message", "Joined room with code: " + roomCode);
-        } else {
-            redirectAttributes.addFlashAttribute("error", "Failed to join room with code: " + roomCode);
-        }
-        // if game has started, redirect to game page, else redirect to welcome page
-        MahjongGame game = gameService.getGame(roomCode);
-        if (game != null) {
-            return "redirect:/game/" + roomCode;
-        } else {
+        @PostMapping("/createRoom")
+        public String createRoom(@RequestParam String roomCode, @ModelAttribute("username") String username,
+                                 RedirectAttributes redirectAttributes) {
+            String roomCodeGet = gameService.createRoom(roomCode, username);
+            if (roomCodeGet != null) {
+                try {
+                    String serverIp = InetAddress.getLocalHost().getHostAddress();
+                    String serverPort = "8080"; // 你的应用的端口号
+                    String url = "http://" + serverIp + ":" + serverPort; // 没弄SSL证书，所以是http而不是https
+                    redirectAttributes.addFlashAttribute("message",
+                            "Room created with code: " + roomCode + ". Others can join at: " + url);
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                    redirectAttributes.addFlashAttribute("error", "Failed to get server IP address.");
+                }
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Failed to create room with code: " + roomCode);
+            }
             return "redirect:/welcome/" + roomCode;
         }
-    }
 
-    @GetMapping("/welcome/{roomCode}")
-    public String welcomeToRoom(@PathVariable String roomCode, Model model) {
-        model.addAttribute("welcomeMessage", "Welcome to room: " + roomCode);
-        return "welcome";
-    }
+        @PostMapping("/joinRoom")
+        public String joinRoom(@RequestParam String roomCode, @ModelAttribute("username") String username,
+                               RedirectAttributes redirectAttributes) {
+            boolean success = gameService.joinRoom(roomCode, username);
+            if (success) {
+                redirectAttributes.addFlashAttribute("message", "Joined room with code: " + roomCode);
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Failed to join room with code: " + roomCode);
+            }
+            // if game has started, redirect to game page, else redirect to welcome page
+            MahjongGame game = gameService.getGame(roomCode);
+            if (game != null) {
+                return "redirect:/game/" + roomCode;
+            } else {
+                return "redirect:/welcome/" + roomCode;
+            }
+        }
 
-    @GetMapping("/welcome")
-    public String welcome(Model model) {
-        model.addAttribute("welcomeMessage", "Welcome to mahjong game");
-        return "welcome";
-    }
+        @GetMapping("/welcome/{roomCode}")
+        public String welcomeToRoom(@PathVariable String roomCode, Model model) {
+            model.addAttribute("welcomeMessage", "Welcome to room: " + roomCode);
+            return "welcome";
+        }
 
-    @GetMapping("/game/{roomCode}")
-    public String game(@PathVariable String roomCode, Model model) {
-        model.addAttribute("roomCode", roomCode);
-        return "game";
-    }
+        @GetMapping("/welcome")
+        public String welcome(Model model) {
+            model.addAttribute("welcomeMessage", "Welcome to mahjong game");
+            return "welcome";
+        }
 
+        @GetMapping("/game/{roomCode}")
+        public String game(@PathVariable String roomCode, Model model) {
+            model.addAttribute("roomCode", roomCode);
+            return "game";
+        }
 
-    @GetMapping("/getAllPlayersHandCards/{roomCode}")
+        @GetMapping("/getAllPlayersHandCards/{roomCode}")
+        @ResponseBody
+        public List<List<String>> getAllPlayersHandCards(@PathVariable String roomCode) {
+            MahjongGame game = gameService.getGame(roomCode);
+            if (game == null) {
+                // Handle the case where the game has not started yet
+                return null;
+            }
+            return game.getAllPlayersHands().stream()
+                    .map(playerHandCards -> playerHandCards.stream()
+                            .map(Tile::getImageUrl)
+                            .collect(Collectors.toList()))
+                    .collect(Collectors.toList());
+        }
+    @PostMapping("/getRoudInfo")
     @ResponseBody
-    public List<List<String>> getAllPlayersHandCards(@PathVariable String roomCode) {
+    public ResultData<RoudInfoEntity> getRoudInfo(@RequestParam String roomCode) {
+        RoudInfoEntity roudInfoEntity = new RoudInfoEntity();
         MahjongGame game = gameService.getGame(roomCode);
         if (game == null) {
-            return null;
+            return ResultData.fail(-1, "game not found");
         }
-        return game.getAllPlayersHands().stream()
-                .map(playerHandCards -> playerHandCards.stream()
-                        .map(Tile::getImageUrl)
-                        .collect(Collectors.toList()))
-                .collect(Collectors.toList());
+        Player[] players = game.players;
+        List<PlayerEntity> playerEntitys = new ArrayList<>();
+        for (Player item : players) {
+            PlayerEntity playerEntity = new PlayerEntity();
+            playerEntity.setUserName(roomCode);
+            String userName = gameService.getUserName(item);
+            playerEntity.setUserName(userName);
+            if (item.isBanker()) {
+                playerEntity.setAlias("庄家");
+                roudInfoEntity.setOwn(playerEntity);
+            }
+            playerEntity.setAlias("闲家");
+            playerEntitys.add(playerEntity);
+        }
+        roudInfoEntity.setPlayers(playerEntitys);
+        return ResultData.success(roudInfoEntity);
     }
 
-    @GetMapping("/getAllPlayersDiscards/{roomCode}")
+    @PostMapping("/take")
     @ResponseBody
-    public List<List<String>> getAllPlayersDiscards(@PathVariable String roomCode) {
-        MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            return null;
+    public ResultData<TakeEntity> take(@RequestParam String roomCode, @RequestParam String userName) {
+        Player player = gameService.getPlayer(roomCode, userName);
+        if (player == null) {
+            return ResultData.fail(-1, "player is not found");
         }
-        return game.getAllPlayersDiscards().stream()
-                .map(playerHandCards -> playerHandCards.stream()
-                        .map(Tile::getImageUrl)
-                        .collect(Collectors.toList()))
-                .collect(Collectors.toList());
+        Tile tile = player.drawTile();
+        TakeEntity takeEntity = new TakeEntity();
+        takeEntity.setTake(tile);
+        ArrayList<Option> raceTypes = new ArrayList<>();
+        if (!player.isCanKong()) {
+            Option operate = new Option();
+            operate.setOperationType(OperationType.Kong);
+            List<Tile> operateTiles = new ArrayList<>();
+            operateTiles.add(tile);
+            operate.setTiles(operateTiles);
+            raceTypes.add(operate);
+        }
+
+        if (player.isCanMahjong()) {
+            Option operate = new Option();
+            operate.setOperationType(OperationType.Hu);
+            List<Tile> operateTiles = new ArrayList<>();
+            operateTiles.add(tile);
+            operate.setTiles(operateTiles);
+            raceTypes.add(operate);
+        }
+
+        List<Tile> chows = player.getHand().getChows();
+        List<Tile> pungs = player.getHand().getPungs();
+        List<Tile> kongs = player.getHand().getKongs();
+        List<Tile> discards = player.getHand().getDiscards();
+        List<Tile>[] handAllTypeCards = player.getHand().gethandcard();
+        List<Tile> handCars = new ArrayList<>();
+        for (List<Tile> item : handAllTypeCards) {
+            handCars.addAll(item);
+        }
+        takeEntity.setChows(chows);
+        takeEntity.setPungs(pungs);
+        takeEntity.setKongs(kongs);
+        takeEntity.setOuts(discards);
+        takeEntity.setHands(handCars);
+
+        TakeMessage msg = new TakeMessage();
+        msg.setWho(userName);
+        sendTake(roomCode, msg);
+
+        return ResultData.success(takeEntity);
     }
 
-    @GetMapping("/getAllPlayersShowedCards/{roomCode}")
+    @PostMapping("/put")
     @ResponseBody
-    public List<List<String>> getAllPlayersShowedCards(@PathVariable String roomCode) {
-        MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            return null;
+    public ResultData<PutEntity> put(@RequestParam String roomCode, @RequestParam String userName,
+                                     @RequestParam Tile tile) {
+        Player player = gameService.getPlayer(roomCode, userName);
+        if (player == null) {
+            return ResultData.fail(-1, "player is not found");
         }
-        return game.getAllPlayersShowedCards().stream()
-                .map(playerHandCards -> playerHandCards.stream()
-                        .map(Tile::getImageUrl)
-                        .collect(Collectors.toList()))
-                .collect(Collectors.toList());
+        player.discardTile(tile);
+        PutEntity puEntity = new PutEntity();
+        puEntity.setPut(tile);
+        List<Tile> chows = player.getHand().getChows();
+        List<Tile> pungs = player.getHand().getPungs();
+        List<Tile> kongs = player.getHand().getKongs();
+        List<Tile> discards = player.getHand().getDiscards();
+        List<Tile>[] handAllTypeCards = player.getHand().gethandcard();
+        List<Tile> handCars = new ArrayList<>();
+        for (List<Tile> item : handAllTypeCards) {
+            handCars.addAll(item);
+        }
+        puEntity.setChows(chows);
+        puEntity.setPungs(pungs);
+        puEntity.setKongs(kongs);
+        puEntity.setOuts(discards);
+        puEntity.setHands(handCars);
+
+        PutMessage msg = new PutMessage();
+        msg.setWho(userName);
+        msg.setTile(tile);
+        sendPut(roomCode, msg);
+
+        return ResultData.success(puEntity);
     }
-    @GetMapping("/getDiscardingTile/{roomCode}")
+
+    @PostMapping("/determine")
     @ResponseBody
-    public List<List<String>> getDiscardingTile(@PathVariable String roomCode) {
-        MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            return null;
+    public ResultData<DetermineEntity> determine(@RequestParam String roomCode, @RequestParam String userName,
+                                                 @RequestParam Tile tile) {
+        Player player = gameService.getPlayer(roomCode, userName);
+        if (player == null) {
+            return ResultData.fail(-1, "player is not found");
         }
-        return game.getDiscardingTile().stream()
-                .map(playerHandCards -> playerHandCards.stream()
-                        .map(Tile::getImageUrl)
-                        .collect(Collectors.toList()))
-                .collect(Collectors.toList());
+        DetermineEntity determineEntity = new DetermineEntity();
+        List<Option> options = new ArrayList<>();
+
+        player.checkDecisionCondition(tile);
+        if (player.isCanChow()) {
+            Option option = new Option();
+            List<Tile> tiles = new ArrayList<>();
+            tiles.add(tile);
+            option.setTiles(tiles);
+            option.setOperationType(OperationType.Chow);
+            options.add(option);
+        }
+        if (player.isCanPung()) {
+            Option option = new Option();
+            List<Tile> tiles = new ArrayList<>();
+            tiles.add(tile);
+            option.setTiles(tiles);
+            option.setOperationType(OperationType.Pung);
+            options.add(option);
+        }
+        if (player.isCanKong()) {
+            Option option = new Option();
+            List<Tile> tiles = new ArrayList<>();
+            tiles.add(tile);
+            option.setTiles(tiles);
+            option.setOperationType(OperationType.Kong);
+            options.add(option);
+        }
+        if (player.isCanMahjong()) {
+            Option option = new Option();
+            List<Tile> tiles = new ArrayList<>();
+            tiles.add(tile);
+            option.setTiles(tiles);
+            option.setOperationType(OperationType.Hu);
+            options.add(option);
+        }
+        determineEntity.setOptions(options);
+        return ResultData.success(determineEntity);
     }
 
-    @MessageMapping("/drawTile/{roomCode}")
-    public void handleDrawTileMessage(@Payload String message, @DestinationVariable String roomCode) {
-        System.out.println(message);
-        boolean success = gameService.handleDrawTileMessage(message);
-        String feedback = success ? "Message received and processed successfully." : "Message processing failed.";
-
-        // 发送反馈消息到主题
-        simpMessagingTemplate.convertAndSend("/topic/drawTileFeedback/" + roomCode, feedback);
-        // 正确使用房间代码调用 handleRoomDataChanged 方法
-        handleRoomDataChanged(roomCode, feedback);
-    }
-
-    @MessageMapping("/roomDataChanged/{roomCode}")
-    @SendTo("/topic/roomDataChanged/{roomCode}")
-    public void handleRoomDataChanged(@DestinationVariable String roomCode, String message) {
-        // 在这里编写通知浏览器数据已修改的逻辑
-        System.out.println("Room data has changed in room: " + roomCode);
-        // 这里可以向浏览器发送通知消息，告知数据已修改
-        simpMessagingTemplate.convertAndSend("/topic/roomDataChanged/" + roomCode, message);
-    }
-    @GetMapping("/endGame/{roomCode}")
+    @PostMapping("/operate")
     @ResponseBody
-    public void endGame(@PathVariable String roomCode) {
-        MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-
+    public ResultData<OperateEntity> operate(@RequestParam String roomCode, @RequestParam String userName,
+                                             OperationType operationType,
+                                             Tile[] tiles) {
+        Player player = gameService.getPlayer(roomCode, userName);
+        if (player == null) {
+            return ResultData.fail(-1, "player is not found");
         }
-        game.endGame();
-        handleRoomDataChanged(roomCode,"currentPlayerDraw");
+        if (operationType == OperationType.Chow) {
+            player.declareChow(tiles[0]);
+        } else if (operationType == OperationType.Pung) {
+            player.declarePung(tiles[0]);
+        } else if (operationType == OperationType.Kong) {
+            player.declareKong(tiles[0]);
+        } else if (operationType == OperationType.Hu) {
+            player.declareMahjong(tiles[0]);
+        }
+        OperateEntity operateEntity = new OperateEntity();
+        List<Tile> chows = player.getHand().getChows();
+        List<Tile> pungs = player.getHand().getPungs();
+        List<Tile> kongs = player.getHand().getKongs();
+        List<Tile> discards = player.getHand().getDiscards();
+        List<Tile>[] handAllTypeCards = player.getHand().gethandcard();
+        List<Tile> handCars = new ArrayList<>();
+        for (List<Tile> item : handAllTypeCards) {
+            handCars.addAll(item);
+        }
+        operateEntity.setChows(chows);
+        operateEntity.setPungs(pungs);
+        operateEntity.setKongs(kongs);
+        operateEntity.setOuts(discards);
+        operateEntity.setHands(handCars);
+        operateEntity.setTargetTile(tiles[0]);
+
+        OperateMessage msg = new OperateMessage();
+        msg.setWho(userName);
+        msg.setOperationType(operationType);
+
+        sendOperate(roomCode, msg);
+        return ResultData.success(operateEntity);
     }
 
-    @GetMapping("/getAllPlayersCondition/{roomCode}")
-    @ResponseBody
-    public List<List<Boolean>> getAllPlayersCondition(@PathVariable String roomCode) {
-        MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            return null;
-        }
-        return game.getAllPlayersCondition();
+    public void sendTake(String roomCode, TakeMessage msg) {
+        template.convertAndSend("/game/room/" + roomCode, msg);
     }
 
-    @GetMapping("/getPlayerIndex/{roomCode}")
-    @ResponseBody
-    public List<Integer> getPlayerIndex(@PathVariable String roomCode) {
-        MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            return null;
-        }
-        return game.getPlayerIndex();
+    public void sendPut(String roomCode, PutMessage msg) {
+        template.convertAndSend("/game/room/" + roomCode, msg);
     }
 
-    @GetMapping("/getAllPlayersScores/{roomCode}")
-    @ResponseBody
-    public List<Integer> getAllPlayersScores(@PathVariable String roomCode) {
-        MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
-            return null;
-        }
-        return game.getAllPlayersScores();
+    public void sendDetermine(String roomCode, DetermineMessage msg) {
+        template.convertAndSend("/game/room/" + roomCode, msg);
     }
 
-    @GetMapping("/currentPlayerDraw/{roomCode}")
-    @ResponseBody
-    public void currentPlayerDraw(@PathVariable String roomCode) {
-        MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
-
-        }
-        game.currentPlayerDraw();
-        handleRoomDataChanged(roomCode,"currentPlayerDraw");
-    }
-    @GetMapping("/currentPlayerKong/{roomCode}")
-    @ResponseBody
-    public void currentPlayerKong(@PathVariable String roomCode) {
-        MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
-
-        }
-        game.currentPlayerKong();
-        handleRoomDataChanged(roomCode,"currentPlayerKong");
-    }
-    @GetMapping("/currentPlayerMahjong/{roomCode}")
-    @ResponseBody
-    public void currentPlayerMahjong(@PathVariable String roomCode) {
-        MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
-
-        }
-        game.currentPlayerMahjong();
-        handleRoomDataChanged(roomCode,"currentPlayerMahjong");
+    public void sendOperate(String roomCode, OperateMessage msg) {
+        template.convertAndSend("/game/room/" + roomCode, msg);
     }
 
-    @GetMapping("/isdiscardOver/{roomCode}")
-    @ResponseBody
-    public void discardOver(@PathVariable String roomCode) {
-        MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
-
-        }
-        game.isdiscardOver();
-        handleRoomDataChanged(roomCode,"discardOver");
+    public void sendSkip(String roomCode, SkipMessage msg) {
+        template.convertAndSend("/game/room/" + roomCode, msg);
     }
-    @GetMapping("/otherPlayerSkip/{roomCode}")
-    @ResponseBody
-    public void otherPlayerSkip(@PathVariable String roomCode) {
-        MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
-
-        }
-        game.otherPlayerSkip();
-        if(game.isdiscardOver()){
-            game.currentPlayerDraw();
-        }
-        handleRoomDataChanged(roomCode,"otherPlayerSkip");
-
-    }
-    @GetMapping("/otherPlayerChow/{roomCode}")
-    @ResponseBody
-    public void otherPlayerChow(@PathVariable String roomCode) {
-        MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
-
-        }
-        game.otherPlayerChow();
-        handleRoomDataChanged(roomCode,"otherPlayerChow");
-    }
-    @GetMapping("/otherPlayerPung/{roomCode}")
-    @ResponseBody
-    public void otherPlayerPung(@PathVariable String roomCode) {
-        MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
-
-        }
-        game.otherPlayerPung();
-        handleRoomDataChanged(roomCode,"otherPlayerPung");
-    }
-    @GetMapping("/otherPlayerKong/{roomCode}")
-    @ResponseBody
-    public void otherPlayerKong(@PathVariable String roomCode) {
-        MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
-
-        }
-        game.otherPlayerKong();
-        handleRoomDataChanged(roomCode,"otherPlayerKong");
-    }
-    @GetMapping("/otherPlayerMahjong/{roomCode}")
-    @ResponseBody
-    public void otherPlayerMahjong(@PathVariable String roomCode) {
-        MahjongGame game = gameService.getGame(roomCode);
-        if (game == null) {
-            // Handle the case where the game has not started yet
-
-        }
-        game.otherPlayerMahjong();
-        handleRoomDataChanged(roomCode,"otherPlayerMahjong");
-    }
-
 }
