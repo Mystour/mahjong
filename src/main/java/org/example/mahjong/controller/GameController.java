@@ -3,6 +3,7 @@ package org.example.mahjong.controller;
 import org.example.mahjong.game.MahjongGame;
 import org.example.mahjong.game.Room;
 import org.example.mahjong.service.GameService;
+import org.example.mahjong.sound.SoundService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -117,6 +118,8 @@ import org.example.mahjong.dto.message.TakeMessage;
         @GetMapping("/game/{roomCode}")
         public String game(@PathVariable String roomCode, Model model) {
             model.addAttribute("roomCode", roomCode);
+            SoundService soundService = SoundService.getInstance();
+            soundService.playMusic();
             return "game";
         }
 
@@ -142,7 +145,7 @@ import org.example.mahjong.dto.message.TakeMessage;
         if (game == null) {
             return ResultData.fail(-1, "game not found");
         }
-        Player[] players = game.players;
+        Player[] players = game.getPlayers();
         List<PlayerEntity> playerEntitys = new ArrayList<>();
         for (Player item : players) {
             PlayerEntity playerEntity = new PlayerEntity();
