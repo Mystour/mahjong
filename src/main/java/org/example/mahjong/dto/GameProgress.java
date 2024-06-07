@@ -4,10 +4,10 @@ import lombok.Getter;
 
 public class GameProgress {
     private final String roomCode;
-    private int progress;
+    private int count;
 
-    public GameProgress(String roomCode, int progress) {
+    public GameProgress(String roomCode, int count) {
         this.roomCode = roomCode;
-        this.progress = progress;
+        this.count = count;
     }
 }

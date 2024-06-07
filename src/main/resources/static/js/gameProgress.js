@@ -1,12 +1,12 @@
 var socket = new SockJS('/room');
 var stompClient = Stomp.over(socket);
 
-stompClient.connect({}, function() {
-    stompClient.subscribe('/topic/game', function(message) {
+stompClient.connect({}, function (options) {
+    stompClient.subscribe('/topic/game', function (message) {
         let data = JSON.parse(message.body);
         let roomCode = data.roomCode;
         let count = data.count;
-        console.log("Received WebSocket message: " + count);
+        console.log("Received game progress message: " + count);
         localStorage.setItem(roomCode, count.toString());
 
         let path = window.location.pathname;
@@ -16,6 +16,8 @@ stompClient.connect({}, function() {
             updateProgressBar(count);
         }
     });
+
+
 });
 
 function updateProgressBar(count) {
@@ -37,17 +39,6 @@ window.onload = function() {
 window.updatePlayerNames = function(playingPlayer) {
     document.getElementById('playingPlayer').textContent = 'Playing player: ' + (playingPlayer || 'None');
 }
-
-// function autoSkip() {
-//     let timer = setInterval(function() {
-//         let progressBar = document.getElementById('progressBar');
-//         progressBar.value -= 1;
-//         if (progressBar.value <= 0) {
-//             skipAction();
-//             clearInterval(timer);
-//         }
-//     }, 1000);
-// }
 
 window.skipAction = function() {
     let path = window.location.pathname;

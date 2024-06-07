@@ -313,4 +313,12 @@ public class GameController {
     public void startGameProgressCountdown(@PathVariable("roomCode") String roomCode) {
         gameService.startGameProgressCountdown(roomCode);
     }
+
+
+    @MessageMapping("/updateCurrentPlayer")
+    public void updateCurrentPlayer(String username) {
+        System.out.println("Received message: " + username);
+        // 将 username 发送到 "/topic/currentPlayer"
+        template.convertAndSend("/topic/currentPlayer", username);
+    }
 }

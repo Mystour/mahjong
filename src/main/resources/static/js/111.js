@@ -45,6 +45,14 @@ function connect() {
                 console.log('Message received: ' + message.body);
 
             });
+
+            // 订阅 "/topic/currentPlayer" 主题
+            stompClient.subscribe('/topic/currentPlayer', function (message) {
+                console.log('Message received: ' + message.body);
+                // 当收到消息时，更新显示的玩家名字
+                let currentPlayingPlayer = message.body;
+                updatePlayerNames(currentPlayingPlayer);
+            });
         },50)
     }, function (error) {
         console.log('Error in connecting WebSocket: ' + error);
@@ -83,10 +91,11 @@ var Player = /** @class */ (function () {
     return Player;
 }());
 
-// Player.prototype.updateGameProgress = function() {
-//     // 调用全局函数来更新进度条和显示的玩家名
-//     window.updateProgressBarAndPlayerNames(this.username);
-// };
+Player.prototype.sendUsernameToServer = function() {
+    // 使用 WebSocket 发送消息
+    var message = JSON.stringify({ 'username': this.username });
+    stompClient.send("/app/updateCurrentPlayer", {}, message);
+};
 
 //以下perform_xxx都是按钮，可以改一下按钮的格式和位置
 Player.prototype.perform_discard = function (handDiv, selectedImgObj) {
@@ -444,10 +453,20 @@ Player.prototype.updateHandWithImages_other = function () {
         var triangle = document.createElement('div');
         triangle.classList.add('triangle');
         handDiv.appendChild(triangle);
+
+        // // startGameProgressCountdown();
+        // console.log('send username to server');
+        // _this.sendUsernameToServer();
     }else if(_this.ischecking){
         var circle = document.createElement('div');
         circle.classList.add('circle');
         handDiv.appendChild(circle);
+
+
+    }
+    if (_this.ischecking && !_this.isturn) {
+        console.log('send username to server');
+        _this.sendUsernameToServer();
     }
 };
 
@@ -501,7 +520,6 @@ async function updateAllPlayersHandCards() {
             var player  = new Player('player' + (i + 1), username, cards[(currentUserIndex + i) % 4], discards[(currentUserIndex + i) % 4],showcards[(currentUserIndex + i) % 4],discardingTile[(currentUserIndex + i) % 4], condition[(currentUserIndex + i) % 4], isturn, ischecking );
             if(i === 0){
                 await player.updateHandWithImages_self();
-                startGameProgressCountdown();
             } else {
                 player.updateHandWithImages_other();
             }
