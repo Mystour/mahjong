@@ -180,27 +180,28 @@ public class MahjongGame extends AbstractGame {
         tilepile = new LinkedList<>();
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 4; j++) {
-                tilepile.add(new BambooTile(TileType.BAMBOO, i));
+                tilepile.add(TileFactory.createTile(TileType.BAMBOO, i));
             }
         }
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 4; j++) {
-                tilepile.add(new CharacterTile(TileType.CHARACTER, i));
+                tilepile.add(TileFactory.createTile(TileType.CHARACTER, i));
             }
         }
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 4; j++) {
-                tilepile.add(new DotTile(TileType.DOT, i));
+
+                tilepile.add(TileFactory.createTile(TileType.DOT, i));
             }
         }
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
-                tilepile.add(new DragonTile(TileType.DRAGON, i));
+                tilepile.add(TileFactory.createTile(TileType.DRAGON, i));
             }
         }
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                tilepile.add(new WindTile(TileType.WIND, i));
+                tilepile.add(TileFactory.createTile(TileType.WIND, i));
             }
         }
     }
