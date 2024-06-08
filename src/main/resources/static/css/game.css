@@ -1,5 +1,5 @@
 body {
-    background-image: url('../images/TileType2/background2.png');
+    background-image: url('../images/background3.png');
     background-size: cover;
     background-repeat: no-repeat;
 }
@@ -160,4 +160,15 @@ body {
 
 .hidden {
     display: none;
+}
+
+
+#playingPlayer {
+    font-size: 20px; /* 调整字体大小 */
+    color: #60beff; /* 调整字体颜色为红色 */
+    font-family: 'Courier New', Courier, monospace; /* 调整字体类型 */
+    border: 2px solid #000000; /* 添加一个黑色的边框 */
+    border-radius: 10px; /* 设置边框为圆角 */
+    padding: 10px; /* 添加内边距 */
+    background-color: #ffffcc; /* 设置背景颜色为黄色 */
 }

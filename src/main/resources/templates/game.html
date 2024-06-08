@@ -10,24 +10,40 @@
     <!-- 最新版本的 Stomp.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
-    <!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
+<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <link rel="stylesheet" type="text/css" th:href="@{/css/game.css}">
 
 </head>
 <body>
-<div id="player1" class="hand south"></div>
-<div id="player2" class="hand east"></div>
-<div id="player3" class="hand north"></div>
-<div id="player4" class="hand west"></div>
+    <div id="player1" class="hand south"></div>
+        <div id="discardPile1" class="discardPile discardPile-south"></div>
+    <div id="player2" class="hand east"></div>
+        <div id="discardPile2" class="discardPile discardPile-east"></div>
+    <div id="player3" class="hand north"></div>
+        <div id="discardPile3" class="discardPile discardPile-north"></div>
+    <div id="player4" class="hand west"></div>
+        <div id="discardPile4" class="discardPile discardPile-west"></div>
 
-<!-- 引入game.ts -->
-<script>console.log("Before game.js")</script>
-<script type="application/javascript" th:src="@{/js/game.js}"></script>
-<script>console.log("After game.js")</script>
+    <!- 引入button.js -->
+    <script>console.log("Before button.js")</script>
+    <script type="application/javascript" th:src="@{/js/button.js}"></script>
+    <script>console.log("After button.js")</script>
 
-<script type="application/javascript" th:src="@{/js/additional.js}"></script>
+    <!-- 引入gameProgress.js -->
+    <script>console.log("Before gameProgress.js")</script>
+    <script type="application/javascript" th:src="@{/js/gameProgress.js}"></script>
+    <script>console.log("After gameProgress.js")</script>
+
+    <!-- 引入111.js -->
+    <script>console.log("Before 111.js")</script>
+    <script type="application/javascript" th:src="@{/js/111.js}"></script>
+    <script>console.log("After 111.js")</script>
+
+    <!-- add a progress bar to show the progress of checking -->
+<!--    <progress id="progressBar" value="0" max="10"></progress>-->
+    <p id="playingPlayer"></p>
 
 </body>
 </html>

@@ -3,6 +3,7 @@ package org.example.mahjong.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.mahjong.dto.GameProgress;
 import org.example.mahjong.dto.RoomProgress;
 import org.example.mahjong.game.MahjongGame;
 import org.example.mahjong.game.Room;
@@ -15,6 +16,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Service
 public class GameService {
@@ -24,6 +29,8 @@ public class GameService {
 
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
     private final ObjectMapper objectMapper;
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     @Autowired
     private SimpMessagingTemplate template;
@@ -46,7 +53,7 @@ public class GameService {
         roomMap.put(roomCode, room);
 
         // Calculate progress and send WebSocket message
-        sendProgress(roomCode);
+        sendRoomProgress(roomCode);
 
         return roomCode;
     }
@@ -74,7 +81,7 @@ public class GameService {
         }
 
         // Calculate progress and send WebSocket message
-        sendProgress(roomCode);
+        sendRoomProgress(roomCode);
 
         return true;
     }
@@ -110,12 +117,34 @@ public class GameService {
         return room == null ? 0 : room.getUsers().size();
     }
 
-    public void sendProgress(String roomCode) {
+    public void sendRoomProgress(String roomCode) {
         int progress = calculateProgress(roomCode);
         RoomProgress roomProgress = new RoomProgress(roomCode, progress);
         template.convertAndSend("/topic/room", roomProgress);
         logger.info("Progress of room {}: {}", roomCode, progress);
     }
+
+    public void startGameProgressCountdown(String roomCode) {
+        System.out.println("startGameProgressCountdown");
+
+        final int[] progress = {10};
+        Timer timer = new Timer();
+        TimerTask countdown = new TimerTask() {
+            public void run() {
+                if (progress[0] > 0) {
+                    GameProgress gameProgress = new GameProgress(roomCode, progress[0]);
+                    template.convertAndSend("/topic/game", gameProgress);
+                    logger.info("Progress of game {}: {}", roomCode, progress[0]);
+                    progress[0]--;
+                    System.out.println(progress[0]);
+                } else {
+                    timer.cancel();
+                }
+            }
+        };
+        timer.scheduleAtFixedRate(countdown, 0, 1000);
+    }
+
     public boolean handleDrawTileMessage(String message) {
         try {
             // 解析 JSON 字符串为一个 Map 对象
