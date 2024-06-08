@@ -1,5 +1,8 @@
 package org.example.mahjong.tile;
 
+/**
+ * This is an abstract factory class to make mahjong tiles
+ */
 public class TileFactory {
     public static Tile createTile(TileType type, int number) {
         return switch (type) {
