@@ -4,9 +4,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+/**
+ * This class is a Spring MVC controller that handles the home page requests.
+ */
 @Controller
 public class HomeController {
 
+    /**
+     * Handles the root URL ("/") GET requests.
+     *
+     * @return A redirect to either the welcome page or the login page depending on the user's authentication status.
+     */
     @GetMapping("/")
     public String home() {
         // Check if the user is authenticated

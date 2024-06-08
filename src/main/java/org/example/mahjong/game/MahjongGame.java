@@ -130,6 +130,7 @@ public class MahjongGame extends AbstractGame {
         List<List<Boolean>> allcondition = new ArrayList<>();
         for (Player player : players) {
             allcondition.add(player.getAllCondition());
+
         }
         return allcondition;
     }
@@ -245,14 +246,7 @@ public class MahjongGame extends AbstractGame {
     @Override
     public void startGame() {
         creatPlayers();
-        creatTilePile();
-        shuffleTiles();
-        distributeInitialTiles();
-        Random random = new Random();
-        dicenum = random.nextInt(10) + 2;
-        indexnum = dicenum % 4;
-        checknum = indexnum;
-        players[indexnum].setIsbanker(true);
+        initializeGame();
     }
 
     /**
@@ -265,6 +259,12 @@ public class MahjongGame extends AbstractGame {
         }
         drawTile = null;
         discradTile = null;
+        initializeGame();
+    }
+    /**
+     * Initialize a condition of new game
+     */
+    private void initializeGame(){
         creatTilePile();
         shuffleTiles();
         distributeInitialTiles();
@@ -287,7 +287,10 @@ public class MahjongGame extends AbstractGame {
      * The current player draws a tile.
      */
     public void currentPlayerDraw() {
+        checkBoardOver();
         drawTile = players[indexnum].drawTile();
+
+
     }
 
     /**
@@ -411,5 +414,13 @@ public class MahjongGame extends AbstractGame {
         discradTile = null;
         indexnum = checknum;
     }
-
+    /**
+     * If there are no tiles left in the pile, start the game again.
+     */
+    private void checkBoardOver(){
+        isBoardOver = tilepile.size() <= 0;
+        if(isBoardOver){
+            endGame();
+        }
+    }
 }

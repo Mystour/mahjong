@@ -3,6 +3,7 @@ package org.example.mahjong.player;
 import org.example.mahjong.game.MahjongGame;
 import org.example.mahjong.score.Scorable;
 import org.example.mahjong.score.ScoringSystem;
+import org.example.mahjong.tile.CharacterTile;
 import org.example.mahjong.tile.Tile;
 import org.example.mahjong.tile.TileType;
 
@@ -125,7 +126,6 @@ public class Player implements Playable, Scorable {
         allcondition.add(canKong);
         allcondition.add(canMahjong);
         allcondition.add(hasMahjong);
-        allcondition.add(isbanker);
         return allcondition;
     }
 
@@ -240,6 +240,7 @@ public class Player implements Playable, Scorable {
         if (canMahjong) {
             hand.sortCard(hand.addCard(tile));
             hasMahjong = true;
+            calculateScore();
         }
     }
 

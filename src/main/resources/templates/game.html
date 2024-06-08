@@ -2,48 +2,52 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>game</title>
-    <!--引入SockJS和Stomp.js-->
-    <!-- SockJS 的另一个 CDN 链接 -->
+    <title>Game</title>
+    <!-- Include SockJS library for WebSocket communication -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
 
-    <!-- 最新版本的 Stomp.js -->
+    <!-- Include STOMP library for WebSocket communication -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
-<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
+    <!-- Include jQuery library -->
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+    <!-- Link to custom game CSS -->
     <link rel="stylesheet" type="text/css" th:href="@{/css/game.css}">
-
 </head>
 <body>
-    <div id="player1" class="hand south"></div>
-        <div id="discardPile1" class="discardPile discardPile-south"></div>
-    <div id="player2" class="hand east"></div>
-        <div id="discardPile2" class="discardPile discardPile-east"></div>
-    <div id="player3" class="hand north"></div>
-        <div id="discardPile3" class="discardPile discardPile-north"></div>
-    <div id="player4" class="hand west"></div>
-        <div id="discardPile4" class="discardPile discardPile-west"></div>
+<!-- Player hands and discard piles -->
+<div id="player1" class="hand south"></div>
+<div id="discardPile1" class="discardPile discardPile-south"></div>
+<div id="player2" class="hand east"></div>
+<div id="discardPile2" class="discardPile discardPile-east"></div>
+<div id="player3" class="hand north"></div>
+<div id="discardPile3" class="discardPile discardPile-north"></div>
+<div id="player4" class="hand west"></div>
+<div id="discardPile4" class="discardPile discardPile-west"></div>
 
-    <!- 引入button.js -->
-    <script>console.log("Before button.js")</script>
-    <script type="application/javascript" th:src="@{/js/button.js}"></script>
-    <script>console.log("After button.js")</script>
+<!-- Include button.js script -->
+<script>console.log("Before button.js")</script>
+<script type="application/javascript" th:src="@{/js/button.js}"></script>
+<script>console.log("After button.js")</script>
 
-    <!-- 引入gameProgress.js -->
-    <script>console.log("Before gameProgress.js")</script>
-    <script type="application/javascript" th:src="@{/js/gameProgress.js}"></script>
-    <script>console.log("After gameProgress.js")</script>
+<!-- Include gameProgress.js script -->
+<script>console.log("Before gameProgress.js")</script>
+<script type="application/javascript" th:src="@{/js/gameProgress.js}"></script>
+<script>console.log("After gameProgress.js")</script>
 
-    <!-- 引入111.js -->
-    <script>console.log("Before 111.js")</script>
-    <script type="application/javascript" th:src="@{/js/111.js}"></script>
-    <script>console.log("After 111.js")</script>
+<!-- Include GameScreen.js script as a module -->
+<script>console.log("Before GameScreen.js")</script>
+<script type="module" th:src="@{/js/GameScreen.js}"></script>
+<script>console.log("After GameScreen.js")</script>
 
-    <!-- add a progress bar to show the progress of checking -->
-<!--    <progress id="progressBar" value="0" max="10"></progress>-->
-    <p id="playingPlayer"></p>
+<!-- Include Scoretable.js script and container for the score table -->
+<script>console.log("Before Scoretable.js")</script>
+<div id="table-container" class="table-container"></div>
+<script type="application/javascript" th:src="@{/js/Scoretable.js}"></script>
+<script>console.log("After Scoretable.js")</script>
 
+<!-- Paragraph to display the current playing player -->
+<p id="playingPlayer"></p>
 </body>
 </html>
