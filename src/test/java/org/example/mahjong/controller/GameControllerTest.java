@@ -8,9 +8,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 
@@ -35,9 +36,9 @@ public class GameControllerTest {
         // Assume that the gameService always returns a non-null room code
         when(gameService.createRoom(roomCode, username)).thenReturn(roomCode);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/createRoom")
-                .param("roomCode", roomCode)
-                .param("username", username))
+        mockMvc.perform(post("/createRoom")
+                        .param("roomCode", roomCode)
+                        .param("username", username))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/welcome/" + roomCode));
     }
