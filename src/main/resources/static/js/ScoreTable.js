@@ -1,82 +1,144 @@
-declare var $: any;
+// Establish a SockJS connection to the /room endpoint
+var socket = new SockJS('/room');
+// Create a STOMP client over the SockJS connection
+var stompClient = Stomp.over(socket);
+// Extract the room code from the URL
+var roomCode = window.location.pathname.split('/')[2];
 
-$(async function () {
-    const roomCode = window.location.pathname.split('/')[2];
-    var username = await $.ajax({
-        url: '/api/username',
-        type: 'GET',
+// Initialize arrays to store usernames and scores
+var usernames = [];
+var scores = [];
+
+// Connect to the STOMP server
+stompClient.connect({}, function (options) {
+    // Subscribe to the /topic/roomDataChanged topic for the specified room
+    stompClient.subscribe('/topic/roomDataChanged/' + roomCode, async function (message) {
+        console.log('Message received: ' + message.body);
+
+        // Fetch updated usernames and scores upon receiving a message
+        try {
+            usernames = await fetch(`/api/roomUsers/${roomCode}`).then(res => res.json());
+            scores = await fetch(`/getAllPlayersScores/${roomCode}`).then(res => res.json());
+
+            console.log('Updated usernames:', usernames);
+            console.log('Updated scores:', scores);
+        } catch (error) {
+            console.error('Error fetching updated data:', error);
+        }
     });
-    var scores = await $.ajax({
-        url: '/getAllPlayersScores/' + roomCode,
-        type: 'GET',
-    });
-    createTable("table-container", username, scores);
 });
 
-function createTable(containerId: string, username: string[], scores: any[]) {
-    var tableContainer = document.getElementById(containerId);
+// Event listener for DOMContentLoaded to initialize UI elements and data
+document.addEventListener("DOMContentLoaded", async function () {
+    // Create a container for the toggle button
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'button-container';
 
-    var table = document.createElement("table");
-    table.id = "ScoreTable";
-    table.className = "score-table"; // 添加类名
+    // Create the toggle button for showing/hiding the score table
+    const toggleButton = document.createElement('button');
+    toggleButton.textContent = 'Score Table';
+    buttonContainer.appendChild(toggleButton);
 
-    // 创建表格标题
-    var titleRow = document.createElement("tr");
-    titleRow.className = "table-title";
-    var titleCell = document.createElement("th");
-    titleCell.colSpan = 2;
-    titleCell.textContent = "Score Table";
-    titleRow.appendChild(titleCell);
-    table.appendChild(titleRow);
+    // Append the button container to the document body
+    document.body.appendChild(buttonContainer);
 
-    // 创建表头
-    var headerRow = document.createElement("tr");
-    var headers = ["Name", "Score"];
-    headers.forEach(function(headerText) {
-        var header = document.createElement("th");
+    // Create a container for the score table
+    const tableContainer = document.createElement('div');
+    tableContainer.id = 'table-container';
+    tableContainer.className = 'table-container hidden'; // Initially hidden
+    document.body.appendChild(tableContainer);
+
+    // Add an event listener to the toggle button to show/hide the score table
+    toggleButton.addEventListener('click', function () {
+        tableContainer.classList.toggle('hidden');
+        if (!tableContainer.classList.contains('hidden')) {
+            tableContainer.classList.add('visible'); // Add visible class when table is shown
+            updateTable(tableContainer); // Update table content when shown
+        } else {
+            tableContainer.classList.remove('visible'); // Remove visible class when table is hidden
+        }
+    });
+
+    // Fetch initial usernames and scores
+    try {
+        usernames = await fetch(`/api/roomUsers/${roomCode}`).then(res => res.json());
+        scores = await fetch(`/getAllPlayersScores/${roomCode}`).then(res => res.json());
+
+        console.log('Initial usernames:', usernames);
+        console.log('Initial scores:', scores);
+    } catch (error) {
+        console.error('Error fetching initial data:', error);
+    }
+});
+
+/**
+ * Creates and populates a table with usernames and scores.
+ *
+ * @param {HTMLElement} container - The container element to append the table to.
+ * @param {Array} usernames - The array of usernames.
+ * @param {Array} scores - The array of scores.
+ */
+function createTable(container, usernames, scores) {
+    const table = document.createElement('table');
+    table.id = 'ScoreTable';
+    table.className = 'score-table';
+
+    // Create table header
+    const headerRow = document.createElement('tr');
+    const headers = ['Name', 'Score'];
+    headers.forEach(headerText => {
+        const header = document.createElement('th');
         header.textContent = headerText;
         headerRow.appendChild(header);
     });
     table.appendChild(headerRow);
 
-    // 创建表格内容
-    for (var i = 0; i < Math.max(username.length, scores.length); i++) {
-        var row = document.createElement("tr");
-        for (var j = 0; j < headers.length; j++) {
-            var cell = document.createElement("td");
-            if (j === 1) {
-                cell.textContent = scores[i] || ""; // 处理分数未定义的情况
-            } else {
-                cell.textContent = username[i] || ""; // 处理用户名未定义的情况
-            }
+    // Create table rows with usernames and scores
+    for (let i = 0; i < Math.max(usernames.length, scores.length); i++) {
+        const row = document.createElement('tr');
+        headers.forEach((_, j) => {
+            const cell = document.createElement('td');
+            cell.textContent = j === 1 ? (scores[i] || "") : (usernames[i] || ""); // Handle undefined values
             row.appendChild(cell);
-        }
+        });
         table.appendChild(row);
     }
 
-    // 将表格添加到容器中
-    tableContainer.appendChild(table);
-
-    // 创建切换按钮
-    var toggleButton = document.createElement("button");
-    toggleButton.textContent = "Toggle Table";
-    toggleButton.onclick = toggleTable;
-    tableContainer.appendChild(toggleButton);
+    container.appendChild(table);
 }
 
-var style = `
+/**
+ * Updates the score table with the latest usernames and scores.
+ *
+ * @param {HTMLElement} container - The container element to update.
+ */
+function updateTable(container) {
+    container.innerHTML = ''; // Clear the container
+    createTable(container, usernames, scores); // Recreate the table with updated data
+}
+
+// Define CSS styles for the UI elements
+const style = `
   .table-container {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 20%;
+    right: 10%;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .table-container.hidden {
+    display: none;
+  }
+
+  .table-container.visible {
     background-color: lightgray;
   }
 
   .score-table {
     margin: 0 auto;
     border-collapse: collapse;
-    display: none; // 默认隐藏表格
   }
 
   .score-table th,
@@ -90,29 +152,10 @@ var style = `
     top: 10px;
     right: 10px;
   }
-
-  .table-title {
-    text-align: center;
-    font-size: 24px;
-    margin-bottom: 10px;
-  }
-
-  .hidden {
-    display: none;
-  }
 `;
 
-var styleTag = document.createElement("style");
+// Append the CSS styles to the document head
+const styleTag = document.createElement('style');
 styleTag.textContent = style;
 document.head.appendChild(styleTag);
 
-function toggleTable() {
-    var table = document.getElementById("ScoreTable");
-    if (table.classList.contains("hidden")) {
-        table.classList.remove("hidden"); // 使用类名切换可见性
-        document.querySelector(".table-title").classList.remove("hidden");
-    } else {
-        table.classList.add("hidden");
-        document.querySelector(".table-title").classList.add("hidden");
-    }
-}

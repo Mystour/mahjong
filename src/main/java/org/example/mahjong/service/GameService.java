@@ -21,28 +21,47 @@ import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+/**
+ * Service for handling game-related operations.
+ */
 @Service
 public class GameService {
 
     private final Map<String, Room> roomMap = new HashMap<>();
     private final Map<String, Player> userMap = new HashMap<>();
-
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
     private final ObjectMapper objectMapper;
-
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     @Autowired
     private SimpMessagingTemplate template;
 
+    /**
+     * Constructor with dependency injection for ObjectMapper.
+     *
+     * @param objectMapper Mapper for JSON processing.
+     */
     public GameService(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Gets the room associated with the specified room code.
+     *
+     * @param roomCode The code of the room.
+     * @return The Room object.
+     */
     public Room getRoom(String roomCode) {
         return roomMap.get(roomCode);
     }
 
+    /**
+     * Creates a new room with the specified room code and adds the specified user to the room.
+     *
+     * @param roomCode The code of the room to create.
+     * @param username The username of the user creating the room.
+     * @return The room code if creation is successful, otherwise null.
+     */
     public String createRoom(String roomCode, String username) {
         if (roomMap.containsKey(roomCode)) {
             return null;
@@ -58,6 +77,13 @@ public class GameService {
         return roomCode;
     }
 
+    /**
+     * Adds the specified user to the specified room.
+     *
+     * @param roomCode The code of the room to join.
+     * @param username The username of the user joining the room.
+     * @return True if the user successfully joins the room, otherwise false.
+     */
     public boolean joinRoom(String roomCode, String username) {
         Room room = roomMap.get(roomCode);
         if (room == null) {
@@ -72,7 +98,7 @@ public class GameService {
             game.currentPlayerDraw();
             room.setGame(game);
 
-            // 将用户与玩家实例的映射关系存储在userMap中
+            // Store the mapping between users and player instances in userMap
             for (String user : room.getUsers()) {
                 Player player = game.getPlayers()[room.getUsers().indexOf(user)];
                 userMap.put(user, player);
@@ -86,16 +112,29 @@ public class GameService {
         return true;
     }
 
+    /**
+     * Gets the player associated with the specified username in the specified room.
+     *
+     * @param roomCode The code of the room.
+     * @param username The username of the player.
+     * @return The Player object.
+     */
     public Player getPlayer(String roomCode, String username) {
         Room room = roomMap.get(roomCode);
         if (room == null || room.getGame() == null) {
             return null;
         }
 
-        // 根据用户找到对应的Player实例
+        // Find the Player instance associated with the user
         return userMap.get(username);
     }
 
+    /**
+     * Gets the username associated with the specified player.
+     *
+     * @param player The Player object.
+     * @return The username of the player.
+     */
     public String getUserName(Player player) {
         for (Map.Entry<String, Player> entry : userMap.entrySet()) {
             String key = entry.getKey();
@@ -107,16 +146,33 @@ public class GameService {
         return "";
     }
 
+    /**
+     * Gets the game associated with the specified room code.
+     *
+     * @param roomCode The code of the room.
+     * @return The MahjongGame object.
+     */
     public MahjongGame getGame(String roomCode) {
         Room room = roomMap.get(roomCode);
         return room == null ? null : room.getGame();
     }
 
+    /**
+     * Calculates the progress of the specified room.
+     *
+     * @param roomCode The code of the room.
+     * @return The number of users in the room.
+     */
     public int calculateProgress(String roomCode) {
         Room room = roomMap.get(roomCode);
         return room == null ? 0 : room.getUsers().size();
     }
 
+    /**
+     * Sends the progress of the specified room via WebSocket.
+     *
+     * @param roomCode The code of the room.
+     */
     public void sendRoomProgress(String roomCode) {
         int progress = calculateProgress(roomCode);
         RoomProgress roomProgress = new RoomProgress(roomCode, progress);
@@ -124,6 +180,11 @@ public class GameService {
         logger.info("Progress of room {}: {}", roomCode, progress);
     }
 
+    /**
+     * Starts a countdown for game progress in the specified room.
+     *
+     * @param roomCode The code of the room.
+     */
     public void startGameProgressCountdown(String roomCode) {
         System.out.println("startGameProgressCountdown");
 
@@ -145,16 +206,23 @@ public class GameService {
         timer.scheduleAtFixedRate(countdown, 0, 1000);
     }
 
+    /**
+     * Handles the draw tile message sent from a client.
+     *
+     * @param message The JSON message containing roomCode, userName, and tile.
+     * @return True if the message is successfully processed, otherwise false.
+     */
     public boolean handleDrawTileMessage(String message) {
         try {
-            // 解析 JSON 字符串为一个 Map 对象
+            // Parse JSON string into a Map object
             Map<String, String> messageMap = objectMapper.readValue(message, new TypeReference<Map<String, String>>() {});
 
-            // 从 Map 中获取 roomCode、userName 和 tile 属性
+            // Get roomCode, userName, and tile from the Map
             String roomCode = messageMap.get("roomCode");
             String userName = messageMap.get("userName");
             String tile = messageMap.get("tile");
-            // 获取游戏实例并处理瓦牌信息
+
+            // Get the game instance and process the tile information
             MahjongGame game = getGame(roomCode);
 
             if (game != null) {
@@ -164,13 +232,9 @@ public class GameService {
                 return false;
             }
         } catch (JsonProcessingException e) {
-            // JSON 解析失败，处理异常
+            // Handle JSON parsing exception
             e.printStackTrace();
         }
         return false;
     }
-
-
-
-
 }

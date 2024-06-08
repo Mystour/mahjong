@@ -126,41 +126,6 @@ body {
     left: -40px; /* 圆形距离左侧的距离 */
 }
 
-.table-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: lightgray;
-}
-
-.score-table {
-    margin: 0 auto;
-    border-collapse: collapse;
-    display: none; // 默认隐藏表格
-}
-
-.score-table th,
-.score-table td {
-    padding: 8px;
-    border: 1px solid black;
-}
-
-.button-container {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
-
-.table-title {
-    text-align: center;
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.hidden {
-    display: none;
-}
 
 
 #playingPlayer {

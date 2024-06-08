@@ -152,24 +152,6 @@ public class Hand {
             case WIND -> 4;
         };
     }
-    //可以作为的report的例子
-//    public static int translateType(TileType type){
-//        switch (type) {
-//            case BAMBOO:
-//                return 0;
-//            case CHARACTER:
-//                return 1;
-//            case DOT:
-//                return 2;
-//            case DRAGON:
-//                return 3;
-//            case WIND:
-//                return 4;
-//            default:
-//                System.out.println("Non-existent tile, what happen?");
-//                return -1;
-//        }
-//    }
 
     /**
      * Creates a deep copy of the handcard array.
