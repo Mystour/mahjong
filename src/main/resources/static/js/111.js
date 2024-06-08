@@ -46,13 +46,13 @@ function connect() {
 
             });
 
-            // 订阅 "/topic/currentPlayer" 主题
-            stompClient.subscribe('/topic/currentPlayer', function (message) {
-                console.log('Message received: ' + message.body);
+            // 订阅 "/topic/currentPlayer/{roomCode}" 主题
+            stompClient.subscribe('/topic/currentPlayer/' + roomCode, function (message) {
                 // 当收到消息时，更新显示的玩家名字
                 let currentPlayingPlayer = message.body;
                 updatePlayerNames(currentPlayingPlayer);
             });
+
         },50)
     }, function (error) {
         console.log('Error in connecting WebSocket: ' + error);
@@ -91,17 +91,19 @@ var Player = /** @class */ (function () {
     return Player;
 }());
 
-Player.prototype.sendUsernameToServer = function() {
+Player.prototype.sendUsernameToServer = function(roomCode) {
     // 使用 WebSocket 发送消息
-    var message = JSON.stringify({ 'username': this.username });
-    stompClient.send("/app/updateCurrentPlayer", {}, message);
+    var message = JSON.stringify({ 'username': username });
+    stompClient.send("/app/updateCurrentPlayer/" + roomCode, {}, message);
 };
+
 
 //以下perform_xxx都是按钮，可以改一下按钮的格式和位置
 Player.prototype.perform_discard = function (handDiv, selectedImgObj) {
     // 创建按钮
     var button = document.createElement('button');
     button.innerHTML = 'Discard';
+    setButtonStyle(button);
     var subscription = null;
 
     // 设置按钮点击事件
@@ -126,6 +128,7 @@ Player.prototype.perform_discard = function (handDiv, selectedImgObj) {
 Player.prototype.perform_chow = function (handDiv) {
     var button = document.createElement('button');
     button.innerHTML = 'Chow';
+    setButtonStyle(button);
     console.log('Chow');
     button.addEventListener('click', function() {
         button.disabled = true;
@@ -147,6 +150,7 @@ Player.prototype.perform_chow = function (handDiv) {
 Player.prototype.perform_pung = function (handDiv) {
     var button = document.createElement('button');
     button.innerHTML = 'Pung';
+    setButtonStyle(button);
     console.log('Pung');
     button.addEventListener('click', function() {
         button.disabled = true;
@@ -247,6 +251,7 @@ Player.prototype.perform_mahjong = function (handDiv,_this) {
 Player.prototype.perform_skip = function (handDiv) {
     var button = document.createElement('button');
     button.innerHTML = 'Skip';
+    setButtonStyle(button)
     button.addEventListener('click', function() {
         // 禁用按钮，防止多次点击
         button.disabled = true;
@@ -373,7 +378,7 @@ Player.prototype.updateHandWithImages_self = async function () {
     }
     if (_this.ischecking) {
         console.log('send username to server');
-        _this.sendUsernameToServer();
+        _this.sendUsernameToServer(roomCode);
     }
 
 };
@@ -465,10 +470,7 @@ Player.prototype.updateHandWithImages_other = function () {
         var circle = document.createElement('div');
         circle.classList.add('circle');
         handDiv.appendChild(circle);
-
-
     }
-
 };
 
 //由于订阅机制，每次服务器的后端数据发生改动后，都会告诉客户端数据改动了，要客户端在更新所有玩家的手牌
@@ -518,7 +520,7 @@ async function updateAllPlayersHandCards() {
                 url: '/api/username',
                 type: 'GET',
             });
-            var player = new Player('player' + (i + 1), username, cards[(currentUserIndex + i) % 4], discards[(currentUserIndex + i) % 4],showcards[(currentUserIndex + i) % 4],discardingTile[(currentUserIndex + i) % 4], condition[(currentUserIndex + i) % 4], isturn, ischecking );
+            var player  = new Player('player' + (i + 1), username, cards[(currentUserIndex + i) % 4], discards[(currentUserIndex + i) % 4],showcards[(currentUserIndex + i) % 4],discardingTile[(currentUserIndex + i) % 4], condition[(currentUserIndex + i) % 4], isturn, ischecking );
             if(i === 0){
                 await player.updateHandWithImages_self();
             } else {
