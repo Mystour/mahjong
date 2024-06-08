@@ -8,6 +8,7 @@ public class MahjongApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(MahjongApplication.class, args);
+
     }
 
 }
