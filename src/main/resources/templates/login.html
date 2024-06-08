@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Mahjong Game</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/login.css}"> <!-- Add this line -->
+<!--    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">   &lt;!&ndash;need VPN to access&ndash;&gt;-->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"> <!-- Add this line -->
+
+
+
+</head>
+<body>
+    <div class="container">
+        <div class="info">
+            <h2 class="text-center mt-5">Mahjong Game</h2>
+        </div>
+        <div th:if="${message != null}" class="alert alert-success" th:text="${message}"></div>
+
+        <div class="login-page">
+            <div class="form">
+                <form class="login-form" th:action="@{/login}" method="post">
+                    <div class="form-group">
+                        <input type="text" placeholder="username" name="username" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" placeholder="password" name="password" class="form-control"/>
+                    </div>
+                    <button type="submit" class="btn btn-primary">login</button>
+                    <!--/*@thymesVar id="error" type="java.lang.String"*/-->
+
+
+                </form>
+                <a th:href="@{/register}" class="btn btn-secondary">Register</a>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>  <!--JQuery的精简版本-->
+    <script th:src="@{/js/bootstrap.min.js}" type="application/javascript"></script>
+</body>
+</html>

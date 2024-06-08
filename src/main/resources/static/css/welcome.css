@@ -1,0 +1,19 @@
+body {
+    background-image: url("../images/welcome2.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.room-button {
+    padding: 40px 80px;  /* 增大按钮的面积 */
+    margin-right: 80px;  /* 增加右边距 */
+    margin-left: 80px;   /* 增加左边距 */
+    background-color: cornsilk;  /* 修改背景颜色 */
+    color: #466afb;     /* 修改字体颜色 */
+    font-size: 30px;    /* 修改字体大小 */
+    border-radius: 10px;  /* 圆角按钮 */
+}
+
+.button-container {
+    margin-top: 300px;  /* 下移按钮 */
+}

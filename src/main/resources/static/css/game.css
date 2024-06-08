@@ -1,0 +1,139 @@
+body {
+    background-image: url('../images/background3.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+
+.hand {
+    width: auto;
+    height: auto;
+    /*border: 1px solid #ffffff;*/
+    margin: 10px;
+    display: flex; /* 让牌在一条线上排开 */
+}
+
+.discardPile {
+    width: 120px;
+    height: auto;
+    /*border: 1px solid #ba3232;*/
+    margin: 10px;
+}
+
+.small-card {
+    width: 60px;
+    height: 80px;
+}
+
+.small-card-side {
+    width: 45px;
+    height: 60px;
+}
+
+.small-card-back {
+    width: 30px;
+    height: 40px;
+}
+
+.small-card1{
+    width: 30px;
+    height: 40px;
+}
+.small-card2{
+    width: 40px;
+    height: 40px;
+}
+
+
+.north {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%) rotate(180deg);
+}
+
+.discardPile-north {
+    position: absolute;
+    top: 25%;
+    left: 52%;
+    transform: translateX(-50%) rotate(180deg);
+}
+
+.east {
+    position: absolute;
+    right: 20%;
+    top: 55%;
+    transform: translateX(+50%) translateY(-200%) rotate(-105deg);
+    flex-direction: row-reverse; /* 从右到左排列 */
+}
+
+.discardPile-east {
+    position: absolute;
+    right: 32%;
+    top: 42%;
+    transform: rotate(-100deg);
+    flex-direction: row-reverse; /* 从右到左排列 */
+}
+
+.south {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.discardPile-south {
+    position: absolute;
+    bottom: 35%;
+    left: 52%;
+    transform: translateX(-50%);
+}
+
+.west {
+    position: absolute;
+    left: 20%;
+    top: 55%;
+    transform: translateX(-50%) translateY(-200%) rotate(105deg);
+}
+
+.discardPile-west {
+    position: absolute;
+    left: 36%;
+    top: 42%;
+    transform:  rotate(100deg);
+}
+
+
+/*测试用的，判断出牌的玩家和判断的玩家*/
+.triangle {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 20px solid blue; /* 三角形的颜色 */
+    position: absolute;
+    top: 10px; /* 三角形距离顶部的距离 */
+    left: -40px; /* 三角形距离左侧的距离 */
+}
+
+.circle {
+    width: 20px; /* 圆形的直径 */
+    height: 20px; /* 圆形的直径 */
+    background-color: red; /* 圆形的颜色 */
+    border-radius: 50%; /* 使元素呈现圆形 */
+    position: absolute;
+    top: 10px; /* 圆形距离顶部的距离 */
+    left: -40px; /* 圆形距离左侧的距离 */
+}
+
+
+
+#playingPlayer {
+    font-size: 20px; /* 调整字体大小 */
+    color: #60beff; /* 调整字体颜色为红色 */
+    font-family: 'Courier New', Courier, monospace; /* 调整字体类型 */
+    border: 2px solid #000000; /* 添加一个黑色的边框 */
+    border-radius: 10px; /* 设置边框为圆角 */
+    padding: 10px; /* 添加内边距 */
+    background-color: #ffffcc; /* 设置背景颜色为黄色 */
+}
