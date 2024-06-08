@@ -52,6 +52,7 @@ export class Player {
     static createButton(handDiv, text, onClick) {
         const button = document.createElement('button');
         button.innerHTML = text;
+        setButtonStyle(button);
         button.addEventListener('click', onClick);
         handDiv.appendChild(button);
     }
